@@ -3162,6 +3162,7 @@
   }
 
   async function manageAccounts(a) {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Управление счетами заблокировано!");
     if(a === 'add_acc') {
       let n = prompt("Новый счет:");
       if(n && n.trim()) {
@@ -5862,6 +5863,7 @@ function renderA() {
 
   // Создание раздела с умным предложением категорий
   async function promptNewProjectType() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Создание разделов доступно только администратору!");
     const nameInput = prompt("Название нового раздела (например: Ремонт, Авто, Свадьба):");
     if (!nameInput || !nameInput.trim()) return;
     const name = nameInput.trim();
@@ -5919,6 +5921,7 @@ function renderA() {
   }
 
   function deleteCurrentCustomProject() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Удаление заблокировано!");
     if (['travel', 'dacha'].includes(currentTravelTab)) return;
     const list = JSON.parse(localStorage.getItem('custom_project_types') || '[]');
     const target = list.find(x => x.id === currentTravelTab);
@@ -6148,6 +6151,7 @@ function renderA() {
     document.getElementById('addTravelExpenseModal').style.display = 'flex';
   }
   async function promptNewTripCategory() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Добавление статей расходов заблокировано!");
     const types = getProjectTypes();
     const currentTabObj = types.find(x => x.id === currentTravelTab) || types[0];
     const targetGroup = currentTabObj.group || currentTabObj.name;
@@ -6649,6 +6653,7 @@ function renderA() {
   }
   // Быстрое добавление одного чека в открытую поездку
   async function addQuickReceiptToCurrentTrip() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Добавление чеков заблокировано!");
     if (!window.currentTravelEventId) return;
     const cat = prompt("Категория (например: Еда в путешествиях, Бензин, Досуг):", "Еда в путешествиях");
     if (!cat) return;
@@ -6927,6 +6932,7 @@ function renderA() {
 
   // Переименование выбранного раздела (вкладки)
   function renameCurrentCustomProject() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Переименование заблокировано!");
     const types = getProjectTypes();
     const currentTabObj = types.find(x => x.id === currentTravelTab);
     if (!currentTabObj) return;
