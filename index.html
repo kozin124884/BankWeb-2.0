@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Банк PRO</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
 
@@ -322,6 +324,21 @@
         <span id="capitalChartArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
       </div>
       <div id="capitalChartBody" style="display:none; margin-top:10px;">
+        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ МАСШТАБОМ И ДАТАМИ -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+          <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:2px; gap:2px;">
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(7)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">7 дн</button>
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(14)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">14 дн</button>
+            <button type="button" class="btn-cap-zoom active-zoom-btn" onclick="setCapitalDaysWindow(30)" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">30 дн</button>
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(60)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">60 дн</button>
+          </div>
+          <div style="display:flex; gap:4px; align-items:center;">
+            <button type="button" onclick="panCapitalChart(-5)" title="Сдвиг назад во времени" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:bold; cursor:pointer; color:var(--text-main);">◀</button>
+            <button type="button" onclick="zoomCapitalChartManual(0.7)" title="Приблизить" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:bold; cursor:pointer; color:var(--text-main);">➕</button>
+            <button type="button" onclick="zoomCapitalChartManual(1.4)" title="Отдалить" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:bold; cursor:pointer; color:var(--text-main);">➖</button>
+            <button type="button" onclick="panCapitalChart(5)" title="Сдвиг вперед во времени" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:bold; cursor:pointer; color:var(--text-main);">▶</button>
+          </div>
+        </div>
         <div style="height:170px; position:relative; width:100%;">
           <canvas id="capitalNetWorthCanvas"></canvas>
         </div>
@@ -459,12 +476,7 @@
           </div>
         </div>
 
-        <!-- КНОПКА ДОСРОЧНОГО ЗАВЕРШЕНИЯ ПЕРЕДЫШКИ -->
-        <div id="btnEndGraceWrap" style="display:none; margin-top:4px;">
-          <button type="button" onclick="manuallyEndGracePeriod()" style="width:100%; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); color:#818cf8; padding:7px 10px; border-radius:9px; font-size:11px; font-weight:bold; cursor:pointer;">
-            ⚡ Все крупные счета оплачены — Завершить передышку
-          </button>
-        </div>
+        <!-- Блок передышки удалён -->
 
         <!-- ЦЕЛЕВЫЕ КОНВЕРТЫ И ПРОГНОЗЫ (ОБЕД, КАФЕ С РУЧКОЙ, ЕДА ДОМА) -->
         <div id="autopilotEnvelopesWrap" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
@@ -1483,6 +1495,18 @@
   let db = getDbClient();
   window.supabaseClient = db;
 
+  // Регистрация плагина масштабирования для Chart.js v4 (Linux, Windows, Android, iOS)
+  try {
+    if (typeof Chart !== 'undefined') {
+      const zoomPlugin = window.ChartZoom || window['chartjs-plugin-zoom'] || (typeof ChartZoom !== 'undefined' ? ChartZoom : null);
+      if (zoomPlugin) {
+        Chart.register(zoomPlugin);
+      }
+    }
+  } catch (err) {
+    console.warn('Не удалось автоматически зарегистрировать ChartZoom:', err);
+  }
+
   // Тактильный отклик для смартфонов
   function haptic(ms = 12) {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -1735,7 +1759,7 @@
   window.onload = () => {
     loadQueueFromStorage(); // восстановит все твои чеки, если телефон выгрузил браузер
     checkPinAuthOnLoad();
-    initIncognito();
+
     const now = new Date();
     const curDay = now.getDate();
     const curYear = now.getFullYear();
@@ -1765,8 +1789,12 @@
   };
 
   async function fetchAllData(silent = false) {
-    // Больше не блокируем загрузку, если в очереди что-то есть при старте!
     document.getElementById('loader').style.display = 'block';
+
+    // Если очередь пуста — очищаем временные локальные наложения, чтобы отобразить чистую базу
+    if (!localQueue || localQueue.length === 0) {
+      localStorage.removeItem('bank_pro_saved_queue');
+    }
 
     try {
       let allTransactions = [];
@@ -1785,13 +1813,32 @@
         page++;
       }
 
-      const [accRes, catRes, debRes, evRes, archRes] = await Promise.all([
+      const [accRes, catRes, debRes, evRes, archRes, setRes] = await Promise.all([
         db.from('accounts').select('*').eq('is_active', true).order('sort_order', { ascending: true }),
         db.from('categories').select('*'),
         db.from('debtors').select('*'),
         db.from('events').select('*'),
-        db.from('debt_archive').select('*').order('date', { ascending: true })
+        db.from('debt_archive').select('*').order('date', { ascending: true }),
+        db.from('app_settings').select('*')
       ]);
+
+      // Синхронизация счетов свободного пула и брони из базы данных (работает и в инкогнито)
+      if (setRes && setRes.data) {
+        setRes.data.forEach(item => {
+          if (item.key === 'ap_included_pool_accounts' && item.value) {
+            localStorage.setItem('ap_included_pool_accounts', item.value);
+          }
+          if (item.key === 'ap_manual_rent_reserve' && item.value !== undefined) {
+            localStorage.setItem('ap_manual_rent_reserve', item.value);
+          }
+          if (item.key === 'ap_override_pool_sum' && item.value !== undefined) {
+            localStorage.setItem('ap_override_pool_sum', item.value);
+          }
+          if (item.key === 'app_system_roles' && item.value) {
+            localStorage.setItem('app_system_roles', item.value);
+          }
+        });
+      }
 
       if (accRes.error) throw accRes.error;
       if (catRes.error) throw catRes.error;
@@ -1834,10 +1881,16 @@
         };
       });
 
-      const accountsData = accRes.data.map(a => ({
-        name: a.name,
-        balance: parseFloat(a.balance) || 0
-      }));
+      const accountsData = accRes.data.map(a => {
+        if (a.color) {
+          localStorage.setItem('acc_color_' + a.name, a.color);
+        }
+        return {
+          name: a.name,
+          balance: parseFloat(a.balance) || 0,
+          color: a.color || null
+        };
+      });
 
       const parsedArchiveDebts = (archRes.data || []).map(a => {
         const p = a.date.split('-');
@@ -1961,17 +2014,12 @@
         }
       }
       else if (q.action === 'edit') {
-        // Обновляем транзакцию и пересчитываем разницу
+        // Обновляем только поля транзакции в памяти (балансы уже скорректированы)
         const idx = appData.transactions.findIndex(t => String(t.r) === String(q.r));
         if (idx !== -1) {
-          const oldTx = appData.transactions[idx];
-          // Откатываем старое
-          if (oldTx.type === 'Расход') updateAccBal(oldTx.accE, oldTx.sumE);
-          if (oldTx.type === 'Доход') updateAccBal(oldTx.accI, -oldTx.sumI);
-          // Применяем новое
-          if (it.type === 'Расход') updateAccBal(it.accE, -it.sumE);
-          if (it.type === 'Доход') updateAccBal(it.accI, it.sumI);
-          appData.transactions[idx] = JSON.parse(JSON.stringify(it));
+          const updatedTx = JSON.parse(JSON.stringify(it));
+          updatedTx.no_budget = (it.no_budget === true || it.no_budget === 'true');
+          appData.transactions[idx] = updatedTx;
         }
       }
     });
@@ -2082,6 +2130,7 @@
         type: q.item.type,
         amount: q.item.type === 'Расход' ? q.item.sumE : (q.item.type === 'Доход' ? q.item.sumI : q.item.sumTr),
         points: q.item.points || 0,
+        no_budget: !!q.item.no_budget,
         account_from: q.item.type === 'Расход' ? q.item.accE : (q.item.type === 'Доход' ? q.item.accI : q.item.accF),
         account_to: q.item.type === 'Перевод' ? q.item.accT : null,
         category: q.item.type === 'Расход' ? q.item.catE : (q.item.type === 'Доход' ? q.item.catI : ''),
@@ -2221,6 +2270,7 @@
       }
 
       // 5. ДОБАВЛЕНИЕ НОВЫХ ЧЕКОВ (включая части сплита)
+      // 5. ДОБАВЛЕНИЕ НОВЫХ ЧЕКОВ (включая части сплита)
       const adds = allTxQueue.filter(q => q.action === 'add').map(q => ({
         date: q.item.fd,
         type: q.item.type,
@@ -2230,6 +2280,7 @@
         category: q.item.type === 'Расход' ? q.item.catE : (q.item.type === 'Доход' ? q.item.catI : ''),
         comment: q.item.type === 'Расход' ? q.item.comE : (q.item.type === 'Доход' ? q.item.comI : ''),
         points: q.item.points || 0,
+        no_budget: !!q.item.no_budget,
         event_id: q.item.event_id || null,
         debtor_name: q.item.debtor_name || null
       }));
@@ -2355,8 +2406,78 @@
           else if (q.action === 'archive_debt') {
             text = `<b>🤝 Архив долгов</b>: <span style="color:#3b82f6; font-weight:bold;">${Math.abs(item.amt)} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.n}</b><br><i>${item.c}</i></div>`;
           }
+          else if (q.action === 'edit') {
+            const orig = q.originalItem || {};
+            const cur = q.item || {};
+            const diffs = [];
+
+            const origCat = orig.catE || orig.catI || (orig.accF ? `${orig.accF} ➔ ${orig.accT}` : '—');
+            const curCat = cur.catE || cur.catI || (cur.accF ? `${cur.accF} ➔ ${cur.accT}` : '—');
+            if (origCat !== curCat) {
+              diffs.push(`📂 Категория: <span style="text-decoration:line-through; color:var(--text-mute);">${origCat}</span> ➔ <b>${curCat}</b>`);
+            }
+
+            const origSum = parseFloat(orig.sumE || orig.sumI || orig.sumTr) || 0;
+            const curSum = parseFloat(cur.sumE || cur.sumI || cur.sumTr) || 0;
+            if (origSum !== curSum) {
+              diffs.push(`💰 Сумма: <span style="text-decoration:line-through; color:var(--text-mute);">${origSum.toLocaleString()} ₽</span> ➔ <b style="color:#3b82f6;">${curSum.toLocaleString()} ₽</b>`);
+            }
+
+            const origAcc = orig.accE || orig.accI || orig.accF || '';
+            const curAcc = cur.accE || cur.accI || cur.accF || '';
+            if (origAcc && curAcc && origAcc !== curAcc) {
+              diffs.push(`💳 Счёт: <span style="text-decoration:line-through; color:var(--text-mute);">${origAcc}</span> ➔ <b>${curAcc}</b>`);
+            }
+
+            if (orig.d && cur.d && orig.d !== cur.d) {
+              diffs.push(`📅 Дата: <span style="text-decoration:line-through; color:var(--text-mute);">${orig.d}</span> ➔ <b>${cur.d}</b>`);
+            }
+
+            const origCom = (orig.comE || orig.comI || '').trim();
+            const curCom = (cur.comE || cur.comI || '').trim();
+            if (origCom !== curCom) {
+              diffs.push(`💬 Заметка: <span style="text-decoration:line-through; color:var(--text-mute);">${origCom || 'пусто'}</span> ➔ <i>${curCom || 'очищена'}</i>`);
+            }
+
+            // Точное отслеживание галочки баллов
+            const origPoints = parseFloat(orig.points) || 0;
+            const curPoints = parseFloat(cur.points) || 0;
+            if (origPoints !== curPoints) {
+              if (curPoints > 0 && origPoints === 0) {
+                diffs.push(`🎁 Баллы: <b style="color:#10b981;">+${curPoints.toLocaleString()} баллов</b>`);
+              } else if (curPoints === 0 && origPoints > 0) {
+                diffs.push(`🎁 Баллы: <span style="color:#ef4444; text-decoration:line-through;">было ${origPoints.toLocaleString()} б. (отключено)</span>`);
+              } else {
+                diffs.push(`🎁 Баллы: <span style="text-decoration:line-through; color:var(--text-mute);">${origPoints} б.</span> ➔ <b style="color:#10b981;">${curPoints} б.</b>`);
+              }
+            }
+
+            // Точное отслеживание галочки исключения из Автопилота
+            const origNoB = !!orig.no_budget;
+            const curNoB = !!cur.no_budget;
+            if (origNoB !== curNoB) {
+              if (curNoB) {
+                diffs.push(`🛡️ <b>Исключено из дневного лимита Автопилота</b>`);
+              } else {
+                diffs.push(`🛡️ <b>Возвращено в дневной лимит Автопилота</b>`);
+              }
+            }
+
+            // Если изменений полей не было (например, открыли и пересохранили)
+            if (diffs.length === 0) {
+              diffs.push(`<i>Параметры без изменений (${curCat}, ${curSum.toLocaleString()} ₽)</i>`);
+            }
+
+            text = `
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                <span style="background:rgba(245,158,11,0.15); color:#f59e0b; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:900;">✏️ ИЗМЕНЕНО: ${curCat} (${curSum.toLocaleString()} ₽)</span>
+              </div>
+              <div style="font-size:11px; line-height:1.45; padding-left:2px;">${diffs.join('<br>')}</div>
+            `;
+            bg = 'var(--input-bg)';
+          }
           else {
-            text = `<b>${q.action === 'edit' ? '✏️ Изменение' : item.type}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.catE || item.catI || (item.accF + ' ➔ ' + item.accT)}</b><br><i>${item.comE || item.comI || ''}</i></div>`;
+            text = `<b>${item.type}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.catE || item.catI || (item.accF + ' ➔ ' + item.accT)}</b><br><i>${item.comE || item.comI || ''}</i></div>`;
           }
 
           let btnEdit = (q.action !== 'delete' && q.action !== 'archive_debt') ? `<button onclick="editQueueItem('${q.r}')" style="background:#f59e0b; color:white; border:none; border-radius:8px; padding:6px 10px; font-weight:bold; cursor:pointer; font-size:11px;" title="Изменить">✏️</button>` : '';
@@ -2403,6 +2524,22 @@
       } else {
         document.getElementById('fSum').value = item.sumE || item.sumI;
         document.getElementById('fCom').value = item.comE || item.comI;
+
+        // Восстанавливаем галочку и сумму баллов
+        const pointsToggle = document.getElementById('fUsePointsToggle');
+        const pointsWrap = document.getElementById('fPointsWrap');
+        const pointsInput = document.getElementById('fPointsSum');
+        const hasPoints = (parseFloat(item.points) || 0) > 0;
+        if (pointsToggle) pointsToggle.checked = hasPoints;
+        if (pointsWrap) pointsWrap.style.display = hasPoints ? 'block' : 'none';
+        if (pointsInput) pointsInput.value = hasPoints ? item.points : '';
+
+        // Восстанавливаем галочку исключения из Автопилота
+        const noBudgetToggle = document.getElementById('fNoBudget');
+        if (noBudgetToggle) {
+          noBudgetToggle.checked = (item.no_budget === true || item.no_budget === 'true');
+        }
+
         setTimeout(() => {
           document.getElementById('fCat').value = item.catE || item.catI;
           document.getElementById('fAcc').value = item.accE || item.accI;
@@ -2422,8 +2559,10 @@
     if (idx === -1) return;
 
     const qObj = localQueue[idx];
+    const isLocalItem = String(id).startsWith('local_');
 
-    if (qObj.action === 'add') {
+    // 1. Если чек был добавлен в текущей сессии (не был в базе данных)
+    if (qObj.action === 'add' || isLocalItem) {
       const q = qObj.item;
       if (q) {
         if (q.type === 'Расход') updateAccBal(q.accE, q.sumE);
@@ -2433,36 +2572,38 @@
           updateAccBal(q.accT, -q.sumTr);
         }
       }
+      // Полностью стираем из памяти
       appData.transactions = appData.transactions.filter(x => String(x.r) !== String(id));
     }
+    // 2. Если редактировался чек, который УЖЕ ЕСТЬ в базе
     else if (qObj.action === 'edit') {
-      // ОТКАТ РЕДАКТИРОВАНИЯ:
       const current = qObj.item;
       const orig = qObj.originalItem;
       if (orig && current) {
-        // 1. Убираем измененную сумму со счетов
+        // Отменяем действие текущей отредактированной версии
         if (current.type === 'Расход') updateAccBal(current.accE, current.sumE);
         if (current.type === 'Доход') updateAccBal(current.accI, -current.sumI);
-        if (current.type === 'Перевод') {
+        if (current.type === 'Перевод' || current.type === 'Между своими') {
           updateAccBal(current.accF, current.sumTr);
           updateAccBal(current.accT, -current.sumTr);
         }
 
-        // 2. Начисляем обратно исходную сумму
+        // Возвращаем исходное списание/зачисление старого чека
         if (orig.type === 'Расход') updateAccBal(orig.accE, -orig.sumE);
         if (orig.type === 'Доход') updateAccBal(orig.accI, orig.sumI);
-        if (orig.type === 'Перевод') {
+        if (orig.type === 'Перевод' || orig.type === 'Между своими') {
           updateAccBal(orig.accF, -orig.sumTr);
           updateAccBal(orig.accT, orig.sumTr);
         }
 
-        // 3. Возвращаем саму транзакцию в исходное состояние
+        // Восстанавливаем оригинальные поля чека
         const txIdx = appData.transactions.findIndex(x => String(x.r) === String(id));
         if (txIdx !== -1) {
           appData.transactions[txIdx] = JSON.parse(JSON.stringify(orig));
         }
       }
     }
+    // 3. Если отменяется удаление чека из базы
     else if (qObj.action === 'delete') {
       const q = qObj.item;
       if (q) {
@@ -2480,6 +2621,7 @@
     }
 
     localQueue.splice(idx, 1);
+    saveQueueToStorage();
 
     const globalItems = getGlobalQueueItems();
     if (globalItems.length === 0) {
@@ -2492,7 +2634,6 @@
     renderBankCards();
     renderTravels();
     executeHistSearch();
-    saveQueueToStorage()
     renderDebts();
   }
 
@@ -2543,12 +2684,23 @@
     updateCustomColorSelected(color);
   }
 
-  function confirmAccountColor() {
+  async function confirmAccountColor() {
     const accName = document.getElementById('colorTargetAccount').value;
     const color = document.getElementById('customColorPicker').value;
     if (accName) {
       localStorage.setItem('acc_color_' + accName, color);
+      const accObj = appData.accounts.find(a => a.name === accName);
+      if (accObj) accObj.color = color;
       renderBankCards();
+
+      // Синхронизируем цвет с сервером Supabase
+      if (!isGuest() && accName !== '__ALL__') {
+        try {
+          await db.from('accounts').update({ color: color }).eq('name', accName);
+        } catch (e) {
+          console.warn('Не удалось сохранить цвет в базу:', e);
+        }
+      }
     }
     document.getElementById('accountColorModal').style.display = 'none';
   }
@@ -2937,7 +3089,7 @@
       d: d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0],
       type: currentFormType,
       points: currentFormType === 'Расход' ? pointsVal : 0,
-      no_budget: isNoBudget, // Флаг: не сжигать лимит дня
+      no_budget: currentFormType === 'Расход' ? !!isNoBudget : false,
       catE: currentFormType === 'Расход' ? cat : '',
       sumE: currentFormType === 'Расход' ? parseFloat(sum) : 0,
       accE: currentFormType === 'Расход' ? acc : '',
@@ -3301,6 +3453,15 @@
 
 
   // ==== АНАЛИТИКА ====
+
+  function calcMedian(arr) {
+    if (!arr || arr.length === 0) return 0;
+    const sorted = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 !== 0) return sorted[mid];
+    return Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  }
+
   function updatePeriodUI() {
     const pt = document.getElementById('periodType').value;
     document.getElementById('pMonthWrap').style.display = (pt === 'month' || pt === 'salary') ? 'block' : 'none';
@@ -4160,11 +4321,12 @@ function renderA() {
 
           const isSubOpen = openedAnalytics.has('subcat_' + n + '_' + sn) ? 'block' : 'none';
           const subAvgCheck = so.i.length > 0 ? Math.round(so.s / so.i.length) : so.s;
+          const subMedCheck = calcMedian(so.i.map(x => x.s));
 
           const pGroup = ((so.s / o.s) * 100).toFixed(0);
           const pAll = ((so.s / tc) * 100).toFixed(1);
 
-          // 1. ПОДКАТЕГОРИИ: КНОПКА «АНАЛИЗ» В САМОМ НАЧАЛЕ СТРОЧКИ ПЕРЕД ИМЕНЕМ
+          // 1. ПОДКАТЕГОРИИ: КНОПКА «АНАЛИЗ» + СРЕДНИЙ И МЕДИАННЫЙ ЧЕКИ
           sub += `<div style="margin-bottom:6px;">
                     <div class="click-header" style="background:var(--bg-card); border:1px solid var(--border); padding:7px 9px;" onclick="tC(event,this,'subcat_${n}_${sn}')">
                       <div style="min-width:0; flex:1;">
@@ -4175,7 +4337,8 @@ function renderA() {
                           <b style="color:var(--text-main); font-size:13px;">${sn}</b>
                         </div>
                         <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:3px; padding-left: 2px;">
-                          <span class="stat-chip">~${subAvgCheck.toLocaleString()}&nbsp;₽/чек</span>
+                          <span class="stat-chip">ср.&nbsp;~${subAvgCheck.toLocaleString()}&nbsp;₽</span>
+                          <span class="stat-chip" title="Медианный чек">мед.&nbsp;~${subMedCheck.toLocaleString()}&nbsp;₽</span>
                           <span class="stat-chip"><b>${so.i.length}&nbsp;чек.</b></span>
                           <span class="stat-chip">${pGroup}%&nbsp;группы&nbsp;<span style="opacity:0.75;">(${pAll}%&nbsp;от&nbsp;всех)</span></span>
                         </div>
@@ -4190,7 +4353,9 @@ function renderA() {
         });
 
         const isCatOpen = openedAnalytics.has('cat_' + n) ? 'block' : 'none';
+        const allGroupChecks = Object.values(o.subs).flatMap(sub => sub.i.map(x => x.s));
         const avgCatCheck = groupTxCount > 0 ? Math.round(o.s / groupTxCount) : o.s;
+        const medCatCheck = calcMedian(allGroupChecks);
         const avgCatMonth = Math.round(o.s / periodMonths);
 
         const nLow = n.toLowerCase();
@@ -4205,12 +4370,14 @@ function renderA() {
         } else if (periodDays >= 25) {
           catAvgBadges = `
             <span class="stat-chip" style="color:var(--text-main);">~${avgCatMonth.toLocaleString()}&nbsp;₽/мес</span>
-            <span class="stat-chip">ср.&nbsp;чек&nbsp;~${avgCatCheck.toLocaleString()}&nbsp;₽</span>
+            <span class="stat-chip">ср.&nbsp;~${avgCatCheck.toLocaleString()}&nbsp;₽</span>
+            <span class="stat-chip" title="Медианный чек">мед.&nbsp;~${medCatCheck.toLocaleString()}&nbsp;₽</span>
             <span class="stat-chip"><b>${groupTxCount}&nbsp;чек.</b></span>
           `;
         } else {
           catAvgBadges = `
-            <span class="stat-chip">ср.&nbsp;чек&nbsp;~${avgCatCheck.toLocaleString()}&nbsp;₽</span>
+            <span class="stat-chip">ср.&nbsp;~${avgCatCheck.toLocaleString()}&nbsp;₽</span>
+            <span class="stat-chip" title="Медианный чек">мед.&nbsp;~${medCatCheck.toLocaleString()}&nbsp;₽</span>
             <span class="stat-chip"><b>${groupTxCount}&nbsp;чек.</b></span>
           `;
         }
@@ -4912,9 +5079,13 @@ function renderA() {
     if(!tx) return alert("Не удалось найти транзакцию.");
 
     currentTxForSplit = tx;
+    // Клонируем исходное состояние ДО любых правок пользователя с сохранением баллов и флага
+    window.editingTxOriginalSnapshot = {
+      ...JSON.parse(JSON.stringify(tx)),
+      points: parseFloat(tx.points) || 0,
+      no_budget: (tx.no_budget === true || tx.no_budget === 'true')
+    };
     document.getElementById('editRow').value = tx.r;
-    // ... дальше ваш стандартный код открытия модалки
-    document.getElementById('editType').value = tx.type;
 
     let dateVal = tx.fd;
     if(!dateVal) dateVal = toISOLocal(new Date());
@@ -4943,7 +5114,10 @@ function renderA() {
 
     const pointsInp = document.getElementById('editPointsSum');
     if (pointsInp) pointsInp.value = tx.points > 0 ? tx.points : '';
-    if (document.getElementById('editNoBudget')) document.getElementById('editNoBudget').checked = !!tx.no_budget;
+    const noBudgetChk = document.getElementById('editNoBudget');
+    if (noBudgetChk) {
+      noBudgetChk.checked = (tx.no_budget === true || tx.no_budget === 'true' || tx.no_budget === 1);
+    }
 
     const splitBtn = document.getElementById('splitExistingTxBtn');
     if (splitBtn) {
@@ -5006,49 +5180,66 @@ function renderA() {
     const c = document.getElementById('editComment').value;
     const type = document.getElementById('editType').value;
     const pointsVal = parseFloat(document.getElementById('editPointsSum')?.value) || 0;
-
     const newAcc = document.getElementById('editAcc')?.value;
+
     const tx = appData.transactions.find(x => String(x.r) === String(r));
     if (!tx) return;
 
-    // 1. Запоминаем исходное состояние для отката
+    // 1. Исходный снимок для сравнения
     const existingEdit = localQueue.find(q => String(q.r) === String(r) && q.action === 'edit');
-    const originalTxSnapshot = existingEdit ? existingEdit.originalItem : JSON.parse(JSON.stringify(tx));
+    const originalTxSnapshot = existingEdit ? existingEdit.originalItem : (window.editingTxOriginalSnapshot || JSON.parse(JSON.stringify(tx)));
 
-    // 2. Возвращаем старую сумму на СТАРЫЙ счёт
-    if (tx.type === 'Расход') updateAccBal(tx.accE, tx.sumE);
-    if (tx.type === 'Доход') updateAccBal(tx.accI, -tx.sumI);
-    if (tx.type === 'Перевод' || tx.type === 'Между своими') {
-      updateAccBal(tx.accF, tx.sumTr);
-      updateAccBal(tx.accT, -tx.sumTr);
+    // 2. Аккуратная корректировка баланса БЕЗ задвоений
+    const oldAcc = (tx.type === 'Расход' ? tx.accE : (tx.type === 'Доход' ? tx.accI : tx.accF)) || '';
+    const oldSum = parseFloat(tx.type === 'Расход' ? tx.sumE : (tx.type === 'Доход' ? tx.sumI : tx.sumTr)) || 0;
+
+    if (oldAcc === newAcc) {
+      // Счёт тот же — меняем баланс ровно на разницу сумм!
+      const diff = sum - oldSum;
+      if (diff !== 0) {
+        if (type === 'Расход') updateAccBal(newAcc, -diff);
+        else if (type === 'Доход') updateAccBal(newAcc, diff);
+      }
+    } else {
+      // Счёт сменился — возвращаем на старый и списываем с нового
+      if (oldAcc) {
+        if (tx.type === 'Расход') updateAccBal(oldAcc, oldSum);
+        else if (tx.type === 'Доход') updateAccBal(oldAcc, -oldSum);
+      }
+      if (newAcc) {
+        if (type === 'Расход') updateAccBal(newAcc, -sum);
+        else if (type === 'Доход') updateAccBal(newAcc, sum);
+      }
     }
 
-    // 3. Записываем обновленные поля и списываем/начисляем на НОВЫЙ счёт
+    // 3. Записываем новые значения в объект транзакции
     tx.fd = d;
     tx.d = d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0];
     tx.points = (type === 'Расход') ? pointsVal : 0;
-    tx.no_budget = document.getElementById('editNoBudget')?.checked || false;
-    haptic(15);
+    tx.no_budget = !!document.getElementById('editNoBudget')?.checked;
 
     if (type === 'Расход') {
       tx.catE = cat; tx.sumE = sum; tx.comE = c; tx.accE = newAcc;
-      updateAccBal(newAcc, -sum);
     } else if (type === 'Доход') {
       tx.catI = cat; tx.sumI = sum; tx.comI = c; tx.accI = newAcc;
-      updateAccBal(newAcc, sum);
     } else if (type === 'Перевод') {
-      tx.accF = newAcc;
-      updateAccBal(newAcc, -sum);
-      updateAccBal(tx.accT, sum);
+      tx.accF = newAcc; tx.sumTr = sum;
     }
+    haptic(15);
 
-    // 4. Фиксируем в очереди
-    if (existingEdit) {
-      existingEdit.item = JSON.parse(JSON.stringify(tx));
-    } else {
-      let existingAdd = localQueue.find(q => String(q.r) === String(r) && q.action === 'add');
+    // 4. Запись в очередь: локальные остаются 'add', серверные становятся 'edit'
+    const isLocalNewTx = String(r).startsWith('local_');
+    const existingAdd = localQueue.find(q => String(q.r) === String(r) && q.action === 'add');
+
+    if (isLocalNewTx || existingAdd) {
       if (existingAdd) {
         existingAdd.item = JSON.parse(JSON.stringify(tx));
+      } else {
+        localQueue.push({ action: 'add', r: r, item: JSON.parse(JSON.stringify(tx)) });
+      }
+    } else {
+      if (existingEdit) {
+        existingEdit.item = JSON.parse(JSON.stringify(tx));
       } else {
         localQueue.push({
           action: 'edit',
@@ -5059,15 +5250,16 @@ function renderA() {
       }
     }
 
+    saveQueueToStorage();
     updateSyncBar();
     closeModal('editModal');
     applyDatesLocally();
     renderBankCards();
     renderTravels();
     executeHistSearch();
-    renderMonthlyBudgetWidget(); // Мгновенно пересчитывает стрик и дневной пульс!
-    return;
-    }
+    if (typeof renderMonthlyBudgetWidget === 'function') renderMonthlyBudgetWidget();
+    if (typeof renderRichInsights === 'function') renderRichInsights();
+  }
 
   function toggleHideDebtor(name) {
     if (hiddenDebtors.includes(name)) {
@@ -6669,7 +6861,8 @@ function renderA() {
       account_from: acc,
       category: cat,
       comment: com,
-      event_id: window.currentTravelEventId
+      event_id: window.currentTravelEventId,
+      no_budget: true // Чеки поездок по умолчанию не сжигают обычный дневной лимит
     };
 
     try {
@@ -8258,9 +8451,29 @@ function renderA() {
   // ВСПОМОГАТЕЛЬНЫЙ ФИЛЬТР: ЧИСТЫЕ ЛИЧНЫЕ РАСХОДЫ
   function isCleanPersonalExpense(t, roles) {
     if (t.type !== 'Расход' || t.sumE <= 0) return false;
-    if (t.no_budget) return false; // Галочка исключает трату из дневного лимита Автопилота!
-    const cL = (t.catE || '').toLowerCase();
+    if (t.no_budget) return false; // Ручная галочка исключения
 
+    const accName = (t.accE || '').toLowerCase();
+
+    // 1. Автоматический запрет для целевых счетов еды/накоплений
+    if (accName.includes('обед') || accName.includes('кафе') || accName.includes('вклад') || accName.includes('накопит') || accName.includes('копил')) {
+      return false;
+    }
+
+    // 2. Проверка по счетам Свободного Пула: если счёт операции не входит в пул — трата не сжигает дневной лимит
+    const cleanTxAcc = (t.accE || '').trim().toLowerCase();
+    const savedPoolJson = localStorage.getItem('ap_included_pool_accounts');
+    if (savedPoolJson) {
+      try {
+        const poolAccs = JSON.parse(savedPoolJson);
+        if (Array.isArray(poolAccs) && poolAccs.length > 0) {
+          const inPool = poolAccs.some(pa => String(pa).trim().toLowerCase() === cleanTxAcc);
+          if (!inPool) return false;
+        }
+      } catch (e) {}
+    }
+
+    const cL = (t.catE || '').toLowerCase();
     const isDebt = ['что-то кому-то купил в долг', 'кому-то в долг', 'вернул долг'].includes(cL);
     const isTransit = isDebt || cL.includes((roles.grandma_cat || 'бабушка').toLowerCase()) || cL.includes('бабушк');
 
@@ -8546,6 +8759,9 @@ function renderA() {
 
 
 
+  // Локальные сессионные счета для симулятора планов (живут до перезагрузки страницы)
+  window.simCustomAccounts = null;
+
   function getAutopilotMetricsForPlan() {
     const now = new Date();
     const curD = now.getDate(), curY = now.getFullYear(), curM = now.getMonth();
@@ -8580,21 +8796,27 @@ function renderA() {
       if (!rentPaid) rentReserved = targetSum;
     }
 
-    // 3. Реальный пул
+    // 3. Реальный пул: если пользователь в планах выбрал свои счета — берем их!
     let cleanPool = 0;
     const manualPool = localStorage.getItem('ap_override_pool_sum');
-    if (manualPool !== null && manualPool !== '') {
+    if (manualPool !== null && manualPool !== '' && !window.simCustomAccounts) {
       cleanPool = parseFloat(manualPool) || 0;
     } else {
-      const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
-      const savedAccounts = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
+      let accountsToSum = [];
+      if (window.simCustomAccounts && Array.isArray(window.simCustomAccounts)) {
+        accountsToSum = window.simCustomAccounts;
+      } else {
+        const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
+        accountsToSum = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
+      }
+
       let totalOnCards = 0;
       (appData.accounts || []).forEach(a => {
         const low = (a.name || '').toLowerCase();
         if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
         const isTarget = low.includes('обед') || low.includes('кафе') || low.includes('вклад') || low.includes('накопит');
-        const shouldInclude = savedAccounts ? savedAccounts.includes(a.name) : !isTarget;
-        if (shouldInclude) totalOnCards += Math.max(0, parseFloat(a.balance) || 0);
+        const shouldInclude = accountsToSum ? accountsToSum.includes(a.name) : !isTarget;
+        if (shouldInclude) totalOnCards += (parseFloat(a.balance) || 0);
       });
       cleanPool = Math.max(0, totalOnCards - rentReserved);
     }
@@ -8607,6 +8829,62 @@ function renderA() {
     const baseDailyLimit = daysLeft > 0 ? Math.round(cleanPool / daysLeft) : 0;
 
     return { cleanPool, daysLeft, baseDailyLimit, lunchBal, cafeBal };
+  }
+
+  function openSimAccountsModal() {
+    const container = document.getElementById('simAccountsCheckboxesList');
+    if (!container) return;
+
+    // При первой загрузке берем счета из пула Автопилота, либо текущие сессионные
+    let activeAccounts = window.simCustomAccounts;
+    if (!activeAccounts) {
+      const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
+      activeAccounts = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
+    }
+
+    let h = '';
+    (appData.accounts || []).forEach(acc => {
+      const n = acc.name;
+      const low = n.toLowerCase();
+      if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
+
+      const isTargetDefault = low.includes('обед') || low.includes('кафе') || low.includes('вклад') || low.includes('накопит');
+      const isChecked = activeAccounts ? activeAccounts.includes(n) : !isTargetDefault;
+
+      h += `
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; font-size:11.5px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>${n} <b style="color:var(--text-mute); font-size:10px;">(${Math.round(acc.balance).toLocaleString()} ₽)</b></span>
+          <input type="checkbox" class="sim-acc-item-chk" value="${n}" ${isChecked ? 'checked' : ''} style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      `;
+    });
+
+    container.innerHTML = h || '<div style="color:var(--text-mute); font-size:11px;">Счета не найдены</div>';
+    openModal('simAccountsModal');
+  }
+
+  function setAllSimAccounts(state) {
+    document.querySelectorAll('.sim-acc-item-chk').forEach(c => c.checked = state);
+  }
+
+  function resetSimAccountsToDefaultPool() {
+    const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
+    const defaultPool = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
+    document.querySelectorAll('.sim-acc-item-chk').forEach(c => {
+      const low = c.value.toLowerCase();
+      const isTargetDefault = low.includes('обед') || low.includes('кафе') || low.includes('вклад') || low.includes('накопит');
+      c.checked = defaultPool ? defaultPool.includes(c.value) : !isTargetDefault;
+    });
+  }
+
+  function applySimAccountsSelection() {
+    const checked = Array.from(document.querySelectorAll('.sim-acc-item-chk:checked')).map(c => c.value);
+    window.simCustomAccounts = checked;
+    closeModal('simAccountsModal');
+
+    // Мгновенно пересчитываем информационную плашку и результаты планов
+    openPlanSimulatorModal();
+    if (typeof calculateSimScenarios === 'function') calculateSimScenarios();
   }
 
   function getSimCategoryAvg(catKey) {
@@ -8922,15 +9200,27 @@ function renderA() {
     });
   }
 
-  function saveFreePoolAccountsSettings() {
+  async function saveFreePoolAccountsSettings() {
     const checked = Array.from(document.querySelectorAll('.pool-acc-item-chk:checked')).map(c => c.value);
-    localStorage.setItem('ap_included_pool_accounts', JSON.stringify(checked));
+    const poolJson = JSON.stringify(checked);
+    localStorage.setItem('ap_included_pool_accounts', poolJson);
 
     const manVal = document.getElementById('apManualPoolInput')?.value.trim();
     if (manVal !== undefined && manVal !== '') {
       localStorage.setItem('ap_override_pool_sum', manVal);
     } else {
       localStorage.removeItem('ap_override_pool_sum');
+    }
+
+    if (!isGuest()) {
+      try {
+        await db.from('app_settings').upsert([
+          { key: 'ap_included_pool_accounts', value: poolJson },
+          { key: 'ap_override_pool_sum', value: manVal || '' }
+        ]);
+      } catch (err) {
+        console.warn('Не удалось синхронизировать пул с базой:', err);
+      }
     }
 
     document.getElementById('freePoolModal').style.display = 'none';
@@ -8945,7 +9235,7 @@ function renderA() {
     document.getElementById('shadowReserveModal').style.display = 'flex';
   }
 
-  function saveShadowReserveSettings() {
+  async function saveShadowReserveSettings() {
     const val = document.getElementById('apShadowReserveInput')?.value.trim();
     const autoRel = document.getElementById('apAutoReleaseRentCheckbox')?.checked;
 
@@ -8956,6 +9246,29 @@ function renderA() {
     }
     localStorage.setItem('ap_auto_release_rent', autoRel ? 'true' : 'false');
 
+    if (!isGuest()) {
+      try {
+        await db.from('app_settings').upsert([
+          { key: 'ap_manual_rent_reserve', value: val || '' }
+        ]);
+      } catch (err) {
+        console.warn('Не удалось синхронизировать бронь с сервером:', err);
+      }
+    }
+
+    document.getElementById('shadowReserveModal').style.display = 'none';
+    renderMonthlyBudgetWidget();
+  }
+
+  async function clearShadowReserveSettings() {
+    localStorage.removeItem('ap_manual_rent_reserve');
+    if (!isGuest()) {
+      try {
+        await db.from('app_settings').upsert([
+          { key: 'ap_manual_rent_reserve', value: '' }
+        ]);
+      } catch (err) {}
+    }
     document.getElementById('shadowReserveModal').style.display = 'none';
     renderMonthlyBudgetWidget();
   }
@@ -9000,7 +9313,6 @@ function renderA() {
 
   // 2. ОСНОВНОЙ РАСЧЕТ И ОТРИСОВКА АВТОПИЛОТА (ПРИВЯЗКА К ID SUPABASE)
   function renderMonthlyBudgetWidget() {
-    updateGrandmaBtnUI();
     const todayISO = toISOLocal(new Date());
     const now = new Date();
     const curDay = now.getDate();
@@ -9072,16 +9384,6 @@ function renderA() {
     const daysLeft = Math.max(1, Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000));
     const weeksToSalary = Math.max(0.1, daysLeft / 7);
 
-    // Период передышки
-    const daysPassedSinceSalary = Math.max(1, Math.round((now.getTime() - cycleStart.getTime()) / 86400000) + 1);
-    const graceManuallyEnded = localStorage.getItem('ap_grace_manually_ended') === 'true';
-    const isGracePeriod = (daysPassedSinceSalary <= 3) && !graceManuallyEnded;
-
-    const endGraceBtnWrap = document.getElementById('btnEndGraceWrap');
-    if (endGraceBtnWrap) {
-      endGraceBtnWrap.style.display = (daysPassedSinceSalary <= 3 && !graceManuallyEnded) ? 'block' : 'none';
-    }
-
     // 4. ТЕНЕВАЯ БРОНЬ АРЕНДЫ
     let rentReserved = 0;
     const manualReserveVal = localStorage.getItem('ap_manual_rent_reserve');
@@ -9124,7 +9426,7 @@ function renderA() {
         }
 
         if (shouldInclude) {
-          totalOnCards += Math.max(0, parseFloat(a.balance) || 0);
+          totalOnCards += (parseFloat(a.balance) || 0);
           includedAccNames.push(n);
         }
       });
@@ -9133,15 +9435,31 @@ function renderA() {
 
     // 6. РАСХОДЫ ЗА СЕГОДНЯ
     let spentToday = 0;
+    let excludedSpentToday = 0; // Траты за сегодня с галочкой "не учитывать"
     const roles = typeof getSystemRoles === 'function' ? getSystemRoles() : { rent_cat: 'Аренда', grandma_cat: 'Бабушка' };
+
     appData.transactions.forEach(t => {
-      if (t.fd === todayISO && isCleanPersonalExpense(t, roles)) {
-        spentToday += t.sumE;
+      if (t.fd === todayISO && t.type === 'Расход' && t.sumE > 0) {
+        if (isCleanPersonalExpense(t, roles)) {
+          spentToday += (parseFloat(t.sumE) || 0);
+        } else {
+          // Если трата прошла с карты свободного пула, но помечена как исключенная (no_budget, аренда и т.д.)
+          const txAcc = (t.accE || '').trim().toLowerCase();
+          const inPool = includedAccNames.some(a => a.trim().toLowerCase() === txAcc);
+          if (inPool) {
+            excludedSpentToday += (parseFloat(t.sumE) || 0);
+          }
+        }
       }
     });
 
-    const fullDailyLimit = Math.round((cleanAvailablePool + spentToday) / daysLeft);
-    window.currentFullDailyLimit = fullDailyLimit; // Сохраняем реальный лимит дня для стрика
+    // Утренний пул для расчета нормы дня: восстанавливаем только то, что списалось сегодня
+    // Благодаря excludedSpentToday крупные чеки с галочкой не снижают сегодняшний лимит посреди дня!
+    const startOfDayPool = Math.max(0, cleanAvailablePool + spentToday + excludedSpentToday);
+    const fullDailyLimit = daysLeft > 0 ? Math.round(startOfDayPool / daysLeft) : Math.round(startOfDayPool);
+    window.currentFullDailyLimit = fullDailyLimit;
+
+    // Остаток на сегодня: учитывает только обычные бытовые расходы дня
     const dailyRemain = fullDailyLimit - spentToday;
 
     // ВЫВОД В ШАПКУ АВТОПИЛОТА
@@ -9151,17 +9469,12 @@ function renderA() {
     const eFmt = `${String(cycleEnd.getDate()).padStart(2,'0')}.${String(cycleEnd.getMonth()+1).padStart(2,'0')}`;
 
     if (subStatus) {
-      subStatus.innerText = `До ЗП ${daysLeft} дн. (${sFmt} — ${eFmt})${isGracePeriod ? ' • Передышка ☕' : ''}`;
+      subStatus.innerText = `До ЗП ${daysLeft} дн. (${sFmt} — ${eFmt})`;
     }
 
     if (dailyBadge) {
-      if (isGracePeriod) {
-        dailyBadge.innerText = `~${fullDailyLimit.toLocaleString()} ₽/день`;
-        dailyBadge.style.color = '#38bdf8';
-      } else {
-        dailyBadge.innerText = `${dailyRemain.toLocaleString()} ₽/день`;
-        dailyBadge.style.color = dailyRemain >= 500 ? '#10b981' : '#ef4444';
-      }
+      dailyBadge.innerText = `${dailyRemain.toLocaleString()} ₽/день`;
+      dailyBadge.style.color = dailyRemain >= 500 ? '#10b981' : '#ef4444';
     }
 
     // СТАЛО (ВСЕГДА ВИДЕН И КЛИКАБЕЛЕН ДАЖЕ ПРИ 0 ДНЕЙ):
@@ -9192,23 +9505,27 @@ function renderA() {
     const isGrandmaDay = localStorage.getItem('is_grandma_shopping_day') === 'true';
 
     if (todaySummary) todaySummary.innerText = `${Math.round(spentToday).toLocaleString()} из ${fullDailyLimit.toLocaleString()} ₽`;
+
     if (todayBar) {
       const pct = fullDailyLimit > 0 ? Math.min(100, Math.round((spentToday / fullDailyLimit) * 100)) : 100;
       todayBar.style.width = pct + '%';
-      todayBar.style.background = isGracePeriod ? '#6366f1' : (pct > 90 ? '#ef4444' : (pct > 65 ? '#f59e0b' : '#10b981'));
+      todayBar.style.background = pct > 90 ? '#ef4444' : (pct > 65 ? '#f59e0b' : '#10b981');
     }
 
+    // Прогноз лимита на завтра с учётом сегодняшних трат
+    const daysLeftTomorrow = Math.max(1, daysLeft - 1);
+    const tomorrowPace = daysLeftTomorrow > 0 ? Math.round(cleanAvailablePool / daysLeftTomorrow) : cleanAvailablePool;
+    const paceDelta = tomorrowPace - fullDailyLimit;
+    const paceDeltaText = paceDelta >= 0
+      ? `<span style="color:#10b981; font-weight:bold;">(завтра: ~${tomorrowPace.toLocaleString()} ₽ ▲)</span>`
+      : `<span style="color:#ef4444; font-weight:bold;">(завтра: ~${tomorrowPace.toLocaleString()} ₽ ▼)</span>`;
+
     if (todayStatus) {
-      if (isGrandmaDay) {
-        todayStatus.innerHTML = '🛒 <span style="color:#f59e0b; font-weight:800;">День у бабушки (Лимит на паузе)</span>';
-      } else if (isGracePeriod) {
-        todayStatus.innerHTML = `☕ <b>Передышка (день ${daysPassedSinceSalary} из 3):</b> крупные оплаты.`;
-        todayStatus.style.color = '#38bdf8';
-      } else if (dailyRemain >= 0) {
-        todayStatus.innerHTML = `🟢 В норме. Остаток на сегодня: <b>${dailyRemain.toLocaleString()} ₽</b>`;
+      if (dailyRemain >= 0) {
+        todayStatus.innerHTML = `🟢 В норме: <b>+${dailyRemain.toLocaleString()} ₽</b> <span style="font-size:10.5px; opacity:0.85;">${paceDeltaText}</span>`;
         todayStatus.style.color = '#10b981';
       } else {
-        todayStatus.innerHTML = `🟡 Превышение на <b>${Math.abs(dailyRemain).toLocaleString()} ₽</b> (размазано)`;
+        todayStatus.innerHTML = `🚨 Лимит дня превышен на <b>${Math.abs(dailyRemain).toLocaleString()} ₽</b> <span style="font-size:10.5px; opacity:0.9;">${paceDeltaText}</span>`;
         todayStatus.style.color = '#ef4444';
       }
     }
@@ -9908,9 +10225,12 @@ function renderA() {
     });
   }
 
-  // --- ГРАФИК ДИНАМИКИ КАПИТАЛА (NET WORTH) ---
+
+  // --- ГРАФИК ДИНАМИКИ КАПИТАЛА С НАДЕЖНЫМ ЗУМОМ И ПАНОРАМИРОВАНИЕМ ---
   let capitalChartInstance = null;
   let isCapitalChartOpen = false;
+  let capWindowDays = 30;
+  let capOffsetDays = 0; // 0 = правый край у сегодняшнего дня
 
   function toggleCapitalChart() {
     isCapitalChartOpen = !isCapitalChartOpen;
@@ -9921,54 +10241,90 @@ function renderA() {
     if (isCapitalChartOpen) renderCapitalChart();
   }
 
+  function setCapitalDaysWindow(days) {
+    capWindowDays = days;
+    capOffsetDays = 0;
+    document.querySelectorAll('.btn-cap-zoom').forEach(btn => {
+      btn.style.background = 'transparent';
+      btn.style.borderColor = 'transparent';
+      btn.style.color = 'var(--text-mute)';
+    });
+    if (event && event.target) {
+      event.target.style.background = 'var(--bg-card)';
+      event.target.style.borderColor = 'var(--border)';
+      event.target.style.color = 'var(--text-main)';
+    }
+    renderCapitalChart();
+  }
+
+  function zoomCapitalChartManual(factor) {
+    let newDays = Math.round(capWindowDays * factor);
+    capWindowDays = Math.max(5, Math.min(180, newDays));
+    renderCapitalChart();
+  }
+
+  function panCapitalChart(deltaDays) {
+    capOffsetDays += deltaDays;
+    if (capOffsetDays > 0) capOffsetDays = 0; // Не уходим в будущее
+    renderCapitalChart();
+  }
+
   function renderCapitalChart() {
     const canvas = document.getElementById('capitalNetWorthCanvas');
     if (!canvas) return;
 
-    // Считаем текущий суммарный баланс выбранных карт
     const currentTotal = appData.accounts
       .filter(a => selectedAccounts.has(a.name) && !a.name.toLowerCase().includes('все счета'))
       .reduce((sum, a) => sum + (parseFloat(a.balance) || 0), 0);
 
     const now = new Date();
-    const days = 30;
-    const labels = [];
-    const balances = new Array(days);
+    const maxDaySpan = Math.max(200, capWindowDays + Math.abs(capOffsetDays) + 30);
+    const fullDayMap = {};
 
-    // Заполняем массив дней от 30 дней назад до сегодня
-    const dayMap = {};
-    for (let i = days - 1; i >= 0; i--) {
+    for (let i = maxDaySpan; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 86400000);
       const iso = toISOLocal(d);
-      const dStr = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
-      labels.push(dStr);
-      dayMap[iso] = { income: 0, expense: 0 };
+      fullDayMap[iso] = { income: 0, expense: 0 };
     }
 
-    // Собираем доходы и расходы по дням для выбранных счетов
     (appData.transactions || []).forEach(t => {
-      if (dayMap[t.fd]) {
+      if (fullDayMap[t.fd]) {
         if (t.type === 'Доход' && selectedAccounts.has(t.accI)) {
-          dayMap[t.fd].income += (parseFloat(t.sumI) || 0);
+          fullDayMap[t.fd].income += (parseFloat(t.sumI) || 0);
         } else if (t.type === 'Расход' && selectedAccounts.has(t.accE)) {
-          dayMap[t.fd].expense += (parseFloat(t.sumE) || 0);
+          fullDayMap[t.fd].expense += (parseFloat(t.sumE) || 0);
         }
       }
     });
 
-    // Восстанавливаем баланс от сегодняшнего дня в прошлое
-    let runningBalance = currentTotal;
-    const isoDates = Object.keys(dayMap).sort(); // от старых к новым
+    const allIsoDates = Object.keys(fullDayMap).sort();
+    const balanceByIso = {};
+    let running = currentTotal;
 
-    for (let i = isoDates.length - 1; i >= 0; i--) {
-      balances[i] = Math.round(runningBalance);
-      const iso = isoDates[i];
-      // Вчерашний баланс = сегодняшний баланс - доходы сегодня + расходы сегодня
-      runningBalance = runningBalance - dayMap[iso].income + dayMap[iso].expense;
+    for (let i = allIsoDates.length - 1; i >= 0; i--) {
+      const iso = allIsoDates[i];
+      balanceByIso[iso] = Math.round(running);
+      running = running - fullDayMap[iso].income + fullDayMap[iso].expense;
+    }
+
+    const endOffset = Math.abs(capOffsetDays);
+    const startOffset = endOffset + capWindowDays - 1;
+
+    const labels = [];
+    const balances = [];
+
+    for (let i = startOffset; i >= endOffset; i--) {
+      const d = new Date(now.getTime() - i * 86400000);
+      const iso = toISOLocal(d);
+      labels.push(`${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`);
+      balances.push(balanceByIso[iso] !== undefined ? balanceByIso[iso] : currentTotal);
     }
 
     const ctx = canvas.getContext('2d');
-    if (capitalChartInstance) capitalChartInstance.destroy();
+    if (capitalChartInstance) {
+      capitalChartInstance.destroy();
+      capitalChartInstance = null;
+    }
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     capitalChartInstance = new Chart(ctx, {
@@ -9979,16 +10335,18 @@ function renderA() {
           label: 'Капитал',
           data: balances,
           borderColor: '#10b981',
-          backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.08)',
+          backgroundColor: isDark ? 'rgba(16, 185, 129, 0.12)' : 'rgba(16, 185, 129, 0.08)',
           fill: true,
-          tension: 0.3,
-          pointRadius: 2,
-          pointHoverRadius: 5
+          tension: 0.25,
+          pointRadius: capWindowDays > 40 ? 1.5 : 3.5,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#10b981'
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 150 },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -9998,16 +10356,46 @@ function renderA() {
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 9 }, maxTicksLimit: 7 } },
+          x: { grid: { display: false }, ticks: { font: { size: 9 }, maxTicksLimit: 8 } },
           y: {
             ticks: {
               font: { size: 9 },
-              callback: (v) => v >= 1000 ? `${Math.round(v/1000)}к` : v
+              callback: (v) => v >= 1000 ? `${Math.round(v / 1000)}к` : v
             }
           }
         }
       }
     });
+
+    // Прямой перехват колесика мыши (работает в любом браузере на Linux)
+    if (!canvas._hasLinuxWheelBound) {
+      canvas.addEventListener('wheel', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.deltaY < 0) {
+          zoomCapitalChartManual(0.75); // Приближение
+        } else {
+          zoomCapitalChartManual(1.3);  // Отдаление
+        }
+      }, { passive: false });
+
+      // Жесты свайпа на сенсорных экранах
+      let touchStartX = 0;
+      canvas.addEventListener('touchstart', e => {
+        if (e.touches && e.touches.length > 0) touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      canvas.addEventListener('touchend', e => {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const diff = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(diff) > 30) {
+          if (diff > 0) panCapitalChart(-4); // свайп вправо = назад в прошлое
+          else panCapitalChart(4);           // свайп влево = к сегодняшнему дню
+        }
+      }, { passive: true });
+
+      canvas._hasLinuxWheelBound = true;
+    }
   }
 
 // =========================================================================
@@ -10722,6 +11110,26 @@ function renderA() {
   </div>
 </div>
 
+<!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ СИМУЛЯТОРА ПЛАНОВ (СЕССИОННАЯ, БЕЗ СБРОСА ПРИ ОБНОВЛЕНИИ) -->
+<div id="simAccountsModal" class="modal" style="z-index: 12000; display: none;">
+  <div class="modal-content" style="max-width: 420px; max-height: 80vh; display: flex; flex-direction: column; padding: 20px; gap: 12px;">
+    <div class="modal-header-sticky">
+      <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">💳 Счета для симулятора планов</h3>
+      <button class="close-btn" type="button" onclick="closeModal('simAccountsModal')">✕</button>
+    </div>
+    <div style="font-size: 11px; color: var(--text-mute); line-height: 1.4;">
+      Временный выбор счетов для быстрого расчёта планов. Не меняет основной свободный пул в автопилоте и сбросится только при полной перезагрузке страницы в браузере.
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button type="button" onclick="setAllSimAccounts(true)" style="flex:1; padding:6px; background:var(--input-bg); border:1px solid var(--border); border-radius:6px; font-size:10.5px; font-weight:bold; color:var(--text-main); cursor:pointer;">Все счета</button>
+      <button type="button" onclick="resetSimAccountsToDefaultPool()" style="flex:1.2; padding:6px; background:var(--input-bg); border:1px solid var(--border); border-radius:6px; font-size:10.5px; font-weight:bold; color:#3b82f6; cursor:pointer;">Как в автопилоте</button>
+      <button type="button" onclick="setAllSimAccounts(false)" style="flex:1; padding:6px; background:var(--input-bg); border:1px solid var(--border); border-radius:6px; font-size:10.5px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
+    </div>
+    <div id="simAccountsCheckboxesList" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:10px; border:1px solid var(--border); max-height:220px; overflow-y:auto;"></div>
+    <button type="button" onclick="applySimAccountsSelection()" style="background:#10b981; color:white; border:none; padding:11px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">⚡ Применить для планов</button>
+  </div>
+</div>
+
 <!-- МОДАЛКА: СИМУЛЯТОР СЦЕНАРИЕВ («КАК МНЕ БЫТЬ?») -->
 <div id="planSimulatorModal" class="modal">
   <div class="modal-content" style="max-width: 440px; max-height: 88vh; overflow-y: scroll; scrollbar-gutter: stable; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; background: var(--bg-card);">
@@ -10737,7 +11145,13 @@ function renderA() {
       Добавьте траты, которые планируете до зарплаты (дача, вещи из ПВЗ, кафе). Алгоритм сопоставит их с честным остатком и предложит оптимальные комбинации.
     </div>
 
-    <!-- 1. ВЕРХНЯЯ ИНФОРМАЦИОННАЯ ПЛАШКА (СВОБОДНЫЙ ПУЛ И ДНЕВНОЙ ЛИМИТ) -->
+    <!-- 1. ВЕРХНЯЯ ИНФОРМАЦИОННАЯ ПЛАШКА (СВОБОДНЫЙ ПУЛ И ДНЕВНОЙ ЛИМИТ С КНОПКОЙ НАСТРОЙКИ СЧЕТОВ) -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:-4px;">
+      <span style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase;">Базовый баланс симулятора:</span>
+      <button type="button" onclick="openSimAccountsModal()" style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">
+        💳 Счета для симуляции ⚙️
+      </button>
+    </div>
     <div id="simBaselineBox" style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
 
     <!-- 2. СПИСОК СТАТЕЙ РАСХОДА -->
