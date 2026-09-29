@@ -8564,7 +8564,7 @@
   function exitToCalculatorAction() {
     closeModal('logoutChoiceModal');
     sessionStorage.clear();
-    window.location.href = '/';
+    window.location.replace('/');
   }
 
   function openPinSettingsModal() {
@@ -18433,7 +18433,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18493,7 +18493,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ВЫХОДА / СМЕНЫ ПОЛЬЗОВАТЕЛЯ -->
-<div id="logoutChoiceModal" class="modal" style="z-index: 4010; display: none;">
+<div id="logoutChoiceModal" class="modal" style="z-index: 12000; display: none;">
   <div class="modal-content" style="max-width: 340px; padding: 20px; text-align: center;">
     <div style="font-size: 32px; margin-bottom: 8px;">🚪</div>
     <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 900; color: var(--text-main);">Выход из системы</h3>
