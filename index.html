@@ -18129,35 +18129,49 @@ function toggleEnvelopeAccordion(prefix) {
     }
   }
 
-  // Динамическая смена реквизитов шлюза калькулятора прямо из админки Банка
+  // Смена логина, ключа и слова сброса входного шлюза калькулятора
   async function updateGatewayCredentials() {
-    if (isGuest()) return alert("🔒 Доступно только администратору!");
+    if (isGuest()) return alert("🔒 Вы вошли как гость! Изменение настроек доступно только администратору с мастер-PIN.");
+
     const newId = document.getElementById('newGatewayId')?.value.trim();
     const newKey = document.getElementById('newGatewayKey')?.value.trim();
+    const newResetWord = document.getElementById('newGatewayResetWord')?.value.trim();
 
-    if (!newId && !newKey) {
-      return alert("Заполните хотя бы одно поле (новый ID или новый ключ)!");
+    if (!newId && !newKey && !newResetWord) {
+      return alert("Заполните хотя бы одно поле (логин, ключ или слово сброса)!");
     }
 
     try {
-      const updates = [];
+      console.log("Попытка сохранения реквизитов шлюза...");
+
       if (newId) {
         const idHash = await sha256(newId);
-        updates.push({ key: 'gateway_id_hash', value: idHash });
+        console.log("Отправка gateway_id_hash:", idHash);
+        const res1 = await db.from('app_settings').upsert({ key: 'gateway_id_hash', value: idHash });
+        if (res1.error) throw res1.error;
       }
+
       if (newKey) {
         const keyHash = await sha256(newKey);
-        updates.push({ key: 'gateway_key_hash', value: keyHash });
+        console.log("Отправка gateway_key_hash:", keyHash);
+        const res2 = await db.from('app_settings').upsert({ key: 'gateway_key_hash', value: keyHash });
+        if (res2.error) throw res2.error;
       }
 
-      const { error } = await db.from('app_settings').upsert(updates);
-      if (error) throw error;
+      if (newResetWord) {
+        const resetHash = await sha256(newResetWord.toLowerCase());
+        console.log("Отправка gateway_reset_word_hash для слова:", newResetWord, "=>", resetHash);
+        const res3 = await db.from('app_settings').upsert({ key: 'gateway_reset_word_hash', value: resetHash });
+        if (res3.error) throw res3.error;
+      }
 
-      alert("✅ Реквизиты входа из Калькулятора успешно обновлены в базе данных!");
+      alert("✅ Настройки шлюза успешно сохранены в Supabase!");
       document.getElementById('newGatewayId').value = '';
       document.getElementById('newGatewayKey').value = '';
+      document.getElementById('newGatewayResetWord').value = '';
     } catch (err) {
-      alert("Ошибка сохранения реквизитов: " + err.message);
+      console.error("Ошибка сохранения шлюза:", err);
+      alert("❌ Ошибка Supabase: " + (err.message || JSON.stringify(err)));
     }
   }
 
