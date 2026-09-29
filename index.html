@@ -7822,7 +7822,7 @@
 </div>
 
 <!-- СКРЫТЫЕ ДОЛЖНИКИ -->
-<div id="hiddenDebtorsModal" class="modal" style="z-index: 1500;">
+<div id="hiddenDebtorsModal" class="modal" style="z-index: 1500; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">👁️ Скрытые должники</h3>
@@ -7833,7 +7833,7 @@
 </div>
 
 <!-- НАСТРОЙКИ КАТЕГОРИЙ -->
-<div id="catManagerModal" class="modal" style="z-index: 1600;">
+<div id="catManagerModal" class="modal" style="z-index: 1600; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0;">Настройки категорий</h3>
@@ -7896,7 +7896,7 @@
 </div>
 
 <!-- ИСТОРИЯ СЧЕТОВ -->
-<div id="accHistoryModal" class="modal">
+<div id="accHistoryModal" class="modal" style="display: none;">
   <div class="modal-content" style="padding: 0;">
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -7926,7 +7926,7 @@
 </div>
 
 <!-- ДОЛГИ УПРАВЛЕНИЕ -->
-<div id="debtCenterModal" class="modal">
+<div id="debtCenterModal" class="modal" style="display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">Управление долгами</h3>
@@ -8065,7 +8065,7 @@
 </div>
 
 <!-- ОКНО ИЗМЕНЕНИЯ ТРАНЗАКЦИИ (ПОВЕРХ ВСЕГО) -->
-<div id="editModal" class="modal" style="z-index: 3100;">
+<div id="editModal" class="modal" style="z-index: 3100; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">Изменить</h3>
@@ -8106,7 +8106,7 @@
 </div>
 
 <!-- ЦВЕТА СЧЕТОВ -->
-<div id="accountColorModal" class="modal">
+<div id="accountColorModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 380px; border-radius: 20px; padding: 24px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:16px;">🎨 Выберите цвет</h3>
@@ -8150,7 +8150,7 @@
 </div>
 
 <!-- МОДАЛКА СОЗДАНИЯ ПОЕЗДКИ / ДАЧИ / ПРОЕКТА (ПАКЕТНЫЙ ВВОД СМЕТЫ) -->
-<div id="addTravelExpenseModal" class="modal" style="z-index: 1500;">
+<div id="addTravelExpenseModal" class="modal" style="z-index: 1500; display: none;">
   <div class="modal-content" style="max-width: 480px; padding: 24px;">
     <div class="modal-header-sticky">
       <h3 id="addTripModalTitle" style="font-weight: 900; margin: 0;">✈️ Создать событие</h3>
@@ -8196,7 +8196,7 @@
 </div>
 
 <!-- МОДАЛКА ИЗМЕНЕНИЯ ПАРАМЕТРОВ ПОЕЗДКИ -->
-<div id="travelEditModal" class="modal" style="z-index: 1200;">
+<div id="travelEditModal" class="modal" style="z-index: 1200; display: none;">
   <div class="modal-content" style="max-width: 380px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0;">✏️ Параметры поездки</h3>
@@ -8228,7 +8228,7 @@
 </div>
 
 <!-- МОДАЛКА ПОЛНЫХ ДЕТАЛЕЙ ПОЕЗДКИ -->
-<div id="travelDetailsModal" class="modal" style="z-index: 1000;">
+<div id="travelDetailsModal" class="modal" style="z-index: 1000; display: none;">
   <div class="modal-content" style="max-width: 480px; height: 85vh; overflow-y: scroll; scrollbar-gutter: stable; padding: 24px; display: flex; flex-direction: column;">
     <div class="modal-header-sticky">
         <h2 id="travelDetailsTitle" style="font-size:18px; font-weight:900; margin:0; color:var(--text-main);">✈️ Смета</h2>
@@ -17892,9 +17892,33 @@ function toggleEnvelopeAccordion(prefix) {
         throw new Error(errJson.message || `Ошибка доступа к GitHub: ${getFileRes.status}`);
       }
 
-      // 2. Берём текущий чистый HTML-код всей страницы
+      // 2. Подготовка чистого HTML-кода без открытых модалок и логов
       log(`📦 Подготовка актуального кода страницы...`);
-      const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+      // Клонируем документ в виртуальный DOM, чтобы очистить временные состояния
+      const docClone = document.documentElement.cloneNode(true);
+
+      // Принудительно закрываем модалку деплоя и сбрасываем логи в клоне
+      const cloneDeployModal = docClone.querySelector('#deployModal');
+      if (cloneDeployModal) {
+        cloneDeployModal.style.display = 'none';
+      }
+      const cloneLog = docClone.querySelector('#deployStatusLog');
+      if (cloneLog) {
+        cloneLog.style.display = 'none';
+        cloneLog.innerHTML = '';
+      }
+      const cloneDeployBtn = docClone.querySelector('#btnRunDeploy');
+      if (cloneDeployBtn) {
+        cloneDeployBtn.disabled = false;
+        cloneDeployBtn.innerText = '🚀 Закоммитить и выложить на сайт';
+      }
+      // Закрываем любые другие открытые модалки в сохраняемом файле
+      docClone.querySelectorAll('.modal').forEach(m => {
+        if (m.id !== 'pinOverlay') m.style.display = 'none';
+      });
+
+      const fullHtml = '<!DOCTYPE html>\n' + docClone.outerHTML;
       const contentBase64 = utf8ToBase64(fullHtml);
 
       // 3. Отправляем коммит через GitHub API
@@ -17955,7 +17979,7 @@ function toggleEnvelopeAccordion(prefix) {
 </script>
 
 <!-- МОДАЛКА СПЛИТА ЧЕКА ПО КАТЕГОРИЯМ -->
-<div id="tripSplitModal" class="modal">
+<div id="tripSplitModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">✂️ Разделить чек по категориям</h3>
@@ -17986,7 +18010,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МИКРО-ШТОРКА БЫСТРОГО ВЫБОРА КАТЕГОРИИ ДЛЯ СПЛИТА -->
-<div id="splitCategoryPickerModal" class="modal">
+<div id="splitCategoryPickerModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 400px; height: 75vh; max-height: 75vh; display: flex; flex-direction: column; padding: 18px; box-sizing: border-box;">
     <div class="modal-header-sticky" style="margin: -18px -18px 10px -18px; padding: 14px 18px;">
       <h3 style="font-weight: 900; margin: 0; font-size: 15px; color: var(--text-main);">🔍 Выберите категорию</h3>
@@ -18001,7 +18025,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ГЛУБОКОЙ АНАЛИТИКИ КАТЕГОРИИ -->
-<div id="categoryDeepAnalyticsModal" class="modal">
+<div id="categoryDeepAnalyticsModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 480px; display: flex; flex-direction: column;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18078,7 +18102,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА НАСТРОЙКИ БЮДЖЕТА -->
-<div id="budgetConfigModal" class="modal">
+<div id="budgetConfigModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 400px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:16px;">⚙️ Настройки бюджета</h3>
@@ -18105,7 +18129,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА НАСТРОЙКИ КОПИЛКИ -->
-<div id="roundingConfigModal" class="modal">
+<div id="roundingConfigModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 400px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">🐷 Настройка копилки</h3>
@@ -18132,7 +18156,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА СМЕНЫ PIN-КОДОВ -->
-<div id="pinSettingsModal" class="modal">
+<div id="pinSettingsModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 380px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">🔒 Безопасность и пароли</h3>
@@ -18173,7 +18197,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: СИМУЛЯТОР СЦЕНАРИЕВ («КАК МНЕ БЫТЬ?») -->
-<div id="planSimulatorModal" class="modal">
+<div id="planSimulatorModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px; max-height: 88vh; overflow-y: scroll; scrollbar-gutter: stable; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; background: var(--bg-card);">
     <div class="modal-header-sticky">
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -18209,7 +18233,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: РУЧНОЙ РЕЖИМ АВТОПИЛОТА -->
-<div id="autopilotOverrideModal" class="modal">
+<div id="autopilotOverrideModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px; max-height: 85vh; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
     <div class="modal-header-sticky">
       <h3 style="margin: 0; font-size: 16px; font-weight: 900; color: var(--text-main);">⚙️ Настройка автопилота</h3>
@@ -18254,7 +18278,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА НАЗНАЧЕНИЯ СИСТЕМНЫХ РОЛЕЙ -->
-<div id="systemRolesModal" class="modal">
+<div id="systemRolesModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 400px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">🏷️ Системные роли</h3>
@@ -18280,7 +18304,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ВЫБОРА СЧЕТА ДЛЯ ЭКОНОМИИ ДНЯ -->
-<div id="quickSaveModal" class="modal">
+<div id="quickSaveModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 360px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">💰 Отправить экономию</h3>
@@ -18300,7 +18324,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА НАСТРОЙКИ ПОРОГОВ КАЛИБРА ЧЕКОВ -->
-<div id="caliberConfigModal" class="modal">
+<div id="caliberConfigModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 380px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">⚙️ Пороги калибра трат</h3>
@@ -18319,7 +18343,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ПРОСМОТРА ОПЕРАЦИЙ КАЛИБРА И УТЕЧЕК -->
-<div id="caliberListModal" class="modal">
+<div id="caliberListModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px;">
     <div class="modal-header-sticky">
       <h3 id="caliberListTitle" style="font-weight:900; margin:0; font-size:15px;">Чеки калибра</h3>
@@ -18330,7 +18354,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal">
+<div id="streakHistoryModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -18356,7 +18380,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: flex;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18376,9 +18400,9 @@ function toggleEnvelopeAccordion(prefix) {
     </div>
 
     <!-- КНОПКА ЗАПУСКА -->
-    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width:100%; background:#10b981; color:white; border:none; padding:14px; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:0.2s;" disabled="">⏳ Публикация в GitHub...</button>
+    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width:100%; background:#10b981; color:white; border:none; padding:14px; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:0.2s;">🚀 Закоммитить и выложить на сайт</button>
 
-    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла index.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл найден, sha: 6b0fd05</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
+    <div id="deployStatusLog" style="display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"></div>
 
     <!-- АККОРДЕОН НАСТРОЕК GITHUB ТОКЕНА И СЕРВЕРА -->
     <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:4px;">
@@ -18387,7 +18411,7 @@ function toggleEnvelopeAccordion(prefix) {
         <span id="deploySettingsArr" style="font-size:9px; color:var(--text-mute);">▼</span>
       </div>
 
-      <div id="deploySettingsBody" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
+      <div id="deploySettingsBody" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
         <div>
           <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Репозиторий (Owner/Repo):</label>
           <input type="text" id="cfgGhRepo" class="input-ui" placeholder="например: ivan/bank-pro" style="margin:0; padding:6px 8px; font-size:11px;">
