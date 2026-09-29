@@ -8671,29 +8671,42 @@
     }
 
     try {
-      const updates = [];
+      // 1. Обновляем ID, если задан
       if (newId) {
         const idHash = await sha256(newId);
-        updates.push({ key: 'gateway_id_hash', value: idHash });
+        const { error: e1 } = await db.from('app_settings').upsert(
+          { key: 'gateway_id_hash', value: idHash },
+          { onConflict: 'key' }
+        );
+        if (e1) throw new Error("ID шлюза: " + e1.message);
       }
+
+      // 2. Обновляем Ключ, если задан
       if (newKey) {
         const keyHash = await sha256(newKey);
-        updates.push({ key: 'gateway_key_hash', value: keyHash });
+        const { error: e2 } = await db.from('app_settings').upsert(
+          { key: 'gateway_key_hash', value: keyHash },
+          { onConflict: 'key' }
+        );
+        if (e2) throw new Error("Ключ шлюза: " + e2.message);
       }
+
+      // 3. Обновляем Слово сброса, если задано (всегда в нижнем регистре)
       if (newResetWord) {
         const resetHash = await sha256(newResetWord.toLowerCase());
-        updates.push({ key: 'gateway_reset_word_hash', value: resetHash });
+        const { error: e3 } = await db.from('app_settings').upsert(
+          { key: 'gateway_reset_word_hash', value: resetHash },
+          { onConflict: 'key' }
+        );
+        if (e3) throw new Error("Слово сброса: " + e3.message);
       }
 
-      const { error } = await db.from('app_settings').upsert(updates);
-      if (error) throw error;
-
-      alert("✅ Настройки шлюза калькулятора успешно обновлены в базе данных!");
+      alert("✅ Настройки шлюза (включая секретное слово) успешно сохранены в базе!");
       document.getElementById('newGatewayId').value = '';
       document.getElementById('newGatewayKey').value = '';
       document.getElementById('newGatewayResetWord').value = '';
     } catch (err) {
-      alert("Ошибка сохранения: " + err.message);
+      alert("❌ Ошибка записи в Supabase: " + err.message);
     }
   }
 
