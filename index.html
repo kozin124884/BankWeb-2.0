@@ -259,7 +259,7 @@
 </head>
 <body>
 <!-- ЭКРАН ВВОДА PIN-КОДА -->
-<div id="pinOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
+<div id="pinOverlay" style="display: none; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
   <div style="font-size:44px; margin-bottom:12px;">🔒</div>
   <h2 id="pinTitle" style="margin:0 0 6px 0; font-weight:900; font-size:20px;">Вход в Банк PRO</h2>
   <div id="pinSubtitle" style="font-size:12px; color:var(--text-mute); margin-bottom:20px;">Введите 4-значный PIN</div>
@@ -8537,16 +8537,34 @@
     updateUserRoleUI();
   }
 
+  // Открытие меню выбора при нажатии на дверцу 🚪
   function logoutApp() {
+    openModal('logoutChoiceModal');
+  }
+
+  // Действие 1: Сменить PIN прямо здесь (Админ <-> Гость)
+  function switchUserRoleAction() {
+    closeModal('logoutChoiceModal');
     sessionStorage.clear();
     db = getDbClient();
+
     const overlay = document.getElementById('pinOverlay');
     if (overlay) {
       overlay.style.display = 'flex';
       const inp = document.getElementById('pinInput');
-      if (inp) { inp.value = ''; inp.focus(); }
+      if (inp) {
+        inp.value = '';
+        setTimeout(() => inp.focus(), 150);
+      }
     }
     updateUserRoleUI();
+  }
+
+  // Действие 2: Выйти насовсем на сайт-фасад
+  function exitToCalculatorAction() {
+    closeModal('logoutChoiceModal');
+    sessionStorage.clear();
+    window.location.href = '/';
   }
 
   function openPinSettingsModal() {
@@ -17781,17 +17799,46 @@ function toggleEnvelopeAccordion(prefix) {
   async function openDeployModal() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Публикация сайта доступна только администратору!");
 
-    // Подтягиваем сохранённые ключи из базы Supabase
-    document.getElementById('cfgGhRepo').value = localStorage.getItem('deploy_gh_repo') || '';
-    document.getElementById('cfgGhBranch').value = localStorage.getItem('deploy_gh_branch') || 'main';
-    document.getElementById('cfgGhPath').value = localStorage.getItem('deploy_gh_path') || 'index.html';
-    document.getElementById('cfgGhToken').value = localStorage.getItem('deploy_gh_token') || '';
-    document.getElementById('cfgDeployWebhook').value = localStorage.getItem('deploy_webhook_url') || '';
+    // Разблокируем кнопку при каждом новом открытии окна
+    const btn = document.getElementById('btnRunDeploy');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = "🚀 Закоммитить и выложить на сайт";
+      btn.style.opacity = '1';
+    }
 
     const logBox = document.getElementById('deployStatusLog');
     if (logBox) { logBox.style.display = 'none'; logBox.innerHTML = ''; }
 
+    // 1. Сначала берём локальный кэш
+    document.getElementById('cfgGhRepo').value = localStorage.getItem('deploy_gh_repo') || 'kozin124884/BankWeb-2.0';
+    document.getElementById('cfgGhBranch').value = localStorage.getItem('deploy_gh_branch') || 'main';
+    document.getElementById('cfgGhPath').value = localStorage.getItem('deploy_gh_path') || 'index.html';
+    document.getElementById('cfgGhToken').value = localStorage.getItem('deploy_gh_token') || '';
+    document.getElementById('cfgDeployWebhook').value = localStorage.getItem('deploy_webhook_url') || 'https://debetus-creditus.ru/api/deploy-webhook?token=MySuperSecretToken2026';
+
     openModal('deployModal');
+
+    // 2. Параллельно подтягиваем свежие ключи из Supabase (для работы с любого нового ПК)
+    try {
+      const { data, error } = await db.from('app_settings').select('*').in('key', [
+        'deploy_gh_repo', 'deploy_gh_branch', 'deploy_gh_path', 'deploy_gh_token', 'deploy_webhook_url'
+      ]);
+      if (!error && data) {
+        data.forEach(item => {
+          if (item.value) {
+            localStorage.setItem(item.key, item.value);
+            if (item.key === 'deploy_gh_repo') document.getElementById('cfgGhRepo').value = item.value;
+            if (item.key === 'deploy_gh_branch') document.getElementById('cfgGhBranch').value = item.value;
+            if (item.key === 'deploy_gh_path') document.getElementById('cfgGhPath').value = item.value;
+            if (item.key === 'deploy_gh_token') document.getElementById('cfgGhToken').value = item.value;
+            if (item.key === 'deploy_webhook_url') document.getElementById('cfgDeployWebhook').value = item.value;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Не удалось подтянуть настройки деплоя из базы:", e);
+    }
   }
 
   async function saveDeployConfig() {
@@ -17952,27 +17999,33 @@ function toggleEnvelopeAccordion(prefix) {
       if (webhookUrl) {
         log(`🌐 Вызов вебхука обновления сайта на РФ-сервере...`);
         try {
-          const whRes = await fetch(webhookUrl, { method: 'POST', mode: 'no-cors' });
-          log(`✅ Сигнал на сервер отправлен! Сайт обновится в течение нескольких секунд.`, '#10b981');
+          await fetch(webhookUrl, { method: 'POST', mode: 'no-cors' });
+          log(`✅ Сигнал на сервер отправлен! Сервер подтягивает изменения...`, '#10b981');
         } catch (whErr) {
-          log(`⚠️ Коммит в GitHub ушёл, но вебхук сервера вернул ошибку: ${whErr.message}`, '#f59e0b');
+          log(`⚠️ Коммит в GitHub ушёл, но вебхук вернул предупреждение: ${whErr.message}`, '#f59e0b');
         }
       } else {
-        log(`ℹ️ GitHub обновлён! Если у вас настроен автодеплой (Actions/Webhook), сайт уже обновляется.`, '#3b82f6');
+        log(`ℹ️ Коммит в GitHub создан. Внешний вебхук не задан.`, '#3b82f6');
       }
 
+      // 5. Финальный статус выводим прямо в окно логов
+      log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      log(`🎉 ГОТОВО! Сайт успешно обновлён.`, '#10b981');
+      log(`💡 Закройте это окно (✕) для возврата к работе.`, 'var(--text-mute)');
+
       haptic(30);
-      btn.innerText = "🎉 Готово! Сайт обновлён";
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerText = "🚀 Закоммитить и выложить на сайт";
-      }, 3500);
+
+      // Кнопка блокируется до закрытия окна модалки
+      btn.disabled = true;
+      btn.innerText = "✓ Опубликовано";
+      btn.style.opacity = '0.6';
 
     } catch (err) {
       log(`❌ Ошибка: ${err.message}`, '#ef4444');
       alert(`Ошибка публикации: ${err.message}`);
       btn.disabled = false;
       btn.innerText = "🚀 Закоммитить и выложить на сайт";
+      btn.style.opacity = '1';
     }
   }
 
@@ -18380,7 +18433,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18400,7 +18453,7 @@ function toggleEnvelopeAccordion(prefix) {
     </div>
 
     <!-- КНОПКА ЗАПУСКА -->
-    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width:100%; background:#10b981; color:white; border:none; padding:14px; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:0.2s;">🚀 Закоммитить и выложить на сайт</button>
+    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;">🚀 Закоммитить и выложить на сайт</button>
 
     <div id="deployStatusLog" style="display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"></div>
 
@@ -18438,6 +18491,32 @@ function toggleEnvelopeAccordion(prefix) {
     </div>
   </div>
 </div>
+
+<!-- МОДАЛКА ВЫХОДА / СМЕНЫ ПОЛЬЗОВАТЕЛЯ -->
+<div id="logoutChoiceModal" class="modal" style="z-index: 4010; display: none;">
+  <div class="modal-content" style="max-width: 340px; padding: 20px; text-align: center;">
+    <div style="font-size: 32px; margin-bottom: 8px;">🚪</div>
+    <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 900; color: var(--text-main);">Выход из системы</h3>
+    <div style="font-size: 11.5px; color: var(--text-mute); margin-bottom: 16px; line-height: 1.4;">
+      Выберите необходимое действие:
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <button type="button" onclick="switchUserRoleAction()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer;">
+        👤 Сменить PIN / Пользователя
+      </button>
+
+      <button type="button" onclick="exitToCalculatorAction()" style="width: 100%; background: var(--input-bg); border: 1.5px solid var(--border); color: #ef4444; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer;">
+        🚪 Выйти насовсем (в Калькулятор)
+      </button>
+
+      <button type="button" onclick="closeModal('logoutChoiceModal')" style="background: none; border: none; color: var(--text-mute); font-size: 11.5px; font-weight: bold; cursor: pointer; padding: 6px; margin-top: 2px;">
+        Отмена
+      </button>
+    </div>
+  </div>
+</div>
+
 
 
 
