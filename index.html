@@ -8476,54 +8476,90 @@
     }
   }
 
-  // Вход по PIN (Мастер или Гость)
+  // Вход по PIN с блокировкой на 3 попытки и динамическим словом сброса
   async function verifyPinAuth() {
     const input = document.getElementById('pinInput');
     const val = (input.value || '').trim();
     if (!val) return;
 
+    const lockUntil = parseInt(localStorage.getItem('__bank_pin_lock_until') || '0', 10);
+    const now = Date.now();
+
     const hash = await sha256(val);
 
     try {
-      const { data, error } = await db.from('app_settings').select('*').in('key', ['master_pin_hash', 'guest_pin_hash']);
+      const { data, error } = await db.from('app_settings').select('*').in('key', [
+        'master_pin_hash', 'guest_pin_hash', 'bank_reset_word_hash'
+      ]);
       if (error) throw error;
 
       const masterRecord = data ? data.find(d => d.key === 'master_pin_hash') : null;
       const guestRecord = data ? data.find(d => d.key === 'guest_pin_hash') : null;
+      const resetRecord = data ? data.find(d => d.key === 'bank_reset_word_hash') : null;
 
-      // Если в базе есть запись — сверяем с ней; если таблица пуста — пускаем по дефолтным
+      // 1. Проверка на секретное слово сброса блокировки
+      const resetHash = resetRecord ? resetRecord.value : (await sha256('сброс'));
+      if (hash === resetHash || val.toLowerCase() === 'сброс') {
+        localStorage.removeItem('__bank_pin_fails');
+        localStorage.removeItem('__bank_pin_lock_until');
+        input.value = '';
+        return alert("✅ Блокировка PIN успешно снята секретным словом!");
+      }
+
+      // Проверка таймера блокировки
+      if (lockUntil > now) {
+        const remainingSec = Math.ceil((lockUntil - now) / 1000);
+        const min = Math.floor(remainingSec / 60);
+        const sec = remainingSec % 60;
+        return alert(`🚨 Вход заблокирован! Осталось ${min}м ${sec}с. (Или введите секретное слово сброса)`);
+      }
+
       const isMaster = masterRecord ? (masterRecord.value === hash || masterRecord.value === val) : (val === '2595');
       const isGuestPin = guestRecord ? (guestRecord.value === hash || guestRecord.value === val) : (val === '0000');
 
       if (isMaster) {
+        localStorage.removeItem('__bank_pin_fails');
+        localStorage.removeItem('__bank_pin_lock_until');
         sessionStorage.clear();
         sessionStorage.setItem('user_role', 'admin');
-        sessionStorage.setItem('__admin_pass', val); // Сохраняем пин для сервера
-        db = getDbClient(); // Пересоздаём клиент с правами админа!
+        sessionStorage.setItem('__admin_pass', val);
+        db = getDbClient();
         document.getElementById('pinOverlay').style.display = 'none';
         input.value = '';
         updateUserRoleUI();
       } else if (isGuestPin) {
+        localStorage.removeItem('__bank_pin_fails');
+        localStorage.removeItem('__bank_pin_lock_until');
         enterAsGuest();
       } else {
-        alert("❌ Неверный PIN!");
+        let fails = parseInt(localStorage.getItem('__bank_pin_fails') || '0', 10) + 1;
+        localStorage.setItem('__bank_pin_fails', fails);
         input.value = '';
         input.focus();
+
+        if (fails >= 3) {
+          localStorage.setItem('__bank_pin_lock_until', Date.now() + 15 * 60 * 1000);
+          localStorage.removeItem('__bank_pin_fails');
+          alert("🚨 3 неверных ввода PIN подряд! Вход заблокирован на 15 минут.");
+        } else {
+          alert(`❌ Неверный PIN! Осталось попыток: ${3 - fails}`);
+        }
       }
     } catch (err) {
       if (val === '2595') {
+        localStorage.removeItem('__bank_pin_fails');
+        localStorage.removeItem('__bank_pin_lock_until');
         sessionStorage.clear();
         sessionStorage.setItem('user_role', 'admin');
         document.getElementById('pinOverlay').style.display = 'none';
         input.value = '';
         updateUserRoleUI();
-      } else if (val === '0000') {
-        enterAsGuest();
       } else {
         alert("Ошибка авторизации: " + err.message);
       }
     }
   }
+
 
   // Вход гостем
   function enterAsGuest() {
@@ -8577,13 +8613,14 @@
     document.getElementById('pinSettingsModal').style.display = 'flex';
   }
 
-  // Смена PIN-кода с проверкой ошибок базы
+  // Смена PIN-кода и секретного слова сброса PIN
   async function updateAppPins() {
     const curPin = document.getElementById('curMasterPin').value.trim();
     const newMaster = document.getElementById('newMasterPin').value.trim();
     const newGuest = document.getElementById('newGuestPin').value.trim();
+    const newResetWord = document.getElementById('newBankResetWord')?.value.trim();
 
-    if (!curPin || !newMaster) return alert("Введите текущий и новый мастер-PIN!");
+    if (!curPin) return alert("Введите текущий мастер-PIN для подтверждения!");
 
     const curHash = await sha256(curPin);
     const { data, error } = await db.from('app_settings').select('value').eq('key', 'master_pin_hash').maybeSingle();
@@ -8591,23 +8628,72 @@
 
     const isCurrentValid = (data && (data.value === curHash || data.value === curPin)) || (!data && curPin === '2595') || (curPin === '2595');
     if (!isCurrentValid) {
-      return alert("Текущий пароль введен неверно!");
+      return alert("Текущий мастер-пароль введен неверно!");
     }
 
-    // Сохраняем мастер-хэш
-    const newMasterHash = await sha256(newMaster);
-    const resM = await db.from('app_settings').upsert({ key: 'master_pin_hash', value: newMasterHash });
-    if (resM.error) return alert("Ошибка записи мастер-PIN: " + resM.error.message);
-
-    // Сохраняем гостевой хэш
+    const updates = [];
+    if (newMaster) {
+      const newMasterHash = await sha256(newMaster);
+      updates.push({ key: 'master_pin_hash', value: newMasterHash });
+    }
     if (newGuest) {
       const newGuestHash = await sha256(newGuest);
-      const resG = await db.from('app_settings').upsert({ key: 'guest_pin_hash', value: newGuestHash });
-      if (resG.error) return alert("Ошибка записи гостевого PIN: " + resG.error.message);
+      updates.push({ key: 'guest_pin_hash', value: newGuestHash });
+    }
+    if (newResetWord) {
+      const resetHash = await sha256(newResetWord.toLowerCase());
+      updates.push({ key: 'bank_reset_word_hash', value: resetHash });
     }
 
-    alert("✅ Пароли успешно обновлены для всех ваших устройств!");
+    if (updates.length === 0) return alert("Заполните хотя бы одно поле для изменения!");
+
+    const { error: upErr } = await db.from('app_settings').upsert(updates);
+    if (upErr) return alert("Ошибка сохранения: " + upErr.message);
+
+    alert("✅ PIN-коды и секретное слово сброса успешно обновлены в базе!");
+    document.getElementById('curMasterPin').value = '';
+    document.getElementById('newMasterPin').value = '';
+    document.getElementById('newGuestPin').value = '';
+    document.getElementById('newBankResetWord').value = '';
     document.getElementById('pinSettingsModal').style.display = 'none';
+  }
+
+  // Смена логина, ключа и слова сброса входного шлюза калькулятора
+  async function updateGatewayCredentials() {
+    if (isGuest()) return alert("🔒 Доступно только администратору!");
+    const newId = document.getElementById('newGatewayId')?.value.trim();
+    const newKey = document.getElementById('newGatewayKey')?.value.trim();
+    const newResetWord = document.getElementById('newGatewayResetWord')?.value.trim();
+
+    if (!newId && !newKey && !newResetWord) {
+      return alert("Заполните хотя бы одно поле (логин, ключ или слово сброса)!");
+    }
+
+    try {
+      const updates = [];
+      if (newId) {
+        const idHash = await sha256(newId);
+        updates.push({ key: 'gateway_id_hash', value: idHash });
+      }
+      if (newKey) {
+        const keyHash = await sha256(newKey);
+        updates.push({ key: 'gateway_key_hash', value: keyHash });
+      }
+      if (newResetWord) {
+        const resetHash = await sha256(newResetWord.toLowerCase());
+        updates.push({ key: 'gateway_reset_word_hash', value: resetHash });
+      }
+
+      const { error } = await db.from('app_settings').upsert(updates);
+      if (error) throw error;
+
+      alert("✅ Настройки шлюза калькулятора успешно обновлены в базе данных!");
+      document.getElementById('newGatewayId').value = '';
+      document.getElementById('newGatewayKey').value = '';
+      document.getElementById('newGatewayResetWord').value = '';
+    } catch (err) {
+      alert("Ошибка сохранения: " + err.message);
+    }
   }
 
   // ==== УТИЛИТЫ ====
@@ -18029,6 +18115,39 @@ function toggleEnvelopeAccordion(prefix) {
     }
   }
 
+  // Динамическая смена реквизитов шлюза калькулятора прямо из админки Банка
+  async function updateGatewayCredentials() {
+    if (isGuest()) return alert("🔒 Доступно только администратору!");
+    const newId = document.getElementById('newGatewayId')?.value.trim();
+    const newKey = document.getElementById('newGatewayKey')?.value.trim();
+
+    if (!newId && !newKey) {
+      return alert("Заполните хотя бы одно поле (новый ID или новый ключ)!");
+    }
+
+    try {
+      const updates = [];
+      if (newId) {
+        const idHash = await sha256(newId);
+        updates.push({ key: 'gateway_id_hash', value: idHash });
+      }
+      if (newKey) {
+        const keyHash = await sha256(newKey);
+        updates.push({ key: 'gateway_key_hash', value: keyHash });
+      }
+
+      const { error } = await db.from('app_settings').upsert(updates);
+      if (error) throw error;
+
+      alert("✅ Реквизиты входа из Калькулятора успешно обновлены в базе данных!");
+      document.getElementById('newGatewayId').value = '';
+      document.getElementById('newGatewayKey').value = '';
+    } catch (err) {
+      alert("Ошибка сохранения реквизитов: " + err.message);
+    }
+  }
+
+
 </script>
 
 <!-- МОДАЛКА СПЛИТА ЧЕКА ПО КАТЕГОРИЯМ -->
@@ -18225,8 +18344,26 @@ function toggleEnvelopeAccordion(prefix) {
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Гостевой PIN (только просмотр):</label>
     <input type="password" id="newGuestPin" maxlength="8" class="input-ui" placeholder="например 0000">
 
-    <button type="button" onclick="updateAppPins()" style="width:100%; background:#3b82f6; color:white; padding:12px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">💾 Обновить пароли в базе</button>
-  </div>
+    <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Секретное слово сброса блокировки PIN:</label>
+    <input type="text" id="newBankResetWord" class="input-ui" placeholder="По умолчанию: сброс">
+
+    <button type="button" onclick="updateAppPins()" style="width:100%; background:#3b82f6; color:white; padding:12px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">💾 Обновить PIN и слово сброса</button>
+
+    <!-- СМЕНА РЕКВИЗИТОВ ВХОДНОГО ШЛЮЗА (ИЗ КАЛЬКУЛЯТОРА) -->
+    <div style="border-top:1px dashed var(--border); padding-top:12px; margin-top:14px;">
+      <div style="font-size:11px; font-weight:900; color:var(--text-main); margin-bottom:8px;">🚪 Реквизиты шлюза (вход из Калькулятора):</div>
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ID сотрудника (логин шлюза):</label>
+      <input type="text" id="newGatewayId" class="input-ui" placeholder="Оставьте пустым, если не меняете">
+
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Ключ авторизации (пароль шлюза):</label>
+      <input type="password" id="newGatewayKey" class="input-ui" placeholder="Оставьте пустым, если не меняете">
+
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Слово сброса блокировки шлюза:</label>
+      <input type="text" id="newGatewayResetWord" class="input-ui" placeholder="По умолчанию: сброс">
+
+      <button type="button" onclick="updateGatewayCredentials()" style="width:100%; background:#10b981; color:white; padding:11px; border-radius:10px; font-weight:bold; border:none; cursor:pointer; font-size:11.5px;">🔑 Сохранить настройки шлюза</button>
+    </div>
+    </div>
 </div>
 
 <!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ СИМУЛЯТОРА ПЛАНОВ (СЕССИОННАЯ, БЕЗ СБРОСА ПРИ ОБНОВЛЕНИИ) -->
@@ -18433,7 +18570,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18493,7 +18630,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ВЫХОДА / СМЕНЫ ПОЛЬЗОВАТЕЛЯ -->
-<div id="logoutChoiceModal" class="modal" style="z-index: 4010; display: none;">
+<div id="logoutChoiceModal" class="modal" style="z-index: 12000; display: none;">
   <div class="modal-content" style="max-width: 340px; padding: 20px; text-align: center;">
     <div style="font-size: 32px; margin-bottom: 8px;">🚪</div>
     <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 900; color: var(--text-main);">Выход из системы</h3>
