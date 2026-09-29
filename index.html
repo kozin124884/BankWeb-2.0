@@ -8596,11 +8596,12 @@
     updateUserRoleUI();
   }
 
-  // Действие 2: Выйти насовсем на сайт-фасад
   function exitToCalculatorAction() {
     closeModal('logoutChoiceModal');
     sessionStorage.clear();
-    window.location.replace('/');
+    // Удаляем куку доступа, чтобы сервер не редиректил обратно в банк
+    document.cookie = "staff_access_pass=; path=/; max-age=0; SameSite=Strict; Secure";
+    window.location.replace('/?calc=1');
   }
 
   function openPinSettingsModal() {
