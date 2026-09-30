@@ -8434,6 +8434,8 @@
     if (modal) modal.style.display = 'none';
   }
 
+
+ // нужно ли мне это...?
   window.addEventListener('click', (e) => {
     if (e.target && e.target.classList && e.target.classList.contains('modal')) {
       e.target.style.display = 'none';
@@ -8617,10 +8619,13 @@
     updateUserRoleUI();
   }
 
-  function exitToCalculatorAction() {
+  async function exitToCalculatorAction() {
     closeModal('logoutChoiceModal');
     sessionStorage.clear();
-    // Удаляем куку доступа, чтобы сервер не редиректил обратно в банк
+    try {
+      // Серверный сброс HttpOnly-сессии
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+    } catch (e) {}
     document.cookie = "staff_access_pass=; path=/; max-age=0; SameSite=Strict; Secure";
     window.location.replace('/?calc=1');
   }
@@ -9190,52 +9195,30 @@
         renderCatQueue(); // Скрываем плашку в окне категорий
       }
 
-      // 2. УДАЛЕНИЕ ТРАНЗАКЦИЙ (включая старые чеки при сплите)
-      const deleteIds = allTxQueue.filter(q => q.action === 'delete' && !String(q.r).startsWith('local_')).map(q => q.r);
-      if (deleteIds.length > 0) {
-        const { error: delErr } = await db.from('transactions').delete().in('id', deleteIds);
-        if (delErr) throw new Error("Ошибка удаления чеков: " + delErr.message);
-      }
+      // Подготовка данных для единого атомарного пакета
+      const deleteIds = allTxQueue
+        .filter(q => q.action === 'delete' && !String(q.r).startsWith('local_'))
+        .map(q => parseInt(q.r, 10));
 
-      // 3. РЕДАКТИРОВАНИЕ ТРАНЗАКЦИЙ
-      const edits = allTxQueue.filter(q => q.action === 'edit');
-      if (edits.length > 0) {
-        const editResults = await Promise.all(edits.map(q => {
-          const it = q.item;
-          return db.from('transactions').update({
-              date: it.fd,
-              type: it.type,
-              amount: it.type === 'Расход' ? it.sumE : (it.type === 'Доход' ? it.sumI : it.sumTr),
-              account_from: it.type === 'Расход' ? it.accE : (it.type === 'Доход' ? it.accI : it.accF),
-              account_to: it.type === 'Перевод' ? it.accT : null,
-              category: it.type === 'Расход' ? it.catE : (it.type === 'Доход' ? it.catI : ''),
-              comment: it.type === 'Расход' ? it.comE : (it.type === 'Доход' ? it.comI : ''),
-              points: it.points || 0,
-              no_budget: !!it.no_budget,
-              event_id: it.event_id || null,
-              debtor_name: it.debtor_name || null
-            }).eq('id', q.r);
-        }));
-        for (const res of editResults) {
-          if (res.error) throw new Error("Ошибка обновления транзакции: " + res.error.message);
-        }
-      }
+      const editsPayload = allTxQueue.filter(q => q.action === 'edit').map(q => {
+        const it = q.item;
+        return {
+          id: parseInt(q.r, 10),
+          date: it.fd,
+          type: it.type,
+          amount: it.type === 'Расход' ? it.sumE : (it.type === 'Доход' ? it.sumI : it.sumTr),
+          account_from: it.type === 'Расход' ? it.accE : (it.type === 'Доход' ? it.accI : it.accF),
+          account_to: it.type === 'Перевод' ? it.accT : null,
+          category: it.type === 'Расход' ? it.catE : (it.type === 'Доход' ? it.catI : ''),
+          comment: it.type === 'Расход' ? it.comE : (it.type === 'Доход' ? it.comI : ''),
+          points: it.points || 0,
+          no_budget: !!it.no_budget,
+          event_id: it.event_id || null,
+          debtor_name: it.debtor_name || null
+        };
+      });
 
-      // 4. АРХИВ ДОЛГОВ
-      const archAdds = allTxQueue.filter(q => q.action === 'archive_debt').map(q => ({
-        date: q.item.fd,
-        debtor_name: q.item.n,
-        amount: q.item.amt,
-        comment: q.item.c || ''
-      }));
-      if (archAdds.length > 0) {
-        const { error: archErr } = await db.from('debt_archive').insert(archAdds);
-        if (archErr) throw new Error("Ошибка архива долгов: " + archErr.message);
-      }
-
-      // 5. ДОБАВЛЕНИЕ НОВЫХ ЧЕКОВ (включая части сплита)
-      // 5. ДОБАВЛЕНИЕ НОВЫХ ЧЕКОВ (включая части сплита)
-      const adds = allTxQueue.filter(q => q.action === 'add').map(q => ({
+      const addsPayload = allTxQueue.filter(q => q.action === 'add').map(q => ({
         date: q.item.fd,
         type: q.item.type,
         amount: q.item.type === 'Расход' ? q.item.sumE : (q.item.type === 'Доход' ? q.item.sumI : q.item.sumTr),
@@ -9248,21 +9231,33 @@
         event_id: q.item.event_id || null,
         debtor_name: q.item.debtor_name || null
       }));
-      if (adds.length > 0) {
-        const { error: addErr } = await db.from('transactions').insert(adds);
-        if (addErr) throw new Error("Ошибка вставки чеков: " + addErr.message);
-      }
 
-      // 6. ОБНОВЛЕНИЕ БАЛАНСОВ СЧЕТОВ
+      const archivePayload = allTxQueue.filter(q => q.action === 'archive_debt').map(q => ({
+        date: q.item.fd,
+        debtor_name: q.item.n,
+        amount: q.item.amt,
+        comment: q.item.c || ''
+      }));
+
       if (typeof updateAllAccountsBalance === 'function') {
         updateAllAccountsBalance();
       }
-      const accResults = await Promise.all(appData.accounts.map(acc =>
-        db.from('accounts').update({ balance: acc.balance }).eq('name', acc.name)
-      ));
-      for (const res of accResults) {
-        if (res.error) throw new Error("Ошибка баланса счета: " + res.error.message);
-      }
+
+      const accountsPayload = appData.accounts.map(acc => ({
+        name: acc.name,
+        balance: acc.balance
+      }));
+
+      // ЕДИНЫЙ АТОМАРНЫЙ ЗАПРОС (Всё сохраняется внутри одной неделимой транзакции PostgreSQL)
+      const { error: batchErr } = await db.rpc('sync_finance_batch', {
+        p_deletes: deleteIds,
+        p_edits: editsPayload,
+        p_adds: addsPayload,
+        p_archive: archivePayload,
+        p_accounts: accountsPayload
+      });
+
+      if (batchErr) throw new Error("Сбой синхронизации: " + batchErr.message);
 
       // Полная очистка очереди
       localQueue = [];
@@ -9544,23 +9539,25 @@
       const current = qObj.item;
       const orig = qObj.originalItem;
       if (orig && current) {
-        // Отменяем действие текущей отредактированной версии
-        if (current.type === 'Расход') updateAccBal(current.accE, current.sumE);
-        if (current.type === 'Доход') updateAccBal(current.accI, -current.sumI);
-        if (current.type === 'Перевод' || current.type === 'Между своими') {
-          updateAccBal(current.accF, current.sumTr);
-          updateAccBal(current.accT, -current.sumTr);
+        // 1. Полностью снимаем эффект текущей версии
+        const curSum = parseFloat(current.sumE || current.sumI || current.sumTr) || 0;
+        if (current.type === 'Расход' && current.accE) updateAccBal(current.accE, curSum);
+        else if (current.type === 'Доход' && current.accI) updateAccBal(current.accI, -curSum);
+        else if ((current.type === 'Перевод' || current.type === 'Между своими') && current.accF && current.accT) {
+          updateAccBal(current.accF, curSum);
+          updateAccBal(current.accT, -curSum);
         }
 
-        // Возвращаем исходное списание/зачисление старого чека
-        if (orig.type === 'Расход') updateAccBal(orig.accE, -orig.sumE);
-        if (orig.type === 'Доход') updateAccBal(orig.accI, orig.sumI);
-        if (orig.type === 'Перевод' || orig.type === 'Между своими') {
-          updateAccBal(orig.accF, -orig.sumTr);
-          updateAccBal(orig.accT, orig.sumTr);
+        // 2. Накатываем обратно оригинальный баланс из базы
+        const origSum = parseFloat(orig.sumE || orig.sumI || orig.sumTr) || 0;
+        if (orig.type === 'Расход' && orig.accE) updateAccBal(orig.accE, -origSum);
+        else if (orig.type === 'Доход' && orig.accI) updateAccBal(orig.accI, origSum);
+        else if ((orig.type === 'Перевод' || orig.type === 'Между своими') && orig.accF && orig.accT) {
+          updateAccBal(orig.accF, -origSum);
+          updateAccBal(orig.accT, origSum);
         }
 
-        // Восстанавливаем оригинальные поля чека
+        // 3. Восстанавливаем оригинальные поля чека
         const txIdx = appData.transactions.findIndex(x => String(x.r) === String(id));
         if (txIdx !== -1) {
           appData.transactions[txIdx] = JSON.parse(JSON.stringify(orig));
@@ -10673,35 +10670,6 @@
     if (body) body.style.display = isInsightsExpanded ? 'block' : 'none';
     if (arrow) arrow.innerText = isInsightsExpanded ? '▲' : '▼';
   }
-
-  // =========================================================================
-  // ЕДИНЫЙ МЕНЕДЖЕР МОДАЛЬНЫХ ОКОН (ДИНАМИЧЕСКИЙ СТЕК Z-INDEX БЕЗ ЗАЛИПАНИЙ)
-  // =========================================================================
-
-  function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) {
-      console.warn('Модальное окно не найдено в DOM:', modalId);
-      return;
-    }
-    topModalZIndex += 10;
-    modal.style.zIndex = topModalZIndex;
-    modal.style.display = 'flex';
-    void modal.offsetHeight; // Гарантированная мгновенная перерисовка браузером
-  }
-
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    modal.style.display = 'none';
-  }
-
-  // Автоматическое закрытие любой модалки по клику на тёмную подложку
-  window.addEventListener('click', (e) => {
-    if (e.target && e.target.classList && e.target.classList.contains('modal')) {
-      e.target.style.display = 'none';
-    }
-  });
 
   function openCaliberModal(e) {
     if (e) { e.stopPropagation(); e.preventDefault(); }
@@ -18403,7 +18371,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
