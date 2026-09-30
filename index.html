@@ -258,7 +258,7 @@
 </head>
 <body>
 <!-- ЭКРАН ВВОДА PIN-КОДА -->
-<div id="pinOverlay" style="display: none; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+<div id="pinOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
   <div style="font-size:44px; margin-bottom:12px;">🔒</div>
   <h2 id="pinTitle" style="margin:0 0 6px 0; font-weight:900; font-size:20px;">Вход в Банк PRO</h2>
   <div id="pinSubtitle" style="font-size:12px; color:var(--text-mute); margin-bottom:20px;">Введите 4-значный PIN</div>
@@ -666,7 +666,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;195 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
         </div>
       </div>
 
@@ -687,7 +687,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -704,7 +704,7 @@
           </div>
 
           <!-- Скрываемое тело виджета капитала -->
-          <div id="capitalAccordionBody" style="display: none; padding: 0 12px 12px 12px; flex-direction: column; gap: 8px;">
+          <div id="capitalAccordionBody" style="display: none; padding: 0px 12px 12px; flex-direction: column; gap: 8px;">
             <!-- БЛОК ВЫБОРА ТОЧНОГО ПЕРИОДА -->
             <div style="background: var(--bg-card); padding: 8px; border-radius: 10px; border: 1px solid var(--border); box-sizing: border-box;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -719,7 +719,7 @@
                 <option value="all" selected="">За всё время</option>
               </select>
 
-              <div id="capMonthWrap" style="display:none; width:100%;"><input type="month" id="capMonth" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
+              <div id="capMonthWrap" style="display: block; width: 100%;"><input type="month" id="capMonth" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
               <div id="capYearWrap" style="display:none; width:100%;"><input type="number" id="capYear" class="input-ui" placeholder="Год (напр. 2026)" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
               <div id="capSingleWrap" style="display:none; width:100%;"><input type="date" id="capSingle" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
               <div id="capCustomWrap" style="display:none; gap:6px; width:100%;">
@@ -732,20 +732,20 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); box-sizing: border-box;">
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Капитал:</div>
-                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">203&nbsp;844 ₽</b>
+                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">135&nbsp;264 ₽</b>
               </div>
               <div>
-                <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за всё время:</div>
-                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +83&nbsp;844 ₽ (69.9%)</b>
+                <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за месяц:</div>
+                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +23&nbsp;011 ₽ (20.5%)</b>
               </div>
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Темп:</div>
-                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+345 ₽/дн</b>
+                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+742 ₽/дн</b>
               </div>
             </div>
 
             <div style="height: 140px; position: relative; width: 100%;">
-              <canvas id="capitalOnlyChartCanvas" height="0" style="display: block; box-sizing: border-box; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0"></canvas>
+              <canvas id="capitalOnlyChartCanvas" style="box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 140px; width: 740px;" width="740" height="140"></canvas>
             </div>
             <!-- Детали операции при клике на вершину капитала (с кликабельными строчками) -->
             <div id="capitalDayDetailsBox" style="display:none; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:11px; margin-top:4px; box-sizing:border-box;"></div>
@@ -1892,7 +1892,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="toggle-content" style="display:none; background:var(--input-bg); padding:10px; border-radius:12px; margin-top:3px; border:1px solid var(--border);">
+                <div class="toggle-content" style="display:block; background:var(--input-bg); padding:10px; border-radius:12px; margin-top:3px; border:1px solid var(--border);">
                   <div style="margin-bottom:6px;">
                     <div class="click-header" style="background:var(--bg-card); border:1px solid var(--border); padding:7px 9px;" onclick="tC(event,this,'subcat_Ручка_Ручке деньги')">
                       <div style="min-width:0; flex:1;">
@@ -1914,7 +1914,7 @@
                         <span style="font-size:9px; color:var(--text-mute);">▼</span>
                       </div>
                     </div>
-                    <div class="toggle-content" style="display:none; padding:4px 8px;"><div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 6px; border-bottom:1px solid var(--border); font-size:12px; cursor:pointer;" onclick="clI(event,'2533')">
+                    <div class="toggle-content" style="display:block; padding:4px 8px;"><div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 6px; border-bottom:1px solid var(--border); font-size:12px; cursor:pointer;" onclick="clI(event,'2533')">
                      <div style="min-width:0; flex:1; padding-right:8px;">
                        <b style="color:var(--text-main); font-size:11.5px;">22.09.2026</b>
                        <div class="pre-wrap" style="color:var(--text-mute); margin-top:2px; font-style:italic; font-size:10.5px;">Без комментария</div>
@@ -7969,15 +7969,15 @@
         <button class="close-btn" onclick="closeModal('debtCenterModal')">✕</button>
     </div>
     <div style="display:flex; border-bottom: 2px solid var(--border); margin-bottom: 16px; overflow-x:auto;">
-      <div id="tabNew" class="tab-btn active" onclick="switchTabDebt('new')">Запись</div>
-      <div id="tabSplit" class="tab-btn" onclick="switchTabDebt('split')">✂️ Сплит чека</div>
+      <div id="tabNew" class="tab-btn" onclick="switchTabDebt('new')">Запись</div>
+      <div id="tabSplit" class="tab-btn active" onclick="switchTabDebt('split')">✂️ Сплит чека</div>
       <div id="tabTransfer" class="tab-btn" onclick="switchTabDebt('transfer')">🔄 Перенос</div>
       <div id="tabSearch" class="tab-btn" onclick="switchTabDebt('search')">Поиск 🔍</div>
       <div id="tabOld" class="tab-btn" onclick="switchTabDebt('old')">📚 Архив</div>
     </div>
 
     <!-- ЗАПИСЬ -->
-    <div id="contentNew">
+    <div id="contentNew" style="display: none;">
       <select id="newAction" class="input-ui" style="cursor:pointer;">
         <option value="Кому-то в долг (Расход)">Я дал в долг</option>
         <option value="Что-то кому-то купил в долг (Расход)">Я купил в долг</option>
@@ -7987,7 +7987,7 @@
       <input type="date" id="newDate" class="input-ui input-date">
 
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ДОЛЖНИК:</label>
-      <select id="newNameSelect" class="input-ui" onchange="toggleDebtManagerNewDebtor(this.value)"></select>
+      <select id="newNameSelect" class="input-ui" onchange="toggleDebtManagerNewDebtor(this.value)"><option value="">-- Выберите должника --</option><option value="Ника">Ника</option><option value="Тина">Тина</option><option value="Геля">Геля</option><option value="Ручка">Ручка</option><option value="Алина">Алина</option><option value="Саня Лерин">Саня Лерин</option><option value="Лера">Лера</option><option value="Егор">Егор</option><option value="Артем">Артем</option><option value="Олеся">Олеся</option><option value="Женя">Женя</option><option value="Папа">Папа</option><option value="Лиза">Лиза</option><option value="Дима">Дима</option><option value="Дана">Дана</option><option value="Алина-староста">Алина-староста</option><option value="Догонова">Догонова</option><option value="__NEW__">+ Добавить нового...</option></select>
       <input type="text" id="newDebtorNameInput" class="input-ui" placeholder="Имя нового должника..." style="display:none; margin-top:8px;">
 
       <textarea id="newDebtComment" class="input-ui" placeholder="За что долг? (комментарий)..." style="margin-top:8px;" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
@@ -7999,7 +7999,7 @@
         </div>
         <div style="flex:1;" id="newAccFieldContainer">
           <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">СЧЕТ СПИСАНИЯ:</label>
-          <select id="newAcc" class="input-ui" style="margin:0;"></select>
+          <select id="newAcc" class="input-ui" style="margin:0;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
         </div>
       </div>
 
@@ -8032,7 +8032,7 @@
     </div>
 
     <!-- СПЛИТ -->
-    <div id="contentSplit" style="display:none; flex-direction:column; gap:10px;">
+    <div id="contentSplit" style="display: block; flex-direction: column; gap: 10px;">
       <div style="background:var(--bg-card); padding:15px; border-radius:12px; border:1px solid var(--border); display:flex; flex-direction:column; gap:10px;">
         <h4 style="margin:0; font-weight:900; color:var(--text-main);">✂️ Разделить чек</h4>
         <div id="splitOriginWarning" style="background:#fef3c7; border:1px solid #f59e0b; padding:10px; border-radius:8px; font-size:11px; color:#b45309; display:none; line-height: 1.4;"></div>
@@ -8041,7 +8041,7 @@
         <input type="number" id="splitTotalSum" class="input-ui" placeholder="Например, 1461" oninput="distributeSplitEqually()">
 
         <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:-4px;">СЧЕТ СПИСАНИЯ:</label>
-        <select id="splitAcc" class="input-ui"></select>
+        <select id="splitAcc" class="input-ui"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
 
         <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:-4px;">ВИД ДОЛГА:</label>
         <select id="splitAction" class="input-ui">
@@ -8064,7 +8064,17 @@
             <span style="font-size:11px; font-weight:bold; color:var(--text-mute);">УЧАСТНИКИ И ИХ ДОЛИ:</span>
             <button onclick="addSplitRow()" style="background:#1e293b; color:white; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">+ Человек</button>
           </div>
-          <div id="splitRowsContainer" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; padding-right:4px;"></div>
+          <div id="splitRowsContainer" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; padding-right:4px;"><div id="split_row_1790770648375_hj1" style="display: flex; gap: 6px; align-items: center;">
+      <select class="input-ui split-name-select" style="margin:0; flex:1.5; padding:6px;" onchange="toggleSplitRowNewInput('split_row_1790770648375_hj1', this.value)"><option value="">-- Участник --</option><option value="Ника">Ника</option><option value="Тина">Тина</option><option value="Геля">Геля</option><option value="Ручка">Ручка</option><option value="Алина">Алина</option><option value="Саня Лерин">Саня Лерин</option><option value="Лера">Лера</option><option value="Егор">Егор</option><option value="Артем">Артем</option><option value="Олеся">Олеся</option><option value="Женя">Женя</option><option value="Папа">Папа</option><option value="Лиза">Лиза</option><option value="Дима">Дима</option><option value="Дана">Дана</option><option value="Алина-староста">Алина-староста</option><option value="Догонова">Догонова</option><option value="__NEW__">+ Другой человек...</option></select>
+      <input type="text" class="input-ui split-new-name-input" placeholder="Имя..." style="display:none; margin:0; flex:1.5; padding:6px;">
+      <input type="number" class="input-ui split-amt-input" placeholder="Сумма" style="margin:0; flex:1; padding:6px;" oninput="recalculateSplitTotalManual()">
+      <button onclick="document.getElementById('split_row_1790770648375_hj1').remove(); recalculateSplitTotalManual();" style="background:#ef4444; color:white; border:none; border-radius:6px; height:32px; width:32px; font-weight:bold; cursor:pointer;">✕</button>
+    </div><div id="split_row_1790770648376_o65" style="display: flex; gap: 6px; align-items: center;">
+      <select class="input-ui split-name-select" style="margin:0; flex:1.5; padding:6px;" onchange="toggleSplitRowNewInput('split_row_1790770648376_o65', this.value)"><option value="">-- Участник --</option><option value="Ника">Ника</option><option value="Тина">Тина</option><option value="Геля">Геля</option><option value="Ручка">Ручка</option><option value="Алина">Алина</option><option value="Саня Лерин">Саня Лерин</option><option value="Лера">Лера</option><option value="Егор">Егор</option><option value="Артем">Артем</option><option value="Олеся">Олеся</option><option value="Женя">Женя</option><option value="Папа">Папа</option><option value="Лиза">Лиза</option><option value="Дима">Дима</option><option value="Дана">Дана</option><option value="Алина-староста">Алина-староста</option><option value="Догонова">Догонова</option><option value="__NEW__">+ Другой человек...</option></select>
+      <input type="text" class="input-ui split-new-name-input" placeholder="Имя..." style="display:none; margin:0; flex:1.5; padding:6px;">
+      <input type="number" class="input-ui split-amt-input" placeholder="Сумма" style="margin:0; flex:1; padding:6px;" oninput="recalculateSplitTotalManual()">
+      <button onclick="document.getElementById('split_row_1790770648376_o65').remove(); recalculateSplitTotalManual();" style="background:#ef4444; color:white; border:none; border-radius:6px; height:32px; width:32px; font-weight:bold; cursor:pointer;">✕</button>
+    </div></div>
         </div>
 
         <div style="display:flex; gap:8px; margin-top:10px;">
@@ -8097,37 +8107,37 @@
 </div>
 
 <!-- ОКНО ИЗМЕНЕНИЯ ТРАНЗАКЦИИ (ПОВЕРХ ВСЕГО) -->
-<div id="editModal" class="modal" style="z-index: 3100; display: none;">
+<div id="editModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">Изменить</h3>
         <button class="close-btn" onclick="closeModal('editModal')">✕</button>
     </div>
-    <input type="hidden" id="editRow">
+    <input type="hidden" id="editRow" value="2296">
     <input type="hidden" id="editType">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">ДАТА</label>
     <input type="date" id="editDate" class="input-ui input-date">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КАТЕГОРИЯ</label>
     <input type="text" id="editCat" class="input-ui" list="editCatDataList" placeholder="Начните вводить...">
-    <datalist id="editCatDataList"></datalist>
+    <datalist id="editCatDataList"><option value="Бабушка Аптека"></option><option value="Бабушка Магазины"></option><option value="Бабушка другое"></option><option value="Обед/столовая на работе"></option><option value="Сборы денег на работе"></option><option value="Еда/что-то на работу для себя"></option><option value="Кафе чисто перекусить"></option><option value="Кофейни"></option><option value="Фастфуд"></option><option value="Кафе в честь чего-то"></option><option value="Перекус/джанкфуд продукты вне дома"></option><option value="Доставка"></option><option value="КБ"></option><option value="Пятерочка"></option><option value="Чижик"></option><option value="Магнит"></option><option value="Дикси"></option><option value="Перекресток"></option><option value="Спар"></option><option value="Вкусвилл"></option><option value="Ароматный мир/винлаб"></option><option value="Другие продуктовые магазины"></option><option value="Вода в еще"></option><option value="-"></option><option value="еще"></option><option value="Фикс прайс"></option><option value="Другие непродуктовые магазины"></option><option value="Маркеты"></option><option value="Одежда"></option><option value="Техника"></option><option value="Мебель"></option><option value="Товары для дома онлайн"></option><option value="Товары для себя/аксессуары"></option><option value="Алкоголь бары пабы"></option><option value="Курение"></option><option value="Алкоголь из магазина домой"></option><option value="Алкоголь из магазина вне дома"></option><option value="Сотовая связь"></option><option value="Интернет домашний"></option><option value="Аренда квартиры"></option><option value="Онлайн - Подписки"></option><option value="Консьержка"></option><option value="ЖКХ - вода"></option><option value="ЖКХ - свет"></option><option value="Парковка"></option><option value="Запчасти на машину"></option><option value="Ремонт машины"></option><option value="Мойка машины"></option><option value="Штрафы"></option><option value="ОСАГО"></option><option value="Бензин"></option><option value="Не запчасти"></option><option value="Вода в машину"></option><option value="Такси"></option><option value="Каршеринг"></option><option value="Самокаты"></option><option value="Транспорт городской общественный"></option><option value="Ручка продукты"></option><option value="Ручка красота"></option><option value="Подарки ручке"></option><option value="Цветы ручке"></option><option value="Ручке деньги"></option><option value="Пленка проявка"></option><option value="Ручка одежда"></option><option value="Ручка другое"></option><option value="Аптека"></option><option value="Здоровье (обследования итд)"></option><option value="Стрижка"></option><option value="Интим"></option><option value="Лекарства"></option><option value="Кино"></option><option value="Театр"></option><option value="Окультуривание (выставки и тд) БИЛЕТЫ"></option><option value="Открытки/сувениры и тд"></option><option value="Иной досуг"></option><option value="Музеи"></option><option value="Иные развлечения"></option><option value="Фотобудка и тд"></option><option value="Подарки"></option><option value="Не сошёлся дебет кредит"></option><option value="Что-то кому-то купил не в долг"></option><option value="Что-то кому-то купил в долг"></option><option value="Кому-то в долг"></option><option value="Кому-то не в долг"></option><option value="Вернул долг"></option><option value="Еда в путешествиях"></option><option value="Досуг и развлечения в путешествиях"></option><option value="Продукты в путешествиях"></option><option value="Иные траты в путешествиях"></option><option value="Сувениры и тд в путешествиях"></option><option value="Бензин в путешествиях"></option><option value="Жилье в путешествиях"></option><option value="Транспорт туда/обратно"></option><option value="Перемещение по локации (такси/автобусы/тд)"></option><option value="Туры"></option><option value="Доставка еды"></option><option value="Домой перекус/готовая еда/джанкфуд из магазина"></option><option value="Еда для себя и гостей дома"></option><option value="Продукты дача"></option><option value="Алкоголь дача"></option><option value="Хозтовары дача"></option><option value="Мясо дача"></option><option value="Еда в продуктовых без ручки"></option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки"></option></datalist>
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">СУММА</label>
     <input type="number" id="editSum" class="input-ui">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">СЧЁТ ОПЕРАЦИИ</label>
-    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"></select>
+    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">ОПЛАЧЕНО БАЛЛАМИ / СКИДКА (₽)</label>
     <input type="number" id="editPointsSum" class="input-ui" placeholder="0 ₽ (не списывается с карты)">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КОММЕНТАРИЙ</label>
-    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
+    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1" style="height: 47px;"></textarea>
 
     <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:bold; color:var(--text-mute); margin-top:8px; margin-bottom:8px; cursor:pointer;">
       <input type="checkbox" id="editNoBudget" style="width:16px; height:16px; cursor:pointer;">
       🛡️ Не учитывать в дневном лимите Автопилота
     </label>
 
-    <button id="splitExistingTxBtn" onclick="splitExistingTx()" style="display:none; width:100%; background:#f59e0b; color:white; border:none; border-radius:8px; padding:10px; font-weight:bold; cursor:pointer; margin-top:8px; font-size:11px;">✂️ Разделить этот чек (Сплит)</button>
+    <button id="splitExistingTxBtn" onclick="splitExistingTx()" style="display: block; width: 100%; background: rgb(245, 158, 11); color: white; border: none; border-radius: 8px; padding: 10px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 11px;">✂️ Разделить чек по категориям</button>
 
     <div style="display:flex; gap:8px; margin-top:10px;">
       <button onclick="document.getElementById('editModal').style.display='none'" style="flex:1; padding:10px; border-radius:8px; background:var(--border); color:var(--text-main); font-weight:bold; border:none; cursor:pointer; font-size:11px;">Отмена</button>
@@ -8301,7 +8311,7 @@
 </div>
 
 <!-- МОДАЛКА ВЫБОРА СЧЕТОВ КАПИТАЛА (НАКОПЛЕНИЯ) -->
-<div id="capitalAccountsModal" class="modal" style="z-index: 1200; display: none;">
+<div id="capitalAccountsModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 420px; max-height: 80vh; display: flex; flex-direction: column; padding: 22px; gap: 12px;">
     <div class="modal-header-sticky">
       <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">💎 Счета капитала (Накопления)</h3>
@@ -8310,7 +8320,82 @@
     <div style="font-size: 11.5px; color: var(--text-mute); line-height: 1.4;">
       Отметьте счета, на которых деньги <b>копятся и откладываются</b> (вклады, накопительные счета, копилки). Они не будут смешиваться с расходными картами.
     </div>
-    <div id="capitalAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); max-height: 220px; overflow-y: auto;"></div>
+    <div id="capitalAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); max-height: 220px; overflow-y: auto;">
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(545 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Яндекс" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="ВТБ" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Сбербанк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Тинькофф" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Озон Банк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="ВБ Банк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;131 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Накопительный счет ручки на путешествия" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;155 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Накопительный счет копить" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(18&nbsp;579 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Накопительный счет тратить" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;594 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(8&nbsp;938 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Инвестиции" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;065 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="cap-acc-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      </div>
     <button type="button" onclick="saveCapitalAccountsSettings()" style="background: #10b981; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 900; font-size: 12px; cursor: pointer;">💾 Сохранить счета капитала</button>
   </div>
 </div>
@@ -12751,18 +12836,33 @@ function renderA() {
   }
 
   function distributeSplitEqually() {
-    const total = parseFloat(document.getElementById('splitTotalSum').value) || 0;
+    const total = Math.round(parseFloat(document.getElementById('splitTotalSum').value) || 0);
     const rows = document.querySelectorAll('#splitRowsContainer > div');
-    if (rows.length === 0 || 0 >= total) return;
-    const share = (total / rows.length).toFixed(2);
-    rows.forEach(row => { const amtInput = row.querySelector('.split-amt-input'); if (amtInput) amtInput.value = share; });
+    if (rows.length === 0 || total <= 0) return;
+
+    // Считаем строго в целых рублях: остаток отдаём первому участнику (334, 333, 333)
+    const count = rows.length;
+    const baseShare = Math.floor(total / count);
+    let remainder = total - (baseShare * count);
+
+    rows.forEach(row => {
+      const amtInput = row.querySelector('.split-amt-input');
+      if (amtInput) {
+        amtInput.value = baseShare + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) remainder--;
+      }
+    });
   }
 
   function recalculateSplitTotalManual() {
     let total = 0;
-    document.querySelectorAll('.split-amt-input').forEach(input => { total += parseFloat(input.value) || 0; });
+    document.querySelectorAll('.split-amt-input').forEach(input => {
+      total += Math.round(parseFloat(input.value) || 0);
+    });
     const totalInput = document.getElementById('splitTotalSum');
-    if (totalInput && document.activeElement !== totalInput) { totalInput.value = total > 0 ? total.toFixed(2) : ''; }
+    if (totalInput && document.activeElement !== totalInput) {
+      totalInput.value = total > 0 ? total : '';
+    }
   }
 
   function splitExistingTx() {
@@ -12816,7 +12916,10 @@ function renderA() {
     }
 
     if (hasError) return alert("⚠️ Заполните имена всех участников и их суммы (>0)!");
-    if (Math.abs(shareSum - total) > 1.0) { if (!confirm(`Сумма долей участников (${shareSum.toLocaleString()} ₽) не совпадает с общей суммой (${total.toLocaleString()} ₽). Всё равно продолжить?`)) return; }
+    const diff = Math.abs(Math.round(shareSum) - Math.round(total));
+    if (diff > 0) {
+      if (!confirm(`Сумма долей участников (${Math.round(shareSum).toLocaleString()} ₽) не совпадает с общей суммой (${Math.round(total).toLocaleString()} ₽).\nРазница: ${diff.toLocaleString()} ₽. Всё равно продолжить?`)) return;
+    }
 
     if (realSpend) {
         participants.forEach(p => {
@@ -16767,18 +16870,23 @@ function renderA() {
     const endIsoStr = toISOLocal(endDate);
 
     (appData.transactions || []).forEach(t => {
-      const isTargetIn = capAccounts.includes(t.accT) || (t.type === 'Доход' && capAccounts.includes(t.accI));
-      const isTargetOut = capAccounts.includes(t.accF) || (t.type === 'Расход' && capAccounts.includes(t.accE));
+      const inCapT = capAccounts.includes(t.accT);
+      const inCapF = capAccounts.includes(t.accF);
+
+      // Внешний приток: пришло на накопительный с обычной карты или как доход
+      const isExternalIn = (inCapT && !inCapF) || (t.type === 'Доход' && capAccounts.includes(t.accI));
+      // Внешний отток: ушло с накопительного на обычную карту (расход капитала) или как прямой расход
+      const isExternalOut = (inCapF && !inCapT) || (t.type === 'Расход' && capAccounts.includes(t.accE));
 
       if (dayMap[t.fd]) {
-        if (isTargetIn) dayMap[t.fd].in += (parseFloat(t.sumTr || t.sumI) || 0);
-        if (isTargetOut) dayMap[t.fd].out += (parseFloat(t.sumTr || t.sumE) || 0);
+        if (isExternalIn) dayMap[t.fd].in += (parseFloat(t.sumTr || t.sumI) || 0);
+        if (isExternalOut) dayMap[t.fd].out += (parseFloat(t.sumTr || t.sumE) || 0);
       }
 
-      // Честный подсчет притока и оттока строго за выбранный период
+      // В оборот периода попадают только реальные движения капитала извне и вовне
       if (t.fd >= startIsoStr && t.fd <= endIsoStr) {
-        if (isTargetIn) periodInflows += (parseFloat(t.sumTr || t.sumI) || 0);
-        if (isTargetOut) periodOutflows += (parseFloat(t.sumTr || t.sumE) || 0);
+        if (isExternalIn) periodInflows += (parseFloat(t.sumTr || t.sumI) || 0);
+        if (isExternalOut) periodOutflows += (parseFloat(t.sumTr || t.sumE) || 0);
       }
     });
 
@@ -16900,17 +17008,31 @@ function renderA() {
           let txsHtml = '';
           if (dayTxs.length > 0) {
             dayTxs.forEach(t => {
-              const isPlus = capAccounts.includes(t.accT) || (t.type === 'Доход' && capAccounts.includes(t.accI));
+              const inCapT = capAccounts.includes(t.accT);
+              const inCapF = capAccounts.includes(t.accF);
+              const isInternal = (t.type === 'Перевод' || t.type === 'Между своими') && inCapF && inCapT;
+              const isPlus = inCapT || (t.type === 'Доход' && capAccounts.includes(t.accI));
               const amt = parseFloat(t.sumTr || t.sumI || t.sumE) || 0;
-              const sign = isPlus ? '+' : '-';
-              const col = isPlus ? '#10b981' : '#ef4444';
-              const title = t.type === 'Перевод' ? `${t.accF} ➔ ${t.accT}` : (t.catE || t.catI || 'Операция');
+
+              let icon = isPlus ? '📥' : '📤';
+              let sign = isPlus ? '+' : '-';
+              let col = isPlus ? '#10b981' : '#ef4444';
+
+              if (isInternal) {
+                icon = '🔄';
+                sign = '• ';
+                col = '#3b82f6';
+              }
+
+              const title = (t.type === 'Перевод' || t.type === 'Между своими')
+                ? `${t.accF} ➔ ${t.accT}`
+                : (t.catE || t.catI || 'Операция');
 
               // СТРОКА КЛИКАБЕЛЬНА — открывает редактирование транзакции
               txsHtml += `
                 <div class="tx-row" onclick="clI(event, '${t.r}')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
                   <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>${isPlus ? '📥' : '📤'} <b>${title}</b></span>
+                    <span>${icon} <b>${title}</b> ${isInternal ? '<span style="font-size:9.5px; color:var(--text-mute); font-weight:normal;">(внутри капитала)</span>' : ''}</span>
                     ${t.comE || t.comI ? `<div style="color:var(--text-mute); font-size:10px; font-style:italic;">${t.comE || t.comI}</div>` : ''}
                   </div>
                   <div style="display:flex; align-items:center; gap:6px;">
@@ -18329,7 +18451,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal" style="display: none;">
+<div id="streakHistoryModal" class="modal" style="z-index: 4040; display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -18340,22 +18462,645 @@ function toggleEnvelopeAccordion(prefix) {
 
     <!-- ФИКСИРОВАННЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (СТОИТ НАМЕРТВО, НЕ СКРОЛЛИТСЯ) -->
     <div style="background:var(--input-bg); border:1.5px solid var(--border); border-radius:12px; padding:3px; display:flex; gap:4px; margin-bottom:12px; flex-shrink:0; box-sizing:border-box;">
-      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex: 1 1 0%; border: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: var(--btn-active); color: var(--btn-active-text);">
         ⚡ Текущий цикл
       </button>
-      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex: 1 1 0%; border: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: transparent; color: var(--text-mute);">
         📅 Прошлый цикл
       </button>
     </div>
 
     <!-- СКРОЛЛЯЩИЙСЯ СПИСОК ДНЕЙ СО СТАБИЛЬНЫМ СКРОЛЛБАРОМ -->
-    <div id="streakHistoryList" style="display:flex; flex-direction:column; gap:6px; overflow-y:scroll; scrollbar-gutter:stable; flex:1; padding-right:2px; box-sizing:border-box;"></div>
+    <div id="streakHistoryList" style="display:flex; flex-direction:column; gap:6px; overflow-y:scroll; scrollbar-gutter:stable; flex:1; padding-right:2px; box-sizing:border-box;">
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_0')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">30.09, Ср</b>
+              <span style="color:#3b82f6; font-size:9.5px; font-weight:900; background:rgba(59,130,246,0.15); padding:1px 6px; border-radius:5px; text-transform:uppercase;">Сегодня</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">✨ 0 ₽</span>
+              <span id="arr_streak_day_0" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_0" style="display: none; padding: 10px 12px; border-top: 1px solid var(--border); background: var(--bg-card); box-sizing: border-box;">
+            
+            <div style="color:var(--text-mute); font-size:11px; font-style:italic; padding:4px 0;">Личных трат не было ✨</div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_1')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">29.09, Вт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 671 ₽ (+524 ₽)</span>
+              <span id="arr_streak_day_1" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_1" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Алкоголь из магазина домой</b>: <span>500 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(75%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Вода в еще</b>: <span>100 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(15%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>еще</b>: <span>70 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(10%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки ручке</b>: <span>1 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(0%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (4 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2640')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Алкоголь из магазина домой</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Водка в ещё для настойки </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-500 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2642')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Вода в еще</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 пятилитровки </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-100 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2641')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">еще</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Лампочка</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-70 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2644')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки ручке</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Подписка на гемини на яндексе</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_2')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">28.09, Пн</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#ef4444; font-weight:800; font-size:11px; background:rgba(239,68,68,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.25); white-space:nowrap;">🔴 2&nbsp;040 ₽ (-845 ₽)</span>
+              <span id="arr_streak_day_2" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_2" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Онлайн - Подписки</b>: <span>1&nbsp;449 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(71%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Фикс прайс</b>: <span>322 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(16%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Пятерочка</b>: <span>150 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(7%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Другие продуктовые магазины</b>: <span>119 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(6%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (5 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2625')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Онлайн - Подписки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Хосткей пополнил счёт </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;200 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2631')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Фикс прайс</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Бумажные полотенца 2 пачки, тряпочки, пшикалка антипятна, губки для посуды</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-322 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2634')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Онлайн - Подписки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Юбуст на месяц </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-249 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2632')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Пятерочка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Ветчина </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-150 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2628')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Другие продуктовые магазины</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Капуста квашеная кулклевер</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-119 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_3')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">27.09, Вс</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 602 ₽ (+593 ₽)</span>
+              <span id="arr_streak_day_3" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_3" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Домой перекус/готовая еда/джанкфуд из магазина</b>: <span>562 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(93%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Еда в продуктовых без ручки</b>: <span>40 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(7%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (2 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2611')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Домой перекус/готовая еда/джанкфуд из магазина</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Чипсы, шоколадки и ТД и тп дикси</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-562 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2602')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Еда в продуктовых без ручки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Дикси мороженое </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-40 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_4')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">26.09, Сб</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 1&nbsp;045 ₽ (+150 ₽)</span>
+              <span id="arr_streak_day_4" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_4" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки</b>: <span>1&nbsp;045 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(100%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (1 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2583')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Лизе подарок на ДР в зя </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;045 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_5')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">25.09, Пт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 269 ₽ (+926 ₽)</span>
+              <span id="arr_streak_day_5" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_5" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Онлайн - Подписки</b>: <span>269 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(100%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (2 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2579')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Онлайн - Подписки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Домен на рег ру</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-169 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2577')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Онлайн - Подписки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">РФ впс сервер на 100 часов</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-100 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_6')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">24.09, Чт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 491 ₽ (+704 ₽)</span>
+              <span id="arr_streak_day_6" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_6" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Алкоголь из магазина домой</b>: <span>169 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(34%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>еще</b>: <span>130 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(26%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Вода в еще</b>: <span>100 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(20%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Пятерочка</b>: <span>92 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(19%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (5 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2546')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Алкоголь из магазина домой</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Томатное пиво из еще</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-169 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2544')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">еще</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 пары перчаток хозяйственных</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-130 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2545')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Вода в еще</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 пятилитровки </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-100 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2549')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Пятерочка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Хрустики</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-90 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2548')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Пятерочка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Творог, ветчина индилайт, ветчина индилайт саброссо россо</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-2 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_7')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">23.09, Ср</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 1&nbsp;193 ₽ (+2 ₽)</span>
+              <span id="arr_streak_day_7" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_7" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Чижик</b>: <span>692 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(58%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>еще</b>: <span>230 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(19%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Домой перекус/готовая еда/джанкфуд из магазина</b>: <span>109 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(9%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Вода в еще</b>: <span>100 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(8%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Еда/что-то на работу для себя</b>: <span>62 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(5%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (6 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2530')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Чижик</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Мясо, хлеб, масло </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-692 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2527')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">еще</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Батарейки и губки</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-230 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2526')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Вода в еще</b>
+                
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-100 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2531')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Домой перекус/готовая еда/джанкфуд из магазина</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Причуда из чижика</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-79 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2524')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Еда/что-то на работу для себя</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">сопливчики на работу в фиксе 2 пачки по 10</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-62 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2528')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Домой перекус/готовая еда/джанкфуд из магазина</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Морская капуста из ещё </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-30 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_8')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">22.09, Вт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 355 ₽ (+840 ₽)</span>
+              <span id="arr_streak_day_8" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_8" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Алкоголь из магазина вне дома</b>: <span>355 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(100%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (1 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2520')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Алкоголь из магазина вне дома</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 пива, водичка и закуска в дикси около москворечья</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-355 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_9')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">21.09, Пн</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#ef4444; font-weight:800; font-size:11px; background:rgba(239,68,68,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.25); white-space:nowrap;">🔴 1&nbsp;234 ₽ (-39 ₽)</span>
+              <span id="arr_streak_day_9" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_9" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки ручке</b>: <span>1&nbsp;234 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(100%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (1 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2494')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки ручке</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">подписка на мидджорни на месяц</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;234 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_10')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">20.09, Вс</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#ef4444; font-weight:800; font-size:11px; background:rgba(239,68,68,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.25); white-space:nowrap;">🔴 3&nbsp;610 ₽ (-2&nbsp;415 ₽)</span>
+              <span id="arr_streak_day_10" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_10" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки</b>: <span>1&nbsp;072 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(30%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Бензин</b>: <span>1&nbsp;001 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(28%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Товары для себя/аксессуары</b>: <span>597 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(17%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Ручке деньги</b>: <span>500 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(14%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Товары для дома онлайн</b>: <span>440 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(12%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (9 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2467')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Бензин</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">роснефть около савеловской , 15+- литров</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;001 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2504')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Алине на др:
+170 - наклейки на ногти миньоны
+186 - табличка миньон
+110 - стикеры миньоны
+262 - еще стикеры миньоны
+178 -  и еще стикеры миньоны</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-906 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2488')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Ручке деньги</b>
+                
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-500 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2503')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Товары для себя/аксессуары</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">фонарик на магните</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-336 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2506')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Товары для дома онлайн</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">грасс суперпена на озон</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-322 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2505')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Товары для себя/аксессуары</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">обложка на ксиву</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-261 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2508')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Товары для дома онлайн</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 лампочки в туалет</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-118 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2492')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">арине монаковой проезд оплатил 2</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-83 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2490')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">арине монаковой проезд оплатил</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-83 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_11')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">19.09, Сб</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">🟢 1&nbsp;121 ₽ (+74 ₽)</span>
+              <span id="arr_streak_day_11" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_11" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Пятерочка</b>: <span>1&nbsp;038 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(93%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Транспорт городской общественный</b>: <span>83 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(7%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (2 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2484')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Пятерочка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">имбирь, печенье, теос, яйца, фарш кур, колбаса, печень</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;038 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2486')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Транспорт городской общественный</b>
+                
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-83 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_12')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">18.09, Пт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#ef4444; font-weight:800; font-size:11px; background:rgba(239,68,68,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.25); white-space:nowrap;">🔴 2&nbsp;968 ₽ (-1&nbsp;773 ₽)</span>
+              <span id="arr_streak_day_12" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_12" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки</b>: <span>890 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(30%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Стрижка</b>: <span>800 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(27%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Фастфуд</b>: <span>567 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(19%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Пятерочка</b>: <span>560 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(19%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Перекус/джанкфуд продукты вне дома</b>: <span>95 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(3%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Домой перекус/готовая еда/джанкфуд из магазина</b>: <span>56 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(2%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (7 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2482')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">вадиму тортик на др в пятерочке в курьяново</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-890 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2472')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Стрижка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">скидка видимо хз,и голова и борода</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-800 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2501')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Фастфуд</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">мак на тимирязевской</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-567 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2475')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Пятерочка</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">лук, огурцы, молоко, печенье, сыр</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-560 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2479')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Перекус/джанкфуд продукты вне дома</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">мороженое дикси</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-60 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2477')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Домой перекус/готовая еда/джанкфуд из магазина</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">пятерочка - лимонный чай сладкий по скидке</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-56 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2481')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Перекус/джанкфуд продукты вне дома</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">с алиной в магните на домодедовской - пара булочек</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-35 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_13')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">17.09, Чт</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10b981; font-weight:800; font-size:11px; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); white-space:nowrap;">✨ 0 ₽</span>
+              <span id="arr_streak_day_13" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_13" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            
+            <div style="color:var(--text-mute); font-size:11px; font-style:italic; padding:4px 0;">Личных трат не было ✨</div>
+          </div>
+        </div>
+      
+        <div style="flex-shrink:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card); margin-bottom:6px; box-sizing:border-box; transform:none !important;">
+          <div class="click-header" onclick="toggleStreakDayDetails('streak_day_14')" style="background:var(--input-bg); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transform:none !important; -webkit-tap-highlight-color:transparent;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="font-size:12.5px; color:var(--text-main);">16.09, Ср</b>
+              
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#ef4444; font-weight:800; font-size:11px; background:rgba(239,68,68,0.12); padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.25); white-space:nowrap;">🔴 6&nbsp;923 ₽ (-5&nbsp;728 ₽)</span>
+              <span id="arr_streak_day_14" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="streak_day_14" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;">
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Подарки</b>: <span>2&nbsp;891 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(42%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Курение</b>: <span>1&nbsp;856 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(27%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Самокаты</b>: <span>1&nbsp;529 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(22%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Запчасти на машину</b>: <span>548 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(8%)</span></span><span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>Товары для себя/аксессуары</b>: <span>99 ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(1%)</span></span></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">🧾 Чеки дня (6 шт):</div><div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2451')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Игорю на ДР:
+1074 - ваттметр в розетку
+181 - джибитсы как приручить дракона 
+918 - 3 вида наклеек как приручить дракона </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-2&nbsp;173 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2445')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Курение</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">4 жижи в мостабаке Дмитровская </div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;856 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2438')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Самокаты</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Вуш 250 минут на 3 месяца</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-1&nbsp;529 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2450')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Подарки</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">Вадиму на ДР:
+270 - наклейки сво
+268 - ремувка ВДВ
+180 - шеврон ZZZ</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-718 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2449')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Запчасти на машину</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">2 лампочки озон</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-548 ₽</b>
+            </div>
+            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '2452')">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main); font-size:12px;">Товары для себя/аксессуары</b>
+                <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">На молнию штука, пуллер</div>
+              </div>
+              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-99 ₽</b>
+            </div></div>
+          </div>
+        </div>
+      </div>
 
   </div>
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4050; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
