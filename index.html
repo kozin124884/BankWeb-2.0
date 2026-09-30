@@ -624,10 +624,10 @@
         <!-- ПАНЕЛЬ УПРАВЛЕНИЯ МАСШТАБОМ И ДАТАМИ -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
           <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:2px; gap:2px;">
-            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(7)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">7 дн</button>
-            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(14)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">14 дн</button>
-            <button type="button" class="btn-cap-zoom active-zoom-btn" onclick="setCapitalDaysWindow(30)" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">30 дн</button>
-            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(60)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">60 дн</button>
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(7, event)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">7 дн</button>
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(14, event)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">14 дн</button>
+            <button type="button" class="btn-cap-zoom active-zoom-btn" onclick="setCapitalDaysWindow(30, event)" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">30 дн</button>
+            <button type="button" class="btn-cap-zoom" onclick="setCapitalDaysWindow(60, event)" style="background:transparent; border:none; color:var(--text-mute); font-size:10px; font-weight:bold; padding:3px 7px; border-radius:6px; cursor:pointer;">60 дн</button>
           </div>
           <div style="display:flex; gap:4px; align-items:center;">
             <button type="button" onclick="panCapitalChart(-5)" title="Сдвиг назад во времени" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:bold; cursor:pointer; color:var(--text-main);">◀</button>
@@ -9095,56 +9095,8 @@
 
   async function uploadAddQueue() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Отправка на сервер заблокирована!");
-    const simpleAdds = getAddQueueItems();
-    if (simpleAdds.length === 0) return;
-    const btn = document.getElementById('btnUploadAddQueueBtn');
-    if (btn) { btn.innerText = '⏳ Отправка...'; btn.disabled = true; }
-
-    try {
-      const adds = simpleAdds.map(q => ({
-        date: q.item.fd,
-        type: q.item.type,
-        amount: q.item.type === 'Расход' ? q.item.sumE : (q.item.type === 'Доход' ? q.item.sumI : q.item.sumTr),
-        points: q.item.points || 0,
-        no_budget: !!q.item.no_budget,
-        account_from: q.item.type === 'Расход' ? q.item.accE : (q.item.type === 'Доход' ? q.item.accI : q.item.accF),
-        account_to: q.item.type === 'Перевод' ? q.item.accT : null,
-        category: q.item.type === 'Расход' ? q.item.catE : (q.item.type === 'Доход' ? q.item.catI : ''),
-        comment: q.item.type === 'Расход' ? q.item.comE : (q.item.type === 'Доход' ? q.item.comI : ''),
-        event_id: q.item.event_id || null,
-        debtor_name: q.item.debtor_name || null
-      }));
-
-      if (typeof updateAllAccountsBalance === 'function') {
-        updateAllAccountsBalance();
-      }
-
-      const accountsPayload = appData.accounts.map(acc => ({
-        name: acc.name,
-        balance: acc.balance
-      }));
-
-      // Атомарный вызов единой неделимой транзакции (ACID)
-      const { error: batchErr } = await db.rpc('sync_finance_batch', {
-        p_deletes: [],
-        p_edits: [],
-        p_adds: adds,
-        p_archive: [],
-        p_accounts: accountsPayload
-      });
-
-      if (batchErr) throw new Error("Сбой добавления: " + batchErr.message);
-
-      localQueue = localQueue.filter(q => !simpleAdds.includes(q));
-      saveQueueToStorage();
-      updateSyncBar();
-      alert('Операции успешно добавлены!');
-      fetchAllData(true);
-    } catch (err) {
-      alert("Ошибка отправки: " + err.message);
-    } finally {
-      if (btn) { btn.innerText = '🚀 Отправить операции на сервер'; btn.disabled = false; }
-    }
+    // Вызываем полный атомарный коммит: всё сохраняется синхронно, исключая рассинхрон счетов
+    await uploadQueue();
   }
 
   async function uploadQueue() {
@@ -9370,17 +9322,18 @@
           let text = '', bg = 'var(--bg-card)', color = 'var(--text-main)';
 
           if (q.action === 'delete') {
-            const cat = item ? (item.catE || item.catI || (item.accF ? `${item.accF} ➔ ${item.accT}` : 'Операция')) : 'Операция';
+            const cat = item ? (item.catE || item.catI || (item.accF ? `${escapeHtml(item.accF)} ➔ ${escapeHtml(item.accT)}` : 'Операция')) : 'Операция';
             const sum = item ? (item.sumE || item.sumI || item.sumTr || 0) : 0;
             const date = item ? (item.d || item.fd || '') : '';
-            const com = item && (item.comE || item.comI) ? `<br><i style="font-size:10px; opacity:0.8;">${item.comE || item.comI}</i>` : '';
+            const rawCom = item ? (item.comE || item.comI || '') : '';
+            const com = rawCom ? `<br><i style="font-size:10px; opacity:0.8;">${escapeHtml(rawCom)}</i>` : '';
 
-            text = `<b style="color:#ef4444;">🗑 Удаление:</b> <b>${cat}</b> — <span style="font-weight:900; color:#ef4444;">${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:10px;">(${date})</span>${com}`;
+            text = `<b style="color:#ef4444;">🗑 Удаление:</b> <b>${escapeHtml(cat)}</b> — <span style="font-weight:900; color:#ef4444;">${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:10px;">(${date})</span>${com}`;
             bg = '#fee2e2';
             color = '#991b1b';
           }
           else if (q.action === 'archive_debt') {
-            text = `<b>🤝 Архив долгов</b>: <span style="color:#3b82f6; font-weight:bold;">${Math.abs(item.amt)} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.n}</b><br><i>${item.c}</i></div>`;
+            text = `<b>🤝 Архив долгов</b>: <span style="color:#3b82f6; font-weight:bold;">${Math.abs(item.amt)} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${escapeHtml(item.n)}</b><br><i>${escapeHtml(item.c)}</i></div>`;
           }
           else if (q.action === 'edit') {
             const orig = q.originalItem || {};
@@ -9453,7 +9406,9 @@
             bg = 'var(--input-bg)';
           }
           else {
-            text = `<b>${item.type}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.catE || item.catI || (item.accF + ' ➔ ' + item.accT)}</b><br><i>${item.comE || item.comI || ''}</i></div>`;
+            const catTitle = item.catE || item.catI || (item.accF ? `${item.accF} ➔ ${item.accT}` : 'Операция');
+            const commentText = item.comE || item.comI || '';
+            text = `<b>${escapeHtml(item.type)}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${escapeHtml(catTitle)}</b><br><i>${escapeHtml(commentText)}</i></div>`;
           }
 
           let btnEdit = (q.action !== 'delete' && q.action !== 'archive_debt') ? `<button onclick="editQueueItem('${q.r}')" style="background:#f59e0b; color:white; border:none; border-radius:8px; padding:6px 10px; font-weight:bold; cursor:pointer; font-size:11px;" title="Изменить">✏️</button>` : '';
@@ -9535,6 +9490,13 @@
     if (idx === -1) return;
 
     const qObj = localQueue[idx];
+
+    // Если удаляемый элемент — часть сплита, безопасно отменяем весь сплит целиком
+    if (qObj.item && qObj.item.splitGroupId) {
+      cancelSplitGroup(qObj.item.splitGroupId);
+      return;
+    }
+
     const isLocalItem = String(id).startsWith('local_');
 
     // 1. Если чек был добавлен в текущей сессии (не был в базе данных)
@@ -13668,10 +13630,9 @@ function renderA() {
     if (wrapNotes) wrapNotes.style.display = 'block';
     if (btnNotes) btnNotes.innerText = 'Свернуть 🔼';
 
-    areTripCatsExpanded = false;
+    window.areTripCatsExpanded = false;
     const btnCats = document.getElementById('btnTripCatsToggle');
     if (btnCats) btnCats.innerText = 'Развернуть всё 🔽';
-    // =========================
 
     document.getElementById('travelDetailsModal').style.display = 'flex';
   }
@@ -16210,9 +16171,9 @@ function renderA() {
           <div style="min-width:0; flex:1; padding-right:8px; overflow:hidden;">
             <div style="display:flex; align-items:center; gap:6px;">
               <b style="color:var(--text-main); font-size:11.5px;">${t.d}</b>
-              <span style="color:var(--text-mute); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.catE}</span>
+              <span style="color:var(--text-mute); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(t.catE)}</span>
             </div>
-            ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${t.comE}</div>` : ''}
+            ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(t.comE)}</div>` : ''}
           </div>
           <b style="color:#ef4444; font-size:11.5px; flex-shrink:0; white-space:nowrap;">-${t.sumE.toLocaleString()} ₽</b>
         </div>
