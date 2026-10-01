@@ -3197,8 +3197,16 @@
     const lockUntil = parseInt(localStorage.getItem('__bank_pin_lock_until') || '0', 10);
     const now = Date.now();
 
+    // 1. Блокируем сетевой запрос, если таймер активен (защита от брутфорса)
+    if (lockUntil > now && val.toLowerCase() !== 'сброс') {
+      const remainingSec = Math.ceil((lockUntil - now) / 1000);
+      const min = Math.floor(remainingSec / 60);
+      const sec = remainingSec % 60;
+      return alert(`🚨 Вход заблокирован! Осталось ${min}м ${sec}с.`);
+    }
+
     try {
-      // 1. Вызов защищённой серверной процедуры (хэш пароля никогда не уходит на клиент)
+      // 2. Вызов защищённой серверной процедуры (хэш пароля никогда не уходит на клиент)
       const { data, error } = await db.rpc('verify_pin_v2', { p_pin: val });
       if (error) throw error;
 
@@ -3547,6 +3555,7 @@
         const p = a.date.split('-');
         return {
           r: 'arch_' + a.id,
+          fd: a.date,
           d: `${p[2]}.${p[1]}.${p[0]}`,
           n: a.debtor_name,
           amt: parseFloat(a.amount),
@@ -3694,6 +3703,21 @@
           const updatedTx = JSON.parse(JSON.stringify(it));
           updatedTx.no_budget = (it.no_budget === true || it.no_budget === 'true');
           appData.transactions[idx] = updatedTx;
+        }
+      }
+      else if (q.action === 'split_parent') {
+        // Убираем оригинальный чек из памяти, так как он разделен
+        const idx = appData.transactions.findIndex(t => String(t.r) === String(q.r));
+        if (idx !== -1) {
+          const t = appData.transactions[idx];
+          updateAccBal(t.accE, t.sumE);
+          appData.transactions.splice(idx, 1);
+        }
+      }
+      else if (q.action === 'archive_debt') {
+        // Добавляем списание долга в память
+        if (!appData.archiveDebts.some(a => String(a.r) === String(q.r))) {
+          appData.archiveDebts.push(it);
         }
       }
     });
@@ -5876,9 +5900,9 @@ function renderA() {
                 <div style="font-size:11px; color:var(--text-mute); margin-bottom:8px; font-weight:800;">${t.d}</div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="background:${getBankCol(t.accF)}; color:white; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold;">${t.accF}</span>
+                    <span style="background:${getBankCol(t.accF)}; color:white; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold;">${escapeHtml(t.accF)}</span>
                     <span style="color:var(--text-mute);">➔</span>
-                    <span style="background:${getBankCol(t.accT)}; color:white; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold;">${t.accT}</span>
+                    <span style="background:${getBankCol(t.accT)}; color:white; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold;">${escapeHtml(t.accT)}</span>
                   </div>
                   <b style="color:var(--text-main); font-size:18px;">${t.sumTr.toLocaleString()} ₽</b>
                 </div>
@@ -7916,7 +7940,7 @@ function renderA() {
     document.querySelectorAll('.batch-note-container').forEach(el => {
       el.style.display = expand ? 'block' : 'none';
     });
-    document.querySelectorAll('.cat-chevron').forEach(chev => {
+    document.querySelectorAll('.batch-cat-card span[id^="chev_"]').forEach(chev => {
       chev.innerText = expand ? '▲ Скрыть' : '▼ Чеки';
     });
   }
@@ -8752,8 +8776,8 @@ function renderA() {
         </div>
 
         <div style="font-size:11px; display:flex; flex-direction:column; gap:4px; margin-bottom:12px; background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-          <div>🏆 <b>Самое затратное:</b> «${maxTrip.city}» — <b style="color:#ef4444;">${maxTrip.totalSum.toLocaleString()} ₽</b></div>
-          <div>🌿 <b>Самое экономное:</b> «${minTrip.city}» — <b style="color:#10b981;">${minTrip.totalSum.toLocaleString()} ₽</b></div>
+          <div>🏆 <b>Самое затратное:</b> «${escapeHtml(maxTrip.city)}» — <b style="color:#ef4444;">${maxTrip.totalSum.toLocaleString()} ₽</b></div>
+          <div>🌿 <b>Самое экономное:</b> «${escapeHtml(minTrip.city)}» — <b style="color:#10b981;">${minTrip.totalSum.toLocaleString()} ₽</b></div>
         </div>
 
         <div style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Структура расходов (клик для раскрытия):</div>
@@ -10855,51 +10879,6 @@ function renderA() {
     renderMonthlyBudgetWidget();
   }
 
-  function openShadowReserveModal() {
-    const inp = document.getElementById('apShadowReserveInput');
-    if (inp) inp.value = localStorage.getItem('ap_manual_rent_reserve') || '';
-    const chk = document.getElementById('apAutoReleaseRentCheckbox');
-    if (chk) chk.checked = localStorage.getItem('ap_auto_release_rent') !== 'false';
-    document.getElementById('shadowReserveModal').style.display = 'flex';
-  }
-
-  async function saveShadowReserveSettings() {
-    const val = document.getElementById('apShadowReserveInput')?.value.trim();
-    const autoRel = document.getElementById('apAutoReleaseRentCheckbox')?.checked;
-
-    if (val !== undefined && val !== '') {
-      localStorage.setItem('ap_manual_rent_reserve', val);
-    } else {
-      localStorage.removeItem('ap_manual_rent_reserve');
-    }
-    localStorage.setItem('ap_auto_release_rent', autoRel ? 'true' : 'false');
-
-    if (!isGuest()) {
-      try {
-        await db.from('app_settings').upsert([
-          { key: 'ap_manual_rent_reserve', value: val || '' }
-        ]);
-      } catch (err) {
-        console.warn('Не удалось синхронизировать бронь с сервером:', err);
-      }
-    }
-
-    document.getElementById('shadowReserveModal').style.display = 'none';
-    renderMonthlyBudgetWidget();
-  }
-
-  async function clearShadowReserveSettings() {
-    localStorage.removeItem('ap_manual_rent_reserve');
-    if (!isGuest()) {
-      try {
-        await db.from('app_settings').upsert([
-          { key: 'ap_manual_rent_reserve', value: '' }
-        ]);
-      } catch (err) {}
-    }
-    document.getElementById('shadowReserveModal').style.display = 'none';
-    renderMonthlyBudgetWidget();
-  }
 
   // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ КОНВЕРТОВ АВТОПИЛОТА ---
   function toggleEnvelopeDropdown(id) {
@@ -11012,33 +10991,32 @@ function renderA() {
     let cleanAvailablePool = 0;
     let includedAccNames = [];
 
+    const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
+    const savedAccounts = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
+
+    let totalOnCards = 0;
+    appData.accounts.forEach(a => {
+      const n = a.name;
+      const low = n.toLowerCase();
+      if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
+
+      let shouldInclude = false;
+      if (savedAccounts) {
+        shouldInclude = savedAccounts.includes(n);
+      } else {
+        const isTarget = low.includes('обед') || low.includes('кафе') || low.includes('вклад') || low.includes('накопит');
+        shouldInclude = !isTarget;
+      }
+
+      if (shouldInclude) {
+        totalOnCards += (parseFloat(a.balance) || 0);
+        includedAccNames.push(n);
+      }
+    });
+
     if (manualPool !== null && manualPool !== '') {
       cleanAvailablePool = parseFloat(manualPool) || 0;
-      includedAccNames = ['Вручную'];
     } else {
-      const savedAccountsJson = localStorage.getItem('ap_included_pool_accounts');
-      const savedAccounts = savedAccountsJson ? JSON.parse(savedAccountsJson) : null;
-
-      let totalOnCards = 0;
-      appData.accounts.forEach(a => {
-        const n = a.name;
-        const low = n.toLowerCase();
-        if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
-
-        let shouldInclude = false;
-        if (savedAccounts) {
-          shouldInclude = savedAccounts.includes(n);
-        } else {
-          const isTarget = low.includes('обед') || low.includes('кафе') || low.includes('вклад') || low.includes('накопит');
-          shouldInclude = !isTarget;
-        }
-
-        if (shouldInclude) {
-          totalOnCards += (parseFloat(a.balance) || 0);
-          includedAccNames.push(n);
-        }
-      });
-      // Пул считается строго по выбранным расходным картам
       cleanAvailablePool = Math.max(0, totalOnCards);
     }
 
@@ -12698,9 +12676,9 @@ function toggleEnvelopeAccordion(prefix) {
         });
 
         const sensitiveInputIds = [
-          'cfgGhToken', 'cfgDeployWebhook', 'pinInput', 'curMasterPin',
-          'newMasterPin', 'newGuestPin', 'newBankResetWord', 'newGatewayId',
-          'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
+          'cfgGhRepo', 'cfgGhBranch', 'cfgGhPath', 'cfgGhToken', 'cfgDeployWebhook',
+          'pinInput', 'curMasterPin', 'newMasterPin', 'newGuestPin', 'newBankResetWord',
+          'newGatewayId', 'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
         ];
         sensitiveInputIds.forEach(id => {
           const el = docClone.querySelector('#' + id);
@@ -13332,13 +13310,13 @@ function toggleEnvelopeAccordion(prefix) {
 
     <div>
       <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Репозиторий (Owner/Repo):</label>
-      <input type="text" id="cfgGhRepo" class="input-ui" placeholder="например: ivan/bank-pro" style="margin:0; padding:8px 10px; font-size:11.5px;">
+      <input type="text" id="cfgGhRepo" class="input-ui" placeholder="например: ivan/bank-pro" style="margin:0; padding:8px 10px; font-size:11.5px;" value="">
     </div>
     <div>
       <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Ветка и путь к файлу:</label>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-        <input type="text" id="cfgGhBranch" class="input-ui" placeholder="main" value="main" style="margin:0; padding:8px 10px; font-size:11.5px;">
-        <input type="text" id="cfgGhPath" class="input-ui" placeholder="BankWeb.html" value="BankWeb.html" style="margin:0; padding:8px 10px; font-size:11.5px;">
+        <input type="text" id="cfgGhBranch" class="input-ui" placeholder="main" style="margin:0; padding:8px 10px; font-size:11.5px;" value="">
+        <input type="text" id="cfgGhPath" class="input-ui" placeholder="BankWeb.html" style="margin:0; padding:8px 10px; font-size:11.5px;" value="">
       </div>
     </div>
     <div>
