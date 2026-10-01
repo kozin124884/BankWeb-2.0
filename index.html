@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Дебет-Кредит | Финансовые калькуляторы и онлайн-инструменты</title>
+  <script>
+    // Мгновенная проверка серверной сессии:
+    (function() {
+      var isCalc = new URLSearchParams(window.location.search).get('calc') === '1';
+      if (!isCalc) {
+        fetch('/auth-verify', { method: 'GET', credentials: 'same-origin' })
+          .then(function(res) { if (res.ok) window.location.replace('bank.html'); })
+          .catch(function() {});
+      }
+    })();
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+    *, *:before, *:after { box-sizing: border-box; }
+    :root {
+      --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --mute: #64748b;
+      --border: #e2e8f0; --input-bg: #f1f5f9; --accent: #10b981;
+    }
+    [data-theme="dark"] {
+      --bg: #020617; --card: #0f172a; --text: #f8fafc; --mute: #94a3b8;
+      --border: #1e293b; --input-bg: #1e293b; --accent: #10b981;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; transition: background 0.3s; }
+    .container { max-width: 680px; margin: 0 auto; }
+    .card { background: var(--card); border-radius: 18px; padding: 20px; border: 1.5px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 16px; }
+    .input-ui { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-weight: 700; background: var(--input-bg); color: var(--text); outline: none; margin-bottom: 12px; font-size: 13px; }
+    .input-ui:focus { border-color: #3b82f6; }
+    .tab-btn { flex: 1; padding: 10px; text-align: center; font-weight: 800; cursor: pointer; border-radius: 10px; background: var(--input-bg); color: var(--mute); font-size: 12px; border: 1px solid var(--border); transition: 0.2s; }
+    .tab-btn.active { background: var(--text); color: var(--card); }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal-content { background: var(--card); padding: 24px; border-radius: 18px; width: 100%; max-width: 360px; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Шапка портала -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:24px;">📊</span>
+      <div>
+        <h1 style="margin:0; font-size:18px; font-weight:900;">Дебет-Кредит</h1>
+        <div style="font-size:11px; color:var(--mute);">Онлайн-инструменты для финансовых расчётов</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button type="button" onclick="toggleTheme()" style="background:var(--border); border:none; padding:8px 12px; border-radius:10px; cursor:pointer;">🌓</button>
+      <button type="button" onclick="handleGatewayClick()" style="background:var(--input-bg); border:1px solid var(--border); color:var(--mute); font-size:11px; font-weight:bold; padding:8px 12px; border-radius:10px; cursor:pointer;">Кабинет 🔒</button>
+    </div>
+  </div>
+
+  <!-- Переключатель инструментов -->
+  <div style="display:flex; gap:6px; margin-bottom:16px;">
+    <button type="button" class="tab-btn active" id="tabDeposit" onclick="switchTool('deposit')">📈 Вклады и %</button>
+    <button type="button" class="tab-btn" id="tabNds" onclick="switchTool('nds')">📑 Расчёт НДС</button>
+    <button type="button" class="tab-btn" id="tabConsumables" onclick="switchTool('consumables')">📦 Расходники</button>
+  </div>
+
+  <!-- ИНСТРУМЕНТ 1: КАЛЬКУЛЯТОР ВКЛАДОВ -->
+  <div id="toolDeposit">
+    <div class="card">
+      <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Сумма на счёте (₽):</label>
+      <input type="number" id="cSum" class="input-ui" value="20000" oninput="runCalc()">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Ставка (% годовых):</label>
+          <input type="number" id="cRate" class="input-ui" value="13" step="0.5" oninput="runCalc()">
+        </div>
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Срок (месяцев):</label>
+          <input type="number" id="cMonths" class="input-ui" value="12" oninput="runCalc()">
+        </div>
+      </div>
+
+      <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Капитализация процентов:</label>
+      <select id="cFreq" class="input-ui" onchange="runCalc()" style="cursor:pointer;">
+        <option value="month" selected>Ежемесячно (накопительный счёт)</option>
+        <option value="day">Ежедневно (в день начисления)</option>
+        <option value="year">Раз в год</option>
+        <option value="end">В конце срока (без капитализации)</option>
+      </select>
+
+      <div style="margin-top:2px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:bold; cursor:pointer;">
+          <input type="checkbox" id="cTopupToggle" checked onchange="document.getElementById('cTopupWrap').style.display = this.checked ? 'block' : 'none'; runCalc();" style="width:16px; height:16px;">
+          Ежемесячное пополнение
+        </label>
+        <div id="cTopupWrap" style="margin-top:8px;">
+          <input type="number" id="cTopup" class="input-ui" value="10000" placeholder="Сумма пополнения" oninput="runCalc()" style="margin:0;">
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg, rgba(16,185,129,0.06), rgba(59,130,246,0.06));">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px; color:var(--mute);">Итого на счёте:</div>
+          <div id="resTotal" style="font-size:28px; font-weight:900; color:#10b981;">0 ₽</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; color:var(--mute);">Начисленные %:</div>
+          <div id="resProfit" style="font-size:20px; font-weight:900; color:#3b82f6;">+0 ₽</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; border-top:1px dashed var(--border); padding-top:10px; font-size:11px;">
+        <div><span style="color:var(--mute);">Вложено:</span><div id="resInvested" style="font-weight:bold; margin-top:2px;">0 ₽</div></div>
+        <div><span style="color:var(--mute);">В месяц:</span><div id="resMonth" style="font-weight:bold; color:#10b981; margin-top:2px;">0 ₽/мес</div></div>
+        <div><span style="color:var(--mute);">В день:</span><div id="resDay" style="font-weight:bold; color:#3b82f6; margin-top:2px;">0 ₽/день</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИНСТРУМЕНТ 2: КАЛЬКУЛЯТОР НДС -->
+  <div id="toolNds" style="display:none;">
+    <div class="card">
+      <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Сумма (₽):</label>
+      <input type="number" id="ndsSum" class="input-ui" value="100000" oninput="runNdsCalc()">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Ставка НДС:</label>
+          <select id="ndsRate" class="input-ui" onchange="runNdsCalc()">
+            <option value="20" selected>20% (Основная)</option>
+            <option value="10">10% (Льготная)</option>
+            <option value="0">0%</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Операция:</label>
+          <select id="ndsType" class="input-ui" onchange="runNdsCalc()">
+            <option value="extract" selected>Выделить НДС (из суммы)</option>
+            <option value="add">Начислить НДС (сверху)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+        <div style="background:var(--input-bg); padding:10px 12px; border-radius:10px;">
+          <div style="font-size:11px; color:var(--mute);">Сумма НДС:</div>
+          <div id="ndsResultTax" style="font-size:20px; font-weight:900; color:#3b82f6; margin-top:2px;">0 ₽</div>
+        </div>
+        <div style="background:var(--input-bg); padding:10px 12px; border-radius:10px;">
+          <div style="font-size:11px; color:var(--mute);">Без НДС:</div>
+          <div id="ndsResultNet" style="font-size:20px; font-weight:900; color:var(--text); margin-top:2px;">0 ₽</div>
+        </div>
+      </div>
+      <div style="font-size:12px; font-weight:bold; padding-top:8px; border-top:1px dashed var(--border);">
+        Итоговая сумма с НДС: <span id="ndsResultTotal" style="color:#10b981; font-weight:900;">0 ₽</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИНСТРУМЕНТ 3: КАЛЬКУЛЯТОР РАСХОДНИКОВ -->
+  <div id="toolConsumables" style="display:none;">
+    <div class="card">
+      <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Стоимость упаковки/расходника (₽):</label>
+      <input type="number" id="cbmCost" class="input-ui" value="3500" oninput="runConsumablesCalc()">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Ресурс (дней / циклов):</label>
+          <input type="number" id="cbmLifespan" class="input-ui" value="90" oninput="runConsumablesCalc()">
+        </div>
+        <div>
+          <label style="font-size:10.5px; font-weight:bold; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:4px;">Расход в сутки:</label>
+          <input type="number" id="cbmDailyUsage" class="input-ui" value="1" step="0.1" oninput="runConsumablesCalc()">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="background:var(--input-bg); padding:10px 12px; border-radius:10px;">
+          <div style="font-size:11px; color:var(--mute);">Себестоимость в день:</div>
+          <div id="cbmCostPerDay" style="font-size:20px; font-weight:900; color:#3b82f6; margin-top:2px;">0 ₽/день</div>
+        </div>
+        <div style="background:var(--input-bg); padding:10px 12px; border-radius:10px;">
+          <div style="font-size:11px; color:var(--mute);">Хватит на:</div>
+          <div id="cbmDaysLeft" style="font-size:20px; font-weight:900; color:#10b981; margin-top:2px;">0 дней</div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:var(--mute); margin-top:10px;">
+        💡 В месяц расходник обходится в: <b id="cbmCostPerMonth" style="color:var(--text);">0 ₽/мес</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ШЛЮЗА С ПОДДЕРЖКОЙ ENTER И АВТОКОМПЛИТА -->
+<div id="gatewayModal" class="modal">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:14px; font-weight:900;">Внутренний портал</h3>
+      <button type="button" onclick="closeGateway()" style="background:none; border:none; cursor:pointer; font-size:16px;">✕</button>
+    </div>
+    <div style="font-size:11px; color:var(--mute); margin-bottom:12px;">Введите учётные данные сотрудника:</div>
+
+    <form onsubmit="event.preventDefault(); verifyGatewayAuth();" autocomplete="on">
+      <input type="text" id="gwId" class="input-ui" placeholder="ID сотрудника / Табельный №" autofocus autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); document.getElementById('gwKey').focus();}">
+      <input type="password" id="gwKey" class="input-ui" placeholder="Ключ авторизации шлюза" autocomplete="current-password">
+      <button type="submit" id="btnGwSubmit" style="width:100%; background:#0f172a; color:white; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12px;">Войти ➔</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+    var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('theme', t);
+  }
+
+  function handleGatewayClick() {
+    fetch('/auth-verify', { method: 'GET', credentials: 'same-origin' })
+      .then(function(res) {
+        if (res.ok) window.location.href = 'bank.html';
+        else openStaffGateway();
+      })
+      .catch(function() {
+        openStaffGateway();
+      });
+  }
+
+  function openStaffGateway() {
+    var modal = document.getElementById('gatewayModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      setTimeout(function() {
+        var idInp = document.getElementById('gwId');
+        if (idInp) idInp.focus();
+      }, 150);
+    }
+  }
+
+  function closeGateway() {
+    var modal = document.getElementById('gatewayModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function switchTool(toolId) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    var activeBtn = document.getElementById('tab' + toolId.charAt(0).toUpperCase() + toolId.slice(1));
+    if (activeBtn) activeBtn.classList.add('active');
+
+    document.getElementById('toolDeposit').style.display = (toolId === 'deposit') ? 'block' : 'none';
+    document.getElementById('toolNds').style.display = (toolId === 'nds') ? 'block' : 'none';
+    document.getElementById('toolConsumables').style.display = (toolId === 'consumables') ? 'block' : 'none';
+
+    if (toolId === 'deposit') runCalc();
+    if (toolId === 'nds') runNdsCalc();
+    if (toolId === 'consumables') runConsumablesCalc();
+  }
+
+  function runCalc() {
+    var sum = parseFloat(document.getElementById('cSum')?.value) || 0;
+    var rate = parseFloat(document.getElementById('cRate')?.value) || 0;
+    var months = parseInt(document.getElementById('cMonths')?.value, 10) || 12;
+    var hasTopup = document.getElementById('cTopupToggle')?.checked;
+    var topup = hasTopup ? (parseFloat(document.getElementById('cTopup')?.value) || 0) : 0;
+    var freq = document.getElementById('cFreq')?.value || 'month';
+
+    var balance = sum, invested = sum, profit = 0;
+    var totalDays = months * 30.416;
+
+    if (freq === 'day') {
+      var dailyRate = (rate / 100) / 365;
+      for (var d = 1; d <= Math.round(totalDays); d++) {
+        if (hasTopup && d % 30 === 0) { balance += topup; invested += topup; }
+        var p = balance * dailyRate;
+        balance += p; profit += p;
+      }
+    } else if (freq === 'month') {
+      var monthlyRate = (rate / 100) / 12;
+      for (var m = 1; m <= months; m++) {
+        if (hasTopup && m > 1) { balance += topup; invested += topup; }
+        var mProfit = balance * monthlyRate;
+        balance += mProfit; profit += mProfit;
+      }
+    } else {
+      if (hasTopup) invested += topup * (months - 1);
+      profit = invested * (rate / 100) * (months / 12);
+      balance = invested + profit;
+    }
+
+    if (document.getElementById('resTotal')) document.getElementById('resTotal').innerText = Math.round(balance).toLocaleString() + ' ₽';
+    if (document.getElementById('resProfit')) document.getElementById('resProfit').innerText = '+' + Math.round(profit).toLocaleString() + ' ₽';
+    if (document.getElementById('resInvested')) document.getElementById('resInvested').innerText = Math.round(invested).toLocaleString() + ' ₽';
+    if (document.getElementById('resMonth')) document.getElementById('resMonth').innerText = '~' + Math.round(profit / months).toLocaleString() + ' ₽/мес';
+    if (document.getElementById('resDay')) document.getElementById('resDay').innerText = '~' + Math.round(profit / Math.max(1, totalDays)).toLocaleString() + ' ₽/день';
+  }
+
+  function runNdsCalc() {
+    var sum = parseFloat(document.getElementById('ndsSum')?.value) || 0;
+    var rate = parseFloat(document.getElementById('ndsRate')?.value) || 20;
+    var type = document.getElementById('ndsType')?.value || 'extract';
+
+    var tax = 0, net = 0, total = 0;
+    if (type === 'extract') {
+      total = sum;
+      tax = Math.round(sum * (rate / (100 + rate)));
+      net = total - tax;
+    } else {
+      net = sum;
+      tax = Math.round(sum * (rate / 100));
+      total = net + tax;
+    }
+
+    if (document.getElementById('ndsResultTax')) document.getElementById('ndsResultTax').innerText = tax.toLocaleString() + ' ₽';
+    if (document.getElementById('ndsResultNet')) document.getElementById('ndsResultNet').innerText = net.toLocaleString() + ' ₽';
+    if (document.getElementById('ndsResultTotal')) document.getElementById('ndsResultTotal').innerText = total.toLocaleString() + ' ₽';
+  }
+
+  function runConsumablesCalc() {
+    var cost = parseFloat(document.getElementById('cbmCost')?.value) || 0;
+    var lifespan = parseFloat(document.getElementById('cbmLifespan')?.value) || 1;
+    var usage = parseFloat(document.getElementById('cbmDailyUsage')?.value) || 1;
+
+    var days = Math.round(lifespan / Math.max(0.01, usage));
+    var perDay = Math.round(cost / Math.max(1, days));
+    var perMonth = perDay * 30;
+
+    if (document.getElementById('cbmDaysLeft')) document.getElementById('cbmDaysLeft').innerText = days + ' дн.';
+    if (document.getElementById('cbmCostPerDay')) document.getElementById('cbmCostPerDay').innerText = '~' + perDay.toLocaleString() + ' ₽/день';
+    if (document.getElementById('cbmCostPerMonth')) document.getElementById('cbmCostPerMonth').innerText = '~' + perMonth.toLocaleString() + ' ₽/мес';
+  }
+
+  async function verifyGatewayAuth() {
+    var idInp = document.getElementById('gwId');
+    var keyInp = document.getElementById('gwKey');
+    var id = (idInp?.value || '').trim();
+    var key = (keyInp?.value || '').trim();
+    var btn = document.getElementById('btnGwSubmit');
+
+    var fails = parseInt(localStorage.getItem('__gw_fails') || '0', 10);
+    var lockUntil = parseInt(localStorage.getItem('__gw_lock_until') || '0', 10);
+    var now = Date.now();
+
+    if (lockUntil > now && !id && !key) {
+      var remMin = Math.ceil((lockUntil - now) / 60000);
+      return alert("🚨 Шлюз заблокирован! Попробуйте через " + remMin + " мин.");
+    }
+
+    if (!id && !key) return alert("Заполните поля!");
+    if (btn) { btn.disabled = true; btn.innerText = "Проверка..."; }
+
+    try {
+      // Прямой запрос к серверному демону (в коде фасада больше нет ключей и URL базы)
+      var sRes = await fetch('/api/issue-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ p_id: id, p_key: key })
+      });
+
+      var data = await sRes.json().catch(function() { return {}; });
+
+      if (data && data.reset === true) {
+        localStorage.removeItem('__gw_fails');
+        localStorage.removeItem('__gw_lock_until');
+        if (idInp) idInp.value = '';
+        if (keyInp) keyInp.value = '';
+        alert("✅ Блокировка шлюза снята.");
+        closeGateway();
+        return;
+      }
+
+      if (lockUntil > now) {
+        var remMinWait = Math.ceil((lockUntil - now) / 60000);
+        return alert("🚨 Шлюз заблокирован! Осталось " + remMinWait + " мин.");
+      }
+
+      if (sRes.ok && data && data.success === true) {
+        localStorage.removeItem('__gw_fails');
+        localStorage.removeItem('__gw_lock_until');
+        window.location.replace('bank.html');
+      } else {
+        fails++;
+        localStorage.setItem('__gw_fails', fails);
+        if (keyInp) keyInp.value = '';
+
+        if (fails >= 3) {
+          localStorage.setItem('__gw_lock_until', Date.now() + 15 * 60 * 1000);
+          localStorage.removeItem('__gw_fails');
+          closeGateway();
+          alert("🚨 3 неверные попытки! Вход заблокирован на 15 минут.");
+        } else {
+          closeGateway();
+          alert("❌ Неверный ID или ключ! Осталось попыток: " + (3 - fails));
+        }
+      }
+    } catch (err) {
+      closeGateway();
+      alert("Ошибка: " + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerText = "Войти ➔"; }
+    }
+  }
+
+
+  window.onload = function() {
+    var t = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    runCalc();
+  };
+</script>
+</body>
+</html>
