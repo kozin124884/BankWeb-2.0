@@ -3104,10 +3104,13 @@
 
     // Освобождение памяти Canvas при закрытии окна аналитики
     if (modalId === 'categoryDeepAnalyticsModal' && catDeepChartInstance) {
+      try { catDeepChartInstance.destroy(); catDeepChartInstance = null; } catch (e) {}
+    }
+    // Уничтожаем график капитала при закрытии его секции
+    if (modalId === 'capitalAccountsModal' || modalId === 'autopilotOverrideModal') {
       try {
-        catDeepChartInstance.destroy();
-        catDeepChartInstance = null;
-      } catch (e) {}
+        if (capitalOnlyChartInstance) { capitalOnlyChartInstance.destroy(); capitalOnlyChartInstance = null; }
+      } catch(e) {}
     }
   }
 
@@ -3756,20 +3759,20 @@
     if (action === 'add' || action === 'archive_debt') {
       localQueue.push({ action, r, item });
     } else if (action === 'edit') {
-      let existingAddIdx = localQueue.findIndex(q => q.r === r && q.action === 'add');
+      let existingAddIdx = localQueue.findIndex(q => String(q.r) === String(r) && q.action === 'add');
       if (existingAddIdx > -1) {
         localQueue[existingAddIdx].item = item;
       } else {
-        let editIdx = localQueue.findIndex(q => q.r === r && q.action === 'edit');
+        let editIdx = localQueue.findIndex(q => String(q.r) === String(r) && q.action === 'edit');
         if (editIdx > -1) localQueue[editIdx].item = item;
         else localQueue.push({ action, r, item });
       }
     } else if (action === 'delete') {
-      let existingAddIdx = localQueue.findIndex(q => q.r === r && q.action === 'add');
+      let existingAddIdx = localQueue.findIndex(q => String(q.r) === String(r) && q.action === 'add');
       if (existingAddIdx > -1) {
         localQueue.splice(existingAddIdx, 1);
       } else {
-        localQueue = localQueue.filter(q => q.r !== r);
+        localQueue = localQueue.filter(q => String(q.r) !== String(r));
         localQueue.push({ action, r, item });
       }
     }
@@ -3891,7 +3894,7 @@
         .map(q => parseInt(q.r, 10))
         .filter(id => !isNaN(id) && id > 0);
 
-      const editsPayload = allTxQueue.filter(q => q.action === 'edit').map(q => {
+      const editsPayload = allTxQueue.filter(q => q.action === 'edit' && !String(q.r).startsWith('local_')).map(q => {
         const it = q.item;
         return {
           id: parseInt(q.r, 10),
@@ -4065,7 +4068,7 @@
             const origCat = orig.catE || orig.catI || (orig.accF ? `${orig.accF} ➔ ${orig.accT}` : '—');
             const curCat = cur.catE || cur.catI || (cur.accF ? `${cur.accF} ➔ ${cur.accT}` : '—');
             if (origCat !== curCat) {
-              diffs.push(`📂 Категория: <span style="text-decoration:line-through; color:var(--text-mute);">${origCat}</span> ➔ <b>${curCat}</b>`);
+              diffs.push(`📂 Категория: <span style="text-decoration:line-through; color:var(--text-mute);">${escapeHtml(origCat)}</span> ➔ <b>${escapeHtml(curCat)}</b>`);
             }
 
             const origSum = parseFloat(orig.sumE || orig.sumI || orig.sumTr) || 0;
@@ -4087,7 +4090,7 @@
             const origCom = (orig.comE || orig.comI || '').trim();
             const curCom = (cur.comE || cur.comI || '').trim();
             if (origCom !== curCom) {
-              diffs.push(`💬 Заметка: <span style="text-decoration:line-through; color:var(--text-mute);">${origCom || 'пусто'}</span> ➔ <i>${curCom || 'очищена'}</i>`);
+              diffs.push(`💬 Заметка: <span style="text-decoration:line-through; color:var(--text-mute);">${escapeHtml(origCom) || 'пусто'}</span> ➔ <i>${escapeHtml(curCom) || 'очищена'}</i>`);
             }
 
             // Точное отслеживание галочки баллов
@@ -5978,7 +5981,7 @@ function renderA() {
                           <button onclick="openCategoryDeepAnalytics(event, '${escapeJsStr(n)}', '${escapeJsStr(sn)}')" style="background:var(--input-bg); border:1px solid var(--border); border-radius:5px; padding:1px 6px; font-size:9.5px; font-weight:bold; color:var(--text-main); cursor:pointer; flex-shrink:0;" title="Анализ подкатегории ${escapeHtml(sn)}">
                             📊 Анализ
                           </button>
-                          <b style="color:var(--text-main); font-size:13px;">${sn}</b>
+                          <b style="color:var(--text-main); font-size:13px;">${escapeHtml(sn)}</b>
                         </div>
                         <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:3px; padding-left: 2px;">
                           <span class="stat-chip">ср.&nbsp;~${subAvgCheck.toLocaleString()}&nbsp;₽</span>
@@ -6028,10 +6031,10 @@ function renderA() {
 
         // 2. ГЛАВНЫЕ КАТЕГОРИИ: КНОПКА «АНАЛИЗ» В САМОМ НАЧАЛЕ СТРОКИ СТАТИСТИКИ
         h += `<div style="padding:6px 0; border-bottom:1px solid var(--border);">
-                <div class="click-header" onclick="tC(event,this,'cat_${n}')" style="display:flex; flex-direction:column; align-items:stretch; gap:5px;">
+                <div class="click-header" onclick="tC(event,this,'cat_${escapeJsStr(n)}')" style="display:flex; flex-direction:column; align-items:stretch; gap:5px;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <div style="width:9px; height:9px; background:${colors[i % colors.length]}; border-radius:3px; flex-shrink:0;"></div>
-                    <b style="font-size:13.5px; color:var(--text-main); word-break:break-word; line-height:1.25;">${n}</b>
+                    <b style="font-size:13.5px; color:var(--text-main); word-break:break-word; line-height:1.25;">${escapeHtml(n)}</b>
                   </div>
                   <div style="display:flex; justify-content:space-between; align-items:center; padding-left:17px; flex-wrap:wrap; gap:5px;">
                     <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
@@ -9059,8 +9062,8 @@ function renderA() {
         h += `<div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-top:6px; margin-bottom:2px; padding-left:4px;">📂 ${grp}</div>`;
         filteredSubs.forEach(c => {
           h += `
-            <div onclick="selectSplitCategory('${c}')" style="padding:9px 12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; font-size:12px; font-weight:700; color:var(--text-main); cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:0.15s;">
-              <span>${c}</span>
+            <div onclick="selectSplitCategory('${escapeJsStr(c)}')" style="padding:9px 12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; font-size:12px; font-weight:700; color:var(--text-main); cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:0.15s;">
+              <span>${escapeHtml(c)}</span>
               <span style="font-size:10px; color:var(--text-mute);">Выбрать ➔</span>
             </div>
           `;
@@ -9400,18 +9403,24 @@ function renderA() {
 
     if (container) {
       if (!txsForPeriod || txsForPeriod.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-mute); font-size:11px; padding:4px 0;">Нет трат за этот период</div>';
+        container.innerHTML = '<div style="color:var(--text-mute); font-size:11px; padding:4px 0;">Нет операций за этот период</div>';
       } else {
-        const topTxs = txsForPeriod.slice().sort((a, b) => b.sumE - a.sumE).slice(0, 4);
+        const topTxs = txsForPeriod.slice().sort((a, b) => (b.type === 'Доход' ? b.sumI : b.sumE) - (a.type === 'Доход' ? a.sumI : a.sumE)).slice(0, 4);
         let h = '';
         topTxs.forEach(t => {
+          const isInc = t.type === 'Доход';
+          const sumVal = isInc ? t.sumI : t.sumE;
+          const catVal = isInc ? t.catI : t.catE;
+          const comVal = isInc ? t.comI : t.comE;
+          const colorVal = isInc ? '#10b981' : '#ef4444';
+          const signVal = isInc ? '+' : '-';
           h += `
             <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:6px 10px; border-radius:8px; border:1px solid var(--border); font-size:11px;" onclick="clI(event, '${t.r}')">
               <div style="min-width:0; flex:1; padding-right:8px;">
-                <b>${t.d}</b> — <span style="color:var(--text-main); font-weight:700;">${t.catE}</span>
-                ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:1px;">${t.comE}</div>` : ''}
+                <b>${t.d}</b> — <span style="color:var(--text-main); font-weight:700;">${escapeHtml(catVal)}</span>
+                ${comVal ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:1px;">${escapeHtml(comVal)}</div>` : ''}
               </div>
-              <b style="color:#ef4444; font-size:11.5px; flex-shrink:0;">${t.sumE.toLocaleString()} ₽</b>
+              <b style="color:${colorVal}; font-size:11.5px; flex-shrink:0;">${signVal}${sumVal.toLocaleString()} ₽</b>
             </div>`;
         });
         container.innerHTML = h;
@@ -9419,7 +9428,7 @@ function renderA() {
     }
 
     const now = new Date();
-    const periodSum = (txsForPeriod || []).reduce((s, t) => s + t.sumE, 0);
+    const periodSum = (txsForPeriod || []).reduce((s, t) => s + (t.type === 'Доход' ? t.sumI : t.sumE), 0);
     const txCount = (txsForPeriod || []).length;
     const periodAvgCheck = txCount > 0 ? Math.round(periodSum / txCount) : 0;
 
@@ -9614,7 +9623,7 @@ function renderA() {
       if (document.getElementById('catDeepFrequency')) document.getElementById('catDeepFrequency').innerText = '—';
       if (allTimeContainer) allTimeContainer.innerHTML = '<div style="color:var(--text-mute); font-size:11px;">Нет данных</div>';
     } else {
-      const totalSum = catTxs.reduce((s, t) => s + t.sumE, 0);
+      const totalSum = catTxs.reduce((s, t) => s + (isIncMode ? t.sumI : t.sumE), 0);
       const avgCheck = Math.round(totalSum / catTxs.length);
 
       const allTimeMonths = Math.max(1, (now.getFullYear() - 2026) * 12 + (now.getMonth() - 1) + (now.getDate() / 30));
@@ -9743,7 +9752,7 @@ function renderA() {
       catTxs.forEach(t => {
         if (!t.fd) return;
         const y = t.fd.slice(0, 4);
-        yearMap[y] = (yearMap[y] || 0) + t.sumE;
+        yearMap[y] = (yearMap[y] || 0) + (isIncMode ? t.sumI : t.sumE);
       });
 
       const sortedYears = Object.keys(yearMap).sort();
@@ -9778,7 +9787,7 @@ function renderA() {
       const yearTxs = catTxs.filter(t => t.fd && t.fd.startsWith(catDrill.year));
       yearTxs.forEach(t => {
         const m = parseInt(t.fd.slice(5, 7), 10) - 1;
-        if (m >= 0 && m < 12) dataValues[m] += t.sumE;
+        if (m >= 0 && m < 12) dataValues[m] += (isIncMode ? t.sumI : t.sumE);
       });
 
       updatePeriodTopPurchases(yearTxs, `${catDrill.year} г.`);
@@ -9817,7 +9826,7 @@ function renderA() {
       monthTxs.forEach(t => {
         const dayNum = parseInt(t.fd.slice(8, 10), 10);
         if (dayNum >= 1 && dayNum <= totalDaysInMonth) {
-          dataValues[dayNum - 1] += t.sumE;
+          dataValues[dayNum - 1] += (isIncMode ? t.sumI : t.sumE);
         }
       });
 
@@ -12680,13 +12689,13 @@ function toggleEnvelopeAccordion(prefix) {
           'pinInput', 'curMasterPin', 'newMasterPin', 'newGuestPin', 'newBankResetWord',
           'newGatewayId', 'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
         ];
-        sensitiveInputIds.forEach(id => {
-          const el = docClone.querySelector('#' + id);
-          if (el) {
-            el.value = '';
-            el.removeAttribute('value');
-            el.setAttribute('value', '');
-            el.textContent = '';
+        // Жесткая зачистка всех инпутов по ID, чтобы Autofill браузера не попал в коммит
+        docClone.querySelectorAll('input, textarea').forEach(inp => {
+          if (sensitiveInputIds.includes(inp.id)) {
+            inp.removeAttribute('value');
+            inp.setAttribute('value', '');
+            inp.value = '';
+            inp.textContent = '';
           }
         });
 
