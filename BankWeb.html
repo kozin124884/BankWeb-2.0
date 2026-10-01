@@ -301,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -353,7 +353,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view active">
+  <div id="viewAnalytics" class="app-view">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -638,7 +638,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -3032,8 +3032,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -12517,7 +12517,7 @@ function toggleEnvelopeAccordion(prefix) {
 
     const repo = document.getElementById('cfgGhRepo')?.value.trim();
     const branch = document.getElementById('cfgGhBranch')?.value.trim() || 'main';
-    const filePath = document.getElementById('cfgGhPath')?.value.trim() || 'index.html';
+    const filePath = document.getElementById('cfgGhPath')?.value.trim() || 'BankWeb.html';
     const token = document.getElementById('cfgGhToken')?.value.trim();
     const webhook = document.getElementById('cfgDeployWebhook')?.value.trim();
 
@@ -12558,7 +12558,7 @@ function toggleEnvelopeAccordion(prefix) {
 
     const repo = localStorage.getItem('deploy_gh_repo') || document.getElementById('cfgGhRepo')?.value.trim();
     const branch = localStorage.getItem('deploy_gh_branch') || document.getElementById('cfgGhBranch')?.value.trim() || 'main';
-    const filePath = localStorage.getItem('deploy_gh_path') || document.getElementById('cfgGhPath')?.value.trim() || 'index.html';
+    const filePath = localStorage.getItem('deploy_gh_path') || document.getElementById('cfgGhPath')?.value.trim() || 'BankWeb.html';
     const token = localStorage.getItem('deploy_gh_token') || document.getElementById('cfgGhToken')?.value.trim();
     const webhookUrl = localStorage.getItem('deploy_webhook_url') || document.getElementById('cfgDeployWebhook')?.value.trim();
 
