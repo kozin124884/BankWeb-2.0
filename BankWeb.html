@@ -301,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -353,7 +353,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view active">
+  <div id="viewAnalytics" class="app-view">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -413,7 +413,7 @@
           </div>
 
           <!-- Скрываемое тело виджета капитала -->
-          <div id="capitalAccordionBody" style="display: none; padding: 0px 12px 12px; flex-direction: column; gap: 8px;">
+          <div id="capitalAccordionBody" style="display: none; padding: 0 12px 12px 12px; flex-direction: column; gap: 8px;">
             <!-- БЛОК ВЫБОРА ТОЧНОГО ПЕРИОДА -->
             <div style="background: var(--bg-card); padding: 8px; border-radius: 10px; border: 1px solid var(--border); box-sizing: border-box;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -428,10 +428,10 @@
                 <option value="all" selected="">За всё время</option>
               </select>
 
-              <div id="capMonthWrap" style="display: none; width: 100%;"><input type="month" id="capMonth" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
+              <div id="capMonthWrap" style="display:none; width:100%;"><input type="month" id="capMonth" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
               <div id="capYearWrap" style="display:none; width:100%;"><input type="number" id="capYear" class="input-ui" placeholder="Год (напр. 2026)" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
               <div id="capSingleWrap" style="display:none; width:100%;"><input type="date" id="capSingle" class="input-ui input-date" style="margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()"></div>
-              <div id="capCustomWrap" style="display: flex; gap: 6px; width: 100%;">
+              <div id="capCustomWrap" style="display:none; gap:6px; width:100%;">
                 <input type="date" id="capStart" class="input-ui input-date" style="flex:1; margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()">
                 <input type="date" id="capEnd" class="input-ui input-date" style="flex:1; margin-bottom:0; padding:6px 8px; font-size:11px;" onchange="renderCapitalOnlyChart()">
               </div>
@@ -455,125 +455,20 @@
                 <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">135&nbsp;264 ₽</b>
               </div>
               <div>
-                <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за период:</div>
-                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +46&nbsp;601 ₽ (52.6%)</b>
+                <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за всё время:</div>
+                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +135&nbsp;264 ₽ (0%)</b>
               </div>
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Темп:</div>
-                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+728 ₽/дн</b>
+                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+554 ₽/дн</b>
               </div>
             </div>
 
             <div style="height: 140px; position: relative; width: 100%;">
-              <canvas id="capitalOnlyChartCanvas" style="box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 140px; width: 740px;" width="740" height="140"></canvas>
+              <canvas id="capitalOnlyChartCanvas" height="0" style="display: block; box-sizing: border-box; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0"></canvas>
             </div>
             <!-- Детали операции при клике на вершину капитала (с кликабельными строчками) -->
-            <div id="capitalDayDetailsBox" style="display: block; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 11px; margin-top: 4px; box-sizing: border-box;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <b>📅 Май '26 • Капитал: 73&nbsp;265 ₽</b>
-              <b style="color:#ef4444; font-size:11px;">▼ -20&nbsp;391 ₽</b>
-            </div>
-            
-                <div class="tx-row" onclick="clI(event, '1354')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📤 <b>Накопительный счет копить ➔ Озон Банк</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#ef4444; white-space:nowrap;">-1&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1342')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📤 <b>Накопительный счет копить ➔ Яндекс</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#ef4444; white-space:nowrap;">-6&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1319')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📤 <b>Накопительный счет копить ➔ Яндекс</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#ef4444; white-space:nowrap;">-17&nbsp;250 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1253')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📥 <b>Тинькофф ➔ Инвестиции</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#10b981; white-space:nowrap;">+1&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1236')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📥 <b>Озон Банк ➔ Накопительный счет копить</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#10b981; white-space:nowrap;">+5&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1250')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📥 <b>Озон Банк ➔ Инвестиции</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#10b981; white-space:nowrap;">+5&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1079')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📤 <b>Накопительный счет копить ➔ Озон Банк</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#ef4444; white-space:nowrap;">-2&nbsp;763 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '11')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📥 <b>Кэшбек/проценты</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#10b981; white-space:nowrap;">+622 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-                <div class="tx-row" onclick="clI(event, '1072')" style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:8px; background:var(--input-bg); margin-top:4px; font-size:11px; cursor:pointer; border:1px solid var(--border);">
-                  <div style="min-width:0; flex:1; padding-right:8px;">
-                    <span>📤 <b>Накопительный счет копить ➔ Озон Банк</b> </span>
-                    
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <b style="color:#ef4444; white-space:nowrap;">-5&nbsp;000 ₽</b>
-                    <span style="font-size:10px; color:var(--text-mute);">✏️</span>
-                  </div>
-                </div>
-              
-          </div>
+            <div id="capitalDayDetailsBox" style="display:none; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:11px; margin-top:4px; box-sizing:border-box;"></div>
           </div>
         </div>
 
@@ -1359,7 +1254,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -4148,30 +4043,30 @@
 </div>
 
 <!-- ОКНО ИЗМЕНЕНИЯ ТРАНЗАКЦИИ (ПОВЕРХ ВСЕГО) -->
-<div id="editModal" class="modal" style="z-index: 4010; display: none;">
+<div id="editModal" class="modal" style="z-index: 3100; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">Изменить</h3>
         <button class="close-btn" onclick="closeModal('editModal')">✕</button>
     </div>
-    <input type="hidden" id="editRow" value="1319">
-    <input type="hidden" id="editType" value="Перевод">
+    <input type="hidden" id="editRow">
+    <input type="hidden" id="editType">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">ДАТА</label>
     <input type="date" id="editDate" class="input-ui input-date">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КАТЕГОРИЯ</label>
     <input type="text" id="editCat" class="input-ui" list="editCatDataList" placeholder="Начните вводить...">
-    <datalist id="editCatDataList"><option value="Зарплата"></option><option value="ЗП ручки"></option><option value="От бабушки"></option><option value="От папы"></option><option value="Вернули долг"></option><option value="Дали в долг"></option><option value="Подарили"></option><option value="за что-то"></option><option value="пенсия ручки"></option><option value="Кэшбек/проценты"></option><option value="Не сошелся дебет кредит"></option></datalist>
+    <datalist id="editCatDataList"></datalist>
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">СУММА</label>
     <input type="number" id="editSum" class="input-ui">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">СЧЁТ ОПЕРАЦИИ</label>
-    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"></select>
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">ОПЛАЧЕНО БАЛЛАМИ / СКИДКА (₽)</label>
     <input type="number" id="editPointsSum" class="input-ui" placeholder="0 ₽ (не списывается с карты)">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КОММЕНТАРИЙ</label>
-    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1" style="height: 47px;"></textarea>
+    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
 
     <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:bold; color:var(--text-mute); margin-top:8px; margin-bottom:8px; cursor:pointer;">
       <input type="checkbox" id="editNoBudget" style="width:16px; height:16px; cursor:pointer;">
@@ -4381,82 +4276,7 @@
       <button type="button" onclick="setOnlyCardPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
       <button type="button" onclick="setAllPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;">
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(300 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Тинькофф" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Озон Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;131 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;155 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(18&nbsp;079 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;605 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(8&nbsp;243 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;065 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      </div>
+    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;"></div>
     <div style="border-top:1px solid var(--border); padding-top:10px;">
       <label style="font-size:10.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Или задать сумму вручную (₽):</label>
       <input type="number" id="apManualPoolInput" class="input-ui" placeholder="Оставьте пустым для авто-расчёта" style="margin:0; padding:9px;">
@@ -4470,8 +4290,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -13807,6 +13627,31 @@ function toggleEnvelopeAccordion(prefix) {
   // ПУБЛИКАЦИЯ В GITHUB И АВТОДЕПЛОЙ НА САЙТ В 1 КЛИК
   // =========================================================================
 
+  let selectedIndexHtmlContent = null;
+
+  function onDeployIndexFileSelected(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedIndexHtmlContent = e.target.result;
+        const badge = document.getElementById('deployIndexStatusBadge');
+        if (badge) {
+          badge.innerText = `✓ Выбран (${(file.size / 1024).toFixed(1)} КБ)`;
+          badge.style.color = '#10b981';
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      selectedIndexHtmlContent = null;
+      const badge = document.getElementById('deployIndexStatusBadge');
+      if (badge) {
+        badge.innerText = 'Не выбран';
+        badge.style.color = 'var(--text-mute)';
+      }
+    }
+  }
+
   function toggleDeploySettingsAccordion() {
     const body = document.getElementById('deploySettingsBody');
     const arr = document.getElementById('deploySettingsArr');
@@ -13829,6 +13674,16 @@ function toggleEnvelopeAccordion(prefix) {
 
     const logBox = document.getElementById('deployStatusLog');
     if (logBox) { logBox.style.display = 'none'; logBox.innerHTML = ''; }
+
+    // Сброс выбора файла фасада
+    selectedIndexHtmlContent = null;
+    const idxInput = document.getElementById('deployIndexFileInput');
+    if (idxInput) idxInput.value = '';
+    const idxBadge = document.getElementById('deployIndexStatusBadge');
+    if (idxBadge) {
+      idxBadge.innerText = 'Не выбран';
+      idxBadge.style.color = 'var(--text-mute)';
+    }
 
     // 1. Сначала берём локальный кэш
     document.getElementById('cfgGhRepo').value = localStorage.getItem('deploy_gh_repo') || 'kozin124884/BankWeb-2.0';
@@ -13945,6 +13800,47 @@ function toggleEnvelopeAccordion(prefix) {
     };
 
     try {
+      // 0. Если прикреплён обновлённый фасад index.html — коммитим его первым
+      if (selectedIndexHtmlContent) {
+        log(`📡 Проверка и обновление фасада index.html в GitHub...`);
+        let indexSha = null;
+        try {
+          const getIdxRes = await fetch(`https://api.github.com/repos/${repo}/contents/index.html?ref=${branch}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          if (getIdxRes.ok) {
+            const idxData = await getIdxRes.json();
+            indexSha = idxData.sha;
+          }
+        } catch (e) {}
+
+        const idxPayload = {
+          message: `${commitMsg} [update index.html]`,
+          content: utf8ToBase64(selectedIndexHtmlContent),
+          branch: branch
+        };
+        if (indexSha) idxPayload.sha = indexSha;
+
+        const putIdxRes = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify(idxPayload)
+        });
+
+        if (!putIdxRes.ok) {
+          log(`⚠️ Ошибка загрузки index.html в GitHub (${putIdxRes.status})`, '#ef4444');
+        } else {
+          log(`✅ Фасад index.html успешно закоммичен в GitHub!`, '#10b981');
+        }
+      }
+
       log(`📡 Проверка файла ${filePath} в ${repo}...`);
 
       // 1. Получаем SHA текущего файла из GitHub (нужен для перезаписи)
@@ -14556,7 +14452,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4030; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14582,7 +14478,19 @@ function toggleEnvelopeAccordion(prefix) {
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 205px;"></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin:0; padding:8px 10px; font-size:12px; font-family:inherit; resize:none; line-height:1.4;"></textarea>
+      </div>
+    </div>
+
+    <!-- ОПЦИОНАЛЬНОЕ ОБНОВЛЕНИЕ ФАСАДА (INDEX.HTML) БЕЗ SSH И SCP -->
+    <div style="background:var(--input-bg); border:1px dashed var(--border); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:6px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Фасад калькулятора (index.html):</label>
+        <span id="deployIndexStatusBadge" style="font-size: 9.5px; font-weight: bold; color: rgb(16, 185, 129);">✓ Выбран (22.0 КБ)</span>
+      </div>
+      <input type="file" id="deployIndexFileInput" accept=".html" style="font-size:11px;" onchange="onDeployIndexFileSelected(this)">
+      <div style="font-size:9.5px; color:var(--text-mute); line-height:1.3;">
+        💡 Если вы правили калькулятор на компьютере, выберите его здесь — он улетит в GitHub и обновится на сервере вместе с банком.
       </div>
     </div>
 
