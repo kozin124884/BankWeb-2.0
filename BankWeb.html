@@ -13660,13 +13660,8 @@ function toggleEnvelopeAccordion(prefix) {
     }
   }
 
-  function toggleDeploySettingsAccordion() {
-    const body = document.getElementById('deploySettingsBody');
-    const arr = document.getElementById('deploySettingsArr');
-    if (!body) return;
-    const isHidden = (body.style.display === 'none');
-    body.style.display = isHidden ? 'flex' : 'none';
-    if (arr) arr.innerText = isHidden ? '▲' : '▼';
+  function openDeploySettingsModal() {
+    openModal('deploySettingsModal');
   }
 
   async function openDeployModal() {
@@ -13755,7 +13750,7 @@ function toggleEnvelopeAccordion(prefix) {
         { key: 'deploy_webhook_url', value: webhook }
       ]);
       alert("✅ Настройки репозитория и токена сохранены в Supabase!");
-      toggleDeploySettingsAccordion();
+      closeModal('deploySettingsModal');
     } catch (e) {
       alert("Ошибка сохранения в базу: " + e.message);
     }
@@ -14457,10 +14452,10 @@ function toggleEnvelopeAccordion(prefix) {
   </div>
 </div>
 
-<!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
+<!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
 <div id="deployModal" class="modal" style="z-index: 4010; display: none;">
-  <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
-    <div class="modal-header-sticky">
+  <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
+    <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
         <span style="font-size:18px;">🚀</span>
         <h3 style="margin:0; font-size:16px; font-weight:900; color:var(--text-main);">Публикация на сайт</h3>
@@ -14519,38 +14514,45 @@ function toggleEnvelopeAccordion(prefix) {
 
     <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
 
-    <!-- АККОРДЕОН НАСТРОЕК GITHUB ТОКЕНА И СЕРВЕРА -->
-    <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:4px;">
-      <div onclick="toggleDeploySettingsAccordion()" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none;">
-        <span style="font-size:11px; font-weight:bold; color:var(--text-mute);">⚙️ Настройки репозитория и токена</span>
-        <span id="deploySettingsArr" style="font-size:9px; color:var(--text-mute);">▼</span>
-      </div>
+    <!-- КНОПКА ОТКРЫТИЯ НАСТРОЕК В ОТДЕЛЬНОМ ОКНЕ -->
+    <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:2px;">
+      <button type="button" onclick="openDeploySettingsModal()" style="width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text-mute); font-size:11px; font-weight:bold; padding:9px 12px; border-radius:10px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:0.2s;">
+        <span>⚙️</span> Настройки репозитория и токена
+      </button>
+    </div>
+  </div>
+</div>
 
-      <div id="deploySettingsBody" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
-        <div>
-          <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Репозиторий (Owner/Repo):</label>
-          <input type="text" id="cfgGhRepo" class="input-ui" placeholder="например: ivan/bank-pro" style="margin:0; padding:6px 8px; font-size:11px;">
-        </div>
-        <div>
-          <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Ветка и путь к файлу:</label>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-            <input type="text" id="cfgGhBranch" class="input-ui" placeholder="main" value="main" style="margin:0; padding:6px 8px; font-size:11px;">
-            <input type="text" id="cfgGhPath" class="input-ui" placeholder="index.html" value="index.html" style="margin:0; padding:6px 8px; font-size:11px;">
-          </div>
-        </div>
-        <div>
-          <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">GitHub Personal Access Token (PAT):</label>
-          <input type="password" id="cfgGhToken" class="input-ui" placeholder="ghp_xxxxxxxxxxxx..." style="margin:0; padding:6px 8px; font-size:11px;">
-        </div>
-        <div>
-          <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">URL вебхука сервера РФ (для авто-обновления сайта):</label>
-          <input type="text" id="cfgDeployWebhook" class="input-ui" placeholder="https://ваш-сайт.рф/deploy-webhook.php?secret=..." style="margin:0; padding:6px 8px; font-size:11px;">
-        </div>
-        <button type="button" onclick="saveDeployConfig()" style="background:var(--border); color:var(--text-main); border:none; padding:8px; border-radius:8px; font-weight:bold; font-size:11px; cursor:pointer;">
-          💾 Сохранить настройки в базу
-        </button>
+<!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
+<div id="deploySettingsModal" class="modal" style="z-index: 4020; display: none;">
+  <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
+    <div class="modal-header-sticky">
+      <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
+      <button class="close-btn" type="button" onclick="closeModal('deploySettingsModal')">✕</button>
+    </div>
+
+    <div>
+      <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Репозиторий (Owner/Repo):</label>
+      <input type="text" id="cfgGhRepo" class="input-ui" placeholder="например: ivan/bank-pro" style="margin:0; padding:8px 10px; font-size:11.5px;">
+    </div>
+    <div>
+      <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">Ветка и путь к файлу:</label>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+        <input type="text" id="cfgGhBranch" class="input-ui" placeholder="main" value="main" style="margin:0; padding:8px 10px; font-size:11.5px;">
+        <input type="text" id="cfgGhPath" class="input-ui" placeholder="BankWeb.html" value="BankWeb.html" style="margin:0; padding:8px 10px; font-size:11.5px;">
       </div>
     </div>
+    <div>
+      <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">GitHub Personal Access Token (PAT):</label>
+      <input type="password" id="cfgGhToken" class="input-ui" placeholder="ghp_xxxxxxxxxxxx..." style="margin:0; padding:8px 10px; font-size:11.5px;">
+    </div>
+    <div>
+      <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">URL вебхука сервера РФ:</label>
+      <input type="text" id="cfgDeployWebhook" class="input-ui" placeholder="https://ваш-сайт.рф/api/deploy-webhook" style="margin:0; padding:8px 10px; font-size:11.5px;">
+    </div>
+    <button type="button" onclick="saveDeployConfig()" style="background:#10b981; color:white; border:none; padding:11px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer; margin-top:4px;">
+      💾 Сохранить настройки в базу
+    </button>
   </div>
 </div>
 
