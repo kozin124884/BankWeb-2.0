@@ -73,6 +73,13 @@
     }
     .input-ui:focus { border-color: #3b82f6; }
 
+    /* Предотвращение аппаратного зума страницы на iPhone при фокусе в поле ввода */
+    @media (max-width: 600px) {
+      .input-ui, select.input-ui, textarea.input-ui {
+        font-size: 16px !important;
+      }
+    }
+
     .input-date { position: relative; background-image: var(--cal-icon); background-repeat: no-repeat; background-position: right 12px center; background-size: 20px; cursor: pointer; color: var(--text-main); }
     .input-date::-webkit-calendar-picker-indicator { position: absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; opacity:0; cursor:pointer; }
 
@@ -294,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -345,9 +352,9 @@
                 <div style="font-size:14px; font-weight:900;">Яндекс</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Яндекс', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Яндекс', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Яндекс', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Яндекс', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Яндекс')">
               </div>
@@ -362,9 +369,9 @@
                 <div style="font-size:14px; font-weight:900;">ВТБ</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'ВТБ', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'ВТБ', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'ВТБ', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'ВТБ', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'ВТБ')">
               </div>
@@ -379,9 +386,9 @@
                 <div style="font-size:14px; font-weight:900;">Сбербанк</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Сбербанк', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Сбербанк', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Сбербанк', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Сбербанк', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Сбербанк')">
               </div>
@@ -396,9 +403,9 @@
                 <div style="font-size:14px; font-weight:900;">Тинькофф</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Тинькофф', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Тинькофф', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Тинькофф', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Тинькофф', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Тинькофф')">
               </div>
@@ -413,9 +420,9 @@
                 <div style="font-size:14px; font-weight:900;">Озон Банк</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Озон Банк', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Озон Банк', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Озон Банк', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Озон Банк', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Озон Банк')">
               </div>
@@ -430,9 +437,9 @@
                 <div style="font-size:14px; font-weight:900;">ВБ Банк</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'ВБ Банк', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'ВБ Банк', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'ВБ Банк', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'ВБ Банк', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'ВБ Банк')">
               </div>
@@ -447,9 +454,9 @@
                 <div style="font-size:14px; font-weight:900;">Наличные</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Наличные', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Наличные', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Наличные', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Наличные', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Наличные')">
               </div>
@@ -464,9 +471,9 @@
                 <div style="font-size:14px; font-weight:900;">Накопительный счет ручки на путешествия</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Накопительный счет ручки на путешествия', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Накопительный счет ручки на путешествия', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Накопительный счет ручки на путешествия', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Накопительный счет ручки на путешествия', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Накопительный счет ручки на путешествия')">
               </div>
@@ -481,9 +488,9 @@
                 <div style="font-size:14px; font-weight:900;">Накопительный счет копить</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Накопительный счет копить', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Накопительный счет копить', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Накопительный счет копить', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Накопительный счет копить', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Накопительный счет копить')">
               </div>
@@ -498,9 +505,9 @@
                 <div style="font-size:14px; font-weight:900;">Накопительный счет тратить</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Накопительный счет тратить', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Накопительный счет тратить', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Накопительный счет тратить', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Накопительный счет тратить', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Накопительный счет тратить')">
               </div>
@@ -515,9 +522,9 @@
                 <div style="font-size:14px; font-weight:900;">На кафешки</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'На кафешки', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'На кафешки', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'На кафешки', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'На кафешки', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'На кафешки')">
               </div>
@@ -532,9 +539,9 @@
                 <div style="font-size:14px; font-weight:900;">Обед на работе</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Обед на работе', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Обед на работе', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Обед на работе', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Обед на работе', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Обед на работе')">
               </div>
@@ -549,9 +556,9 @@
                 <div style="font-size:14px; font-weight:900;">Инвестиции</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Инвестиции', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Инвестиции', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Инвестиции', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Инвестиции', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Инвестиции')">
               </div>
@@ -566,9 +573,9 @@
                 <div style="font-size:14px; font-weight:900;">На развлечения</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'На развлечения', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'На развлечения', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'На развлечения', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'На развлечения', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'На развлечения')">
               </div>
@@ -583,9 +590,9 @@
                 <div style="font-size:14px; font-weight:900;">Баллы яндекс плюса</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Баллы яндекс плюса', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Баллы яндекс плюса', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Баллы яндекс плюса', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Баллы яндекс плюса', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" onclick="toggleAccountSelection(event, 'Баллы яндекс плюса')">
               </div>
@@ -600,9 +607,9 @@
                 <div style="font-size:14px; font-weight:900;">Другой кешбек</div>
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, 'Другой кешбек', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, 'Другой кешбек', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, 'Другой кешбек', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, 'Другой кешбек', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>
                 <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" checked="" onclick="toggleAccountSelection(event, 'Другой кешбек')">
               </div>
@@ -1545,7 +1552,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -7027,7 +7034,7 @@
   </div>
 
 <!-- ЭКРАН 5: БОЛЬШИЕ ТРАТЫ / ПРОЕКТЫ -->
-  <div id="viewTravels" class="app-view">
+  <div id="viewTravels" class="app-view active">
     <!-- Вкладки разделов -->
     <div style="display: flex; justify-content:space-between; align-items:center; margin-bottom: 12px; gap:8px;">
       <div style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; flex:1;" id="travelCustomTabsBar"><div id="btnTab_travel" class="btn-toggle active" onclick="setTravelTab('travel')" style="white-space:nowrap; padding:8px 14px;">✈️ Путешествия</div><div id="btnTab_dacha" class="btn-toggle " onclick="setTravelTab('dacha')" style="white-space:nowrap; padding:8px 14px;">🏡 Дача</div><button type="button" onclick="promptNewProjectType()" style="background:var(--border); color:var(--text-main); border:none; border-radius:10px; padding:6px 14px; font-weight:900; cursor:pointer;" title="Создать новый раздел">➕</button></div>
@@ -8447,10 +8454,10 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
-  <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
+  <div class="nav-item active" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
@@ -8511,6 +8518,11 @@
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.style.display = 'none';
+
+    // Сброс зависшей привязки сплита при закрытии окон
+    if (modalId === 'debtCenterModal' || modalId === 'editModal') {
+      window.originalTxRowIdToReplace = null;
+    }
 
     // Освобождение памяти Canvas при закрытии окна аналитики
     if (modalId === 'categoryDeepAnalyticsModal' && catDeepChartInstance) {
@@ -9843,9 +9855,9 @@
       let arrows = '';
       const safeAccName = escapeJsStr(b.name);
       if (!isAllAccts && sortVal === 'custom') {
-        arrows = `<div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moveAcc(event, '${safeAccName}', -1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▲</button>
-                    <button onclick="moveAcc(event, '${safeAccName}', 1)" style="font-size:10px; padding:2px; background:rgba(255,255,255,0.2); border:none; color:inherit; border-radius:4px; cursor:pointer;">▼</button>
+        arrows = `<div style="display:flex; gap:4px; align-items:center;">
+                    <button onclick="moveAcc(event, '${safeAccName}', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
+                    <button onclick="moveAcc(event, '${safeAccName}', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>`;
       }
 
@@ -10102,8 +10114,9 @@
     const pointsVal = isPointsChecked ? (parseFloat(document.getElementById('fPointsSum')?.value) || 0) : 0;
     const isNoBudget = document.getElementById('fNoBudget')?.checked || false;
 
+    const uniqueId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '_' + Math.random().toString(36).slice(2, 7));
     const tr = {
-      r: 'local_' + Date.now(), fd: d,
+      r: 'local_' + uniqueId, fd: d,
       d: d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0],
       type: currentFormType,
       points: currentFormType === 'Расход' ? pointsVal : 0,
@@ -12024,6 +12037,7 @@ function renderA() {
       no_budget: (tx.no_budget === true || tx.no_budget === 'true')
     };
     document.getElementById('editRow').value = tx.r;
+    document.getElementById('editType').value = tx.type; // Фиксируем тип: Расход / Доход / Перевод
 
     let dateVal = tx.fd;
     if(!dateVal) dateVal = toISOLocal(new Date());
@@ -12404,8 +12418,8 @@ function renderA() {
           </div>
           <div class="toggle-content" style="display:none; margin-top:4px; background:var(--bg-card); border-radius:14px; padding:12px; border:1px solid var(--border);">
             <div style="display:flex; gap:6px; margin-bottom:8px;">
-              <button onclick="renameP(event,'${n}')" style="flex:1; padding:7px; background:var(--input-bg); color:var(--text-main); border:1px solid var(--border); border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">✏️ Переименовать</button>
-              <button onclick="toggleHideDebtor('${n}'); event.stopPropagation();" style="padding:7px 10px; background:var(--input-bg); color:var(--text-main); border:1px solid var(--border); border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">👁️ Скрыть</button>
+              <button onclick="renameP(event,'${escapeJsStr(n)}')" style="flex:1; padding:7px; background:var(--input-bg); color:var(--text-main); border:1px solid var(--border); border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">✏️ Переименовать</button>
+              <button onclick="toggleHideDebtor('${escapeJsStr(n)}'); event.stopPropagation();" style="padding:7px 10px; background:var(--input-bg); color:var(--text-main); border:1px solid var(--border); border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">👁️ Скрыть</button>
             </div>
             ${forgiveBtn}
             ${itH}
@@ -12520,6 +12534,13 @@ function renderA() {
     document.getElementById('contentOld').style.display = t === 'old' ? 'block' : 'none';
     document.getElementById('contentSplit').style.display = t === 'split' ? 'block' : 'none';
     document.getElementById('contentTransfer').style.display = t === 'transfer' ? 'flex' : 'none';
+
+    // Если ушли из сплита в другую вкладку — сбрасываем привязку к старому чеку
+    if (t !== 'split') {
+      window.originalTxRowIdToReplace = null;
+      const warningDiv = document.getElementById('splitOriginWarning');
+      if (warningDiv) warningDiv.style.display = 'none';
+    }
 
     if (t === 'new') populateDebtManagerDebtors();
     if (t === 'search') executeDebtSearch();
@@ -13505,7 +13526,7 @@ function renderA() {
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
             <div style="min-width: 0; flex: 1;">
               <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
-                <span style="font-size: 15px; font-weight: 900; color: #ffffff; word-break: break-word;">${icon} ${trip.city}</span>
+                <span style="font-size: 15px; font-weight: 900; color: #ffffff; word-break: break-word;">${icon} ${escapeHtml(trip.city)}</span>
                 ${excludeBadge}
               </div>
               <div style="font-size: 11.5px; color: #cbd5e1; font-weight: bold;">📅 ${dateText}</div>
