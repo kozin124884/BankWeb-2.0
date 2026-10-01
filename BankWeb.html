@@ -13629,6 +13629,11 @@ function toggleEnvelopeAccordion(prefix) {
 
   let selectedIndexHtmlContent = null;
 
+  function toggleDeployIndexFileInput(isChecked) {
+    const wrap = document.getElementById('deployIndexFileWrap');
+    if (wrap) wrap.style.display = isChecked ? 'flex' : 'none';
+  }
+
   function onDeployIndexFileSelected(input) {
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -13636,8 +13641,11 @@ function toggleEnvelopeAccordion(prefix) {
       reader.onload = function(e) {
         selectedIndexHtmlContent = e.target.result;
         const badge = document.getElementById('deployIndexStatusBadge');
+        const chk = document.getElementById('chkDeployIndex');
+        if (chk) chk.checked = true;
+        toggleDeployIndexFileInput(true);
         if (badge) {
-          badge.innerText = `✓ Выбран (${(file.size / 1024).toFixed(1)} КБ)`;
+          badge.innerText = `✓ Готов (${(file.size / 1024).toFixed(1)} КБ)`;
           badge.style.color = '#10b981';
         }
       };
@@ -13675,8 +13683,14 @@ function toggleEnvelopeAccordion(prefix) {
     const logBox = document.getElementById('deployStatusLog');
     if (logBox) { logBox.style.display = 'none'; logBox.innerHTML = ''; }
 
-    // Сброс выбора файла фасада
+    // Сброс выбора файлов и галочек
     selectedIndexHtmlContent = null;
+    const chkBank = document.getElementById('chkDeployBank');
+    const chkIndex = document.getElementById('chkDeployIndex');
+    if (chkBank) chkBank.checked = true;
+    if (chkIndex) chkIndex.checked = false;
+    toggleDeployIndexFileInput(false);
+
     const idxInput = document.getElementById('deployIndexFileInput');
     if (idxInput) idxInput.value = '';
     const idxBadge = document.getElementById('deployIndexStatusBadge');
@@ -13773,9 +13787,22 @@ function toggleEnvelopeAccordion(prefix) {
       return;
     }
 
+    const shouldDeployBank = document.getElementById('chkDeployBank')?.checked ?? true;
+    const shouldDeployIndex = document.getElementById('chkDeployIndex')?.checked ?? false;
+
+    if (!shouldDeployBank && !shouldDeployIndex) {
+      return alert("⚠️ Выберите хотя бы один файл для публикации (Банк или Калькулятор)!");
+    }
+
+    if (shouldDeployIndex && !selectedIndexHtmlContent) {
+      return alert("⚠️ Вы отметили обновление Калькулятора, но не выбрали файл index.html!");
+    }
+
     const titleInput = document.getElementById('deployCommitTitle')?.value.trim();
     const descInput = document.getElementById('deployCommitDesc')?.value.trim();
-    const defaultTitle = `Обновление Банк PRO (${new Date().toLocaleString('ru-RU')})`;
+    const defaultTitle = shouldDeployBank
+      ? `Обновление Банк PRO (${new Date().toLocaleString('ru-RU')})`
+      : `Обновление фасада Калькулятора (${new Date().toLocaleString('ru-RU')})`;
 
     let commitMsg = titleInput || defaultTitle;
     if (descInput) {
@@ -13800,8 +13827,8 @@ function toggleEnvelopeAccordion(prefix) {
     };
 
     try {
-      // 0. Если прикреплён обновлённый фасад index.html — коммитим его первым
-      if (selectedIndexHtmlContent) {
+      // 1. ПУБЛИКАЦИЯ ТОЛЬКО КАЛЬКУЛЯТОРА (INDEX.HTML) ЕСЛИ ВЫБРАН
+      if (shouldDeployIndex && selectedIndexHtmlContent) {
         log(`📡 Проверка и обновление фасада index.html в GitHub...`);
         let indexSha = null;
         try {
@@ -13818,7 +13845,7 @@ function toggleEnvelopeAccordion(prefix) {
         } catch (e) {}
 
         const idxPayload = {
-          message: `${commitMsg} [update index.html]`,
+          message: `${commitMsg} [index.html]`,
           content: utf8ToBase64(selectedIndexHtmlContent),
           branch: branch
         };
@@ -13835,121 +13862,100 @@ function toggleEnvelopeAccordion(prefix) {
         });
 
         if (!putIdxRes.ok) {
-          log(`⚠️ Ошибка загрузки index.html в GitHub (${putIdxRes.status})`, '#ef4444');
+          throw new Error(`Ошибка загрузки index.html в GitHub: ${putIdxRes.status}`);
+        }
+        log(`✅ Фасад index.html успешно обновлён в GitHub!`, '#10b981');
+      }
+
+      // 2. ПУБЛИКАЦИЯ БАНКА (BANKWEB.HTML) ЕСЛИ ВКЛЮЧЁН ЧЕКБОКС
+      if (shouldDeployBank) {
+        log(`📡 Проверка файла ${filePath} в ${repo}...`);
+
+        let fileSha = null;
+        const getFileRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (getFileRes.ok) {
+          const fileData = await getFileRes.json();
+          fileSha = fileData.sha;
+          log(`✓ Файл ${filePath} найден.`);
+        } else if (getFileRes.status === 404) {
+          log(`ℹ️ Файл ${filePath} ещё не существует, будет создан.`);
         } else {
-          log(`✅ Фасад index.html успешно закоммичен в GitHub!`, '#10b981');
+          const errJson = await getFileRes.json();
+          throw new Error(errJson.message || `Ошибка доступа: ${getFileRes.status}`);
         }
-      }
 
-      log(`📡 Проверка файла ${filePath} в ${repo}...`);
+        log(`📦 Подготовка актуального кода страницы...`);
 
-      // 1. Получаем SHA текущего файла из GitHub (нужен для перезаписи)
-      let fileSha = null;
-      const getFileRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
+        if (filePath === 'index.html') {
+          throw new Error("Запрещено публиковать BankWeb.html в index.html! Укажите целевой путь: BankWeb.html");
         }
-      });
 
-      if (getFileRes.ok) {
-        const fileData = await getFileRes.json();
-        fileSha = fileData.sha;
-        log(`✓ Файл найден, sha: ${fileSha.slice(0, 7)}`);
-      } else if (getFileRes.status === 404) {
-        log(`ℹ️ Файл ещё не существует в репозитории, будет создан новый.`);
-      } else {
-        const errJson = await getFileRes.json();
-        throw new Error(errJson.message || `Ошибка доступа к GitHub: ${getFileRes.status}`);
-      }
+        // Создаём виртуальный клон DOM для очистки перед публикацией
+        const docClone = document.documentElement.cloneNode(true);
 
-      // 2. Подготовка чистого HTML-кода без открытых модалок и логов
-      log(`📦 Подготовка актуального кода страницы...`);
+        docClone.querySelectorAll('.modal').forEach(m => {
+          if (m.id !== 'pinOverlay') m.style.display = 'none';
+        });
 
-      // Клонируем документ в виртуальный DOM, чтобы очистить временные состояния
-      const docClone = document.documentElement.cloneNode(true);
+        const containersToPurge = [
+          '#bankCardsList', '#categoriesList', '#debtsByName',
+          '#travelsList', '#histList', '#tableRowsList', '#queueListRender'
+        ];
+        containersToPurge.forEach(sel => {
+          const box = docClone.querySelector(sel);
+          if (box) box.innerHTML = '';
+        });
 
-      // Принудительно закрываем модалку деплоя и сбрасываем логи в клоне
-      const cloneDeployModal = docClone.querySelector('#deployModal');
-      if (cloneDeployModal) {
-        cloneDeployModal.style.display = 'none';
-      }
-      const cloneLog = docClone.querySelector('#deployStatusLog');
-      if (cloneLog) {
-        cloneLog.style.display = 'none';
-        cloneLog.innerHTML = '';
-      }
-      const cloneDeployBtn = docClone.querySelector('#btnRunDeploy');
-      if (cloneDeployBtn) {
-        cloneDeployBtn.disabled = false;
-        cloneDeployBtn.innerText = '🚀 Закоммитить и выложить на сайт';
-      }
-      // Защита от случайной перезаписи калькулятора-фасада
-      if (filePath === 'index.html') {
-        throw new Error("Запрещено публиковать BankWeb.html в index.html! Укажите целевой путь: BankWeb.html");
-      }
+        const sensitiveInputIds = [
+          'cfgGhToken', 'cfgDeployWebhook', 'pinInput', 'curMasterPin',
+          'newMasterPin', 'newGuestPin', 'newBankResetWord', 'newGatewayId',
+          'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
+        ];
+        sensitiveInputIds.forEach(id => {
+          const el = docClone.querySelector('#' + id);
+          if (el) {
+            el.value = '';
+            el.removeAttribute('value');
+            el.textContent = '';
+          }
+        });
 
-      // Закрываем любые другие открытые модалки в сохраняемом файле
-      docClone.querySelectorAll('.modal').forEach(m => {
-        if (m.id !== 'pinOverlay') m.style.display = 'none';
-      });
+        const fullHtml = '<!DOCTYPE html>\n' + docClone.outerHTML;
+        const contentBase64 = utf8ToBase64(fullHtml);
 
-      // Защита персональных данных: вычищаем живые балансы, списки чеков и должников из Git
-      const containersToPurge = [
-        '#bankCardsList', '#categoriesList', '#debtsByName',
-        '#travelsList', '#histList', '#tableRowsList', '#queueListRender'
-      ];
-      containersToPurge.forEach(sel => {
-        const box = docClone.querySelector(sel);
-        if (box) box.innerHTML = '';
-      });
+        log(`💾 Отправка коммита ${filePath} в ветку ${branch}...`);
+        const commitPayload = {
+          message: commitMsg,
+          content: contentBase64,
+          branch: branch
+        };
+        if (fileSha) commitPayload.sha = fileSha;
 
-      // Безопасность: гарантированно вычищаем токены, пароли и секреты перед отправкой в репозиторий
-      const sensitiveInputIds = [
-        'cfgGhToken', 'cfgDeployWebhook', 'pinInput', 'curMasterPin',
-        'newMasterPin', 'newGuestPin', 'newBankResetWord', 'newGatewayId',
-        'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
-      ];
-      sensitiveInputIds.forEach(id => {
-        const el = docClone.querySelector('#' + id);
-        if (el) {
-          el.value = '';
-          el.removeAttribute('value');
-          el.textContent = '';
+        const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify(commitPayload)
+        });
+
+        if (!putRes.ok) {
+          const errJson = await putRes.json();
+          throw new Error(errJson.message || `Ошибка коммита: ${putRes.status}`);
         }
-      });
 
-      const fullHtml = '<!DOCTYPE html>\n' + docClone.outerHTML;
-      const contentBase64 = utf8ToBase64(fullHtml);
-
-      // 3. Отправляем коммит через GitHub API
-      log(`💾 Отправка коммита в ветку ${branch}...`);
-      const commitPayload = {
-        message: commitMsg,
-        content: contentBase64,
-        branch: branch
-      };
-      if (fileSha) commitPayload.sha = fileSha;
-
-      const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json'
-        },
-        body: JSON.stringify(commitPayload)
-      });
-
-      if (!putRes.ok) {
-        const errJson = await putRes.json();
-        throw new Error(errJson.message || `Ошибка коммита: ${putRes.status}`);
+        log(`✅ Банк PRO (${filePath}) успешно обновлён в GitHub!`, '#10b981');
       }
 
-      const putData = await putRes.json();
-      log(`✅ Коммит успешно создан в GitHub (${putData.commit?.sha?.slice(0, 7) || 'OK'})!`, '#10b981');
-
-      // 4. Если задан вебхук вашего РФ сервера — дёргаем его для мгновенного git pull
+      // 3. Вызов вебхука сервера для моментального применения на сайте
       if (webhookUrl) {
         log(`🌐 Вызов вебхука обновления сайта на РФ-сервере...`);
         try {
@@ -14452,7 +14458,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB И ОБНОВЛЕНИЕ САЙТА В 1 КЛИК -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
     <div class="modal-header-sticky">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14478,26 +14484,40 @@ function toggleEnvelopeAccordion(prefix) {
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin:0; padding:8px 10px; font-size:12px; font-family:inherit; resize:none; line-height:1.4;"></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 70px;"></textarea>
       </div>
     </div>
 
-    <!-- ОПЦИОНАЛЬНОЕ ОБНОВЛЕНИЕ ФАСАДА (INDEX.HTML) БЕЗ SSH И SCP -->
-    <div style="background:var(--input-bg); border:1px dashed var(--border); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:6px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Фасад калькулятора (index.html):</label>
-        <span id="deployIndexStatusBadge" style="font-size: 9.5px; font-weight: bold; color: rgb(16, 185, 129);">✓ Выбран (21.9 КБ)</span>
-      </div>
-      <input type="file" id="deployIndexFileInput" accept=".html" style="font-size:11px;" onchange="onDeployIndexFileSelected(this)">
-      <div style="font-size:9.5px; color:var(--text-mute); line-height:1.3;">
-        💡 Если вы правили калькулятор на компьютере, выберите его здесь — он улетит в GitHub и обновится на сервере вместе с банком.
+    <!-- ВЫБОР ФАЙЛОВ ДЛЯ ПУБЛИКАЦИИ (РАЗДЕЛЬНЫЙ ДЕПЛОЙ) -->
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px;">
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Что обновить на сайте:</label>
+
+      <!-- Чекбокс Банка -->
+      <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:var(--text-main); cursor:pointer;">
+        <input type="checkbox" id="chkDeployBank" checked="" style="width:16px; height:16px; cursor:pointer;">
+        💳 Приложение Банк PRO (BankWeb.html)
+      </label>
+
+      <!-- Чекбокс Калькулятора -->
+      <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:var(--text-main); cursor:pointer;">
+        <input type="checkbox" id="chkDeployIndex" style="width:16px; height:16px; cursor:pointer;" onchange="toggleDeployIndexFileInput(this.checked)">
+        📊 Фасад Калькулятор (index.html)
+      </label>
+
+      <!-- Выбор файла калькулятора (появляется при выборе) -->
+      <div id="deployIndexFileWrap" style="display:none; padding-left:24px; flex-direction:column; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10.5px; color:var(--text-mute);">Файл index.html с компьютера:</span>
+          <span id="deployIndexStatusBadge" style="font-size:9.5px; font-weight:bold; color:var(--text-mute);">Не выбран</span>
+        </div>
+        <input type="file" id="deployIndexFileInput" accept=".html" style="font-size:11px;" onchange="onDeployIndexFileSelected(this)">
       </div>
     </div>
 
     <!-- КНОПКА ЗАПУСКА -->
-    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;">🚀 Закоммитить и выложить на сайт</button>
+    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;" disabled="">⏳ Публикация в GitHub...</button>
 
-    <div id="deployStatusLog" style="display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"></div>
+    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
 
     <!-- АККОРДЕОН НАСТРОЕК GITHUB ТОКЕНА И СЕРВЕРА -->
     <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:4px;">
