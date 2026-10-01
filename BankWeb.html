@@ -270,7 +270,7 @@
   <h2 id="pinTitle" style="margin:0 0 6px 0; font-weight:900; font-size:20px;">Вход в Банк PRO</h2>
   <div id="pinSubtitle" style="font-size:12px; color:var(--text-mute); margin-bottom:20px;">Введите 4-значный PIN</div>
 
-  <input type="password" id="pinInput" maxlength="8" inputmode="numeric" class="input-ui" style="max-width:220px; text-align:center; font-size:26px; letter-spacing:8px; padding:12px; margin-bottom:12px;" autofocus="" onkeyup="if(event.key==='Enter') verifyPinAuth()">
+  <input type="password" id="pinInput" maxlength="8" inputmode="numeric" class="input-ui" style="max-width:220px; text-align:center; font-size:26px; letter-spacing:8px; padding:12px; margin-bottom:12px;" autofocus="" onkeyup="if(event.key==='Enter') verifyPinAuth()" value="">
 
   <button onclick="verifyPinAuth()" style="max-width:220px; width:100%; background:#3b82f6; color:white; padding:14px; border-radius:12px; font-weight:900; border:none; cursor:pointer; font-size:14px; margin-bottom:10px;">Войти ➔</button>
   <button onclick="enterAsGuest()" style="max-width:220px; width:100%; background:var(--border); color:var(--text-main); padding:10px; border-radius:12px; font-weight:bold; border:none; cursor:pointer; font-size:12px;">👀 Войти как гость</button>
@@ -301,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -353,7 +353,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view">
+  <div id="viewAnalytics" class="app-view active">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -482,567 +482,13 @@
             <span style="font-size:11px; color:#38bdf8; font-weight:bold;">Настроить счета ⚙️</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:4px;">
-            <div id="autopilotFreePool" class="sensitive-money" style="font-size:20px; font-weight:900; color:#38bdf8;">18&nbsp;379 ₽</div>
+            <div id="autopilotFreePool" class="sensitive-money" style="font-size:20px; font-weight:900; color:#38bdf8;"></div>
             <div id="autopilotPoolAccountsList" style="font-size:10px; color:var(--text-mute); max-width:55%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:right;">В пуле: Яндекс, ВТБ, Сбербанк, Тинькофф, Озон Банк, ВБ Банк, Накопительный счет тратить</div>
           </div>
         </div>
 
         <!-- ЦЕЛЕВЫЕ КОНВЕРТЫ И ПРОГНОЗЫ (ОБЕД, КАФЕ С РУЧКОЙ, ЕДА ДОМА) -->
-        <div id="autopilotEnvelopesWrap" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
-        <!-- 1. ОБЕД НА РАБОТЕ -->
-        <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <div style="font-size:11.5px; color:var(--text-main);">
-                <b>🍱 Обед на&nbsp;работе:</b> <span style="color:#38bdf8; font-weight:800;">8&nbsp;243&nbsp;₽</span>
-              </div>
-              <div style="color:var(--text-mute); font-size:9.5px; margin-top:2px;">(ср.&nbsp;чек:&nbsp;~455&nbsp;₽)</div>
-            </div>
-            <div style="text-align:right; display:flex; align-items:center; gap:6px; flex-shrink:0;">
-              <div>
-                <b style="color:#10b981; font-size:11.5px;">~18.1&nbsp;обед.</b>
-                <div style="color:var(--text-mute); font-size:9.5px;">на&nbsp;15&nbsp;дн.&nbsp;до&nbsp;ЗП</div>
-              </div>
-              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
-            </div>
-          </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с 08-16 (29&nbsp;чек.):</div>
-            
-          <div class="tx-row" onclick="clI(event, '2649')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>30.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Котлета, фаршированный перец, хлеб, круассан по скидке, 2 питья впрок, 2 сладкого впрок</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">695&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2638')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Котлета, пюрешка, салат, попить в прок, багет, круассан</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">556&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2626')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>28.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль, салат, багет</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">330&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2536')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>24.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль, салат, попить впрок, сладкое впрок, багет</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">514&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2522')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>23.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">пятерочка - бризоль, салат, хлэб</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">296&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2516')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>22.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">пятерочка боксмастер и еще чтото</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">492&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2459')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>17.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль и десерт Сникерс по скидке без салата и круассан</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">298&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2440')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>16.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятерочка бризоль салат попить сладкое </div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">554&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2409')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>15.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль, салат, шоколад, попить</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">565&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2390')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>14.09.2026</b> — <span>Обед/столовая на работе</span>
-              
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">425&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2350')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>11.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка на сутки еда в курчатник  за баллы</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">2&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2343')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>10.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка бризоль, рулетики ветчина сыр и ТД </div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">632&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2328')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>09.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль куриная, салат, хлебушек </div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">320&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2308')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>08.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Плов, селёдка под шубой, попить</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">557&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2292')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>07.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль куриная, салат, Сникерс, ролл сэндвич</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">517&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2258')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>04.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка бризоль куриная, селёдка под шубой</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">519&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2248')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>03.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Бризоль куриная, салат, шаурма</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">470&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2239')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>02.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка индейка по скидке и салат</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">556&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '8')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>01.09.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка - шашлык, салатик, сладость, хлеб</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">366&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '67')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>28.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка шашлык, салатик, 2 газировки, 2 шоколадки</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">567&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '80')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>27.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка - плов и салат</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">330&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '82')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>27.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Ментос в пятёрочке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">2&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '86')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>26.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Ошибка</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '92')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>26.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка - курочка, картошка, салатик, попить</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">526&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '112')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>25.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятерочка шницель, салат, рис</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">342&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '132')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>24.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка макарошки с котлетой, салатик, попить, сладкое, багет чесночный</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">620&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '184')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>20.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка - котлета с пюрешкой и селёдка под шубой.ю и тд</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">417&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '200')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>19.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка котлета по киевски и тд</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">606&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '254')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>17.08.2026</b> — <span>Обед/столовая на работе</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Еда на дежурство в курче</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;115&nbsp;₽</b>
-          </div>
-          </div>
-        </div>
-
-        <!-- 2. ЕДА ВНЕ ДОМА С РУЧКОЙ -->
-        <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <div style="font-size:11.5px; color:var(--text-main);">
-                <b>☕ Еда вне дома с&nbsp;ручкой:</b> <span style="color:#f59e0b; font-weight:800;">6&nbsp;605&nbsp;₽</span>
-              </div>
-              <div style="color:var(--text-mute); font-size:9.5px; margin-top:2px;">(ср.&nbsp;чек:&nbsp;~894&nbsp;₽)</div>
-            </div>
-            <div style="text-align:right; display:flex; align-items:center; gap:6px; flex-shrink:0;">
-              <div>
-                <b style="color:#10b981; font-size:11.5px;">~7.4&nbsp;поход.</b>
-                <div style="color:var(--text-mute); font-size:9.5px;">~3.5&nbsp;раз/нед.&nbsp;до&nbsp;ЗП</div>
-              </div>
-              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
-            </div>
-          </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с 08-16 (26&nbsp;чек.):</div>
-            
-          <div class="tx-row" onclick="clI(event, '2580')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>26.09.2026</b> — <span>Кафе в честь чего-то</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">кофейня метеорит, шарики из матчи и сливочная уха</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">4&nbsp;420&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2589')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>26.09.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Матча и вода в дринките на таганке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">297&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2590')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>26.09.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Медовик в дринките на пролетарке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">275&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2479')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>18.09.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">мороженое дикси</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">60&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2481')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>18.09.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">с алиной в магните на домодедовской - пара булочек</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">35&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2501')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>18.09.2026</b> — <span>Фастфуд</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">мак на тимирязевской</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">567&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2439')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>16.09.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Дринкит на хлебзаводе </div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">630&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2399')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>14.09.2026</b> — <span>Фастфуд</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Мак ручке и мне</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">665&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2332')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>09.09.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">ручке по воде в фасоли на кг</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">64&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2297')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>07.09.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Дна на волочаевской вкусная выпечка, не довели, взяли с собой домой</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">2&nbsp;970&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2301')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>07.09.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Водичка около серпа и молота</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">60&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2243')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>02.09.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Круассан ручке из серф кофе на хлебзаводе</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">260&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2244')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>02.09.2026</b> — <span>Фастфуд</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Мак домой</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">941&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '45')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.08.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Вода в пятёрочке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">37&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '46')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.08.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Вода в кб</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">20&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '49')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.08.2026</b> — <span>Кафе в честь чего-то</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Кофейня aark Чаплыгина - 2 кофе 2 сладости</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;910&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '50')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.08.2026</b> — <span>Кафе в честь чего-то</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Кафе sliders на Сухаревской, много бургеров</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">2&nbsp;166&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '64')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>29.08.2026</b> — <span>Фастфуд</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Утром после Некрасовки мак в 6 утра на Яблочкова - макзавтрак</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;027&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '52')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>28.08.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Многа кафе на Бауманской - 2 булочки мне и ручке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">500&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '54')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>28.08.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Человек и пароход в пространстве суперметалл - кофе, матча, 2 булочки</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;050&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '85')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>27.08.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Дринкит на щукинской - 2 кофе (случайно), матча, 2 сэндвича и 2 сладкого</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">2&nbsp;005&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '171')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>21.08.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Вода в КБ на Электрозаводе</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">40&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '178')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>21.08.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Дринкит - матча, кофэ и вкусняшка</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">855&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '179')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>21.08.2026</b> — <span>Фастфуд</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Шаурма в новостройках почтовой улицы и картошка</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;067&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '213')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>18.08.2026</b> — <span>Кофейни</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Дом winners. Лате, матча, булка с маком и с корицей</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">1&nbsp;078&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '265')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>16.08.2026</b> — <span>Перекус/джанкфуд продукты вне дома</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">3 бургера в "налёту" на стаханке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">252&nbsp;₽</b>
-          </div>
-          </div>
-        </div>
-
-        <!-- 3. ЕДА ДОМА С РУЧКОЙ (СИММЕТРИЧНАЯ ДВУХКОЛОНОЧНАЯ СЕТКА) -->
-        <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; padding:8px 10px; background:var(--input-bg);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="min-width:0; flex:1; padding-right:8px;">
-                <div style="font-size:11.5px; color:var(--text-main);">
-                  <b>🛒 Еда дома с&nbsp;ручкой:</b> <span style="color:#10b981; font-weight:800;">~870&nbsp;₽</span>
-                </div>
-                <div style="color:var(--text-mute); font-size:9.5px; margin-top:2px;">
-                  Ср.&nbsp;чек:&nbsp;<b>~211&nbsp;₽</b> • ~1.9&nbsp;раз/нед.
-                </div>
-              </div>
-              <div style="text-align:right; display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                <div>
-                  <b style="color:#10b981; font-size:11.5px;">~58&nbsp;₽/день</b>
-                  <div style="color:var(--text-mute); font-size:9.5px;">на&nbsp;15&nbsp;дн. (~4&nbsp;заказ.)</div>
-                </div>
-                <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
-              </div>
-            </div>
-
-            <div style="margin-top:5px; padding-top:5px; border-top:1px dashed var(--border); font-size:10px; color:var(--text-mute); display:flex; justify-content:space-between; align-items:center;">
-              <span>💡 До&nbsp;ЗП хватит на <b>~4&nbsp;заказов</b> по&nbsp;~211&nbsp;₽</span>
-              <span style="color:#10b981; font-weight:bold;">Пул покрывает</span>
-            </div>
-          </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с 08-16 (13&nbsp;чек.):</div>
-            
-          <div class="tx-row" onclick="clI(event, '2655')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>30.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Чипсы ручке из ленты</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">130&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2611')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>27.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Чипсы, шоколадки и ТД и тп дикси</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">562&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2528')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>23.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Морская капуста из ещё </div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">30&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2531')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>23.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Причуда из чижика</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">79&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2477')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>18.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">пятерочка - лимонный чай сладкий по скидке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">56&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2427')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>15.09.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Милкивэй ручке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">80&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '2291')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>07.09.2026</b> — <span>Доставка еды</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Яндекс лавка - доставка заодно с простыней - круассан и печенье</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">388&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '31')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>31.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Вкусвил - булочка с корицей и круассан ручке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">353&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '32')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>31.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Пятёрочка - сладости ручке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">144&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '99')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>25.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Кб шоколадка ручке</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">45&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '125')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>24.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Фанта китайская в еще</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">65&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '193')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>19.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Чипсы ручке в доставке пятерочки</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">120&nbsp;₽</b>
-          </div>
-          <div class="tx-row" onclick="clI(event, '196')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>19.08.2026</b> — <span>Домой перекус/готовая еда/джанкфуд из магазина</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">Кб - 10 мороженого Простоквашино и ещё 2 рожка</div>
-            </div>
-            <b style="color:#ef4444; flex-shrink:0;">690&nbsp;₽</b>
-          </div>
-          </div>
-        </div>
-      </div>
+        <div id="autopilotEnvelopesWrap" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
 
         <!-- ВСТРОЕННЫЕ ФИНАНСОВЫЕ ИНСАЙТЫ -->
         <div style="border: 1.5px solid rgba(99,102,241,0.25); border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(59,130,246,0.05));">
@@ -1075,69 +521,7 @@
                 <option value="all_time">За всё время</option>
               </select>
             </div>
-            <div id="analyticsSmartInsightsContent" style="display:flex; flex-direction:column; gap:6px;">
-      
-        <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border); line-height:1.45; font-size:11px;">
-          <div>• <b>Сравнение темпа (к 16-му дню ЗП):</b></div>
-          <div style="padding-left:8px; margin-top:2px;">
-            — К прошлому месяцу: <b style="color:#10b981;">на 54% экономнее (-27&nbsp;089 ₽)</b> (было 50&nbsp;345 ₽)<br>
-            — К норме 3 мес.: <b style="color:#10b981;">на 64% экономнее</b> (норма: 64&nbsp;461 ₽)
-          </div>
-        </div>
-      
-
-      <div style="margin-top:4px;">• <b>Личный темп:</b> <span style="color:#3b82f6; font-weight:bold;">775 ₽/день</span> (за 30 дн. без аренды/поездок/обедов)</div>
-      <div>• <b>Главная статья:</b> «Подарки» — <b>5&nbsp;898 ₽</b> (25.4%)</div>
-      <div>• <b>Выходные (сб/вс):</b> <b>27%</b> бюджета (6&nbsp;378 ₽)</div>
-
-      <!-- БЛОК КАЛИБРА С ПЕРЕКЛЮЧЕНИЕМ РЕЖИМОВ -->
-      <div style="margin-top:6px; padding:10px; background:var(--input-bg); border-radius:10px; border:1px solid var(--border);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <b style="font-size:11px; text-transform:uppercase; color:var(--text-mute);">🔍 Калибр чеков:</b>
-          <div style="display:flex; gap:4px; align-items:center;">
-            <div style="display:flex; background:var(--border); padding:2px; border-radius:6px; font-size:10px; font-weight:bold;">
-              <span onclick="toggleCaliberMode('manual')" style="padding:2px 8px; border-radius:4px; cursor:pointer; background:var(--bg-card); color:var(--text-main);">Ручной</span>
-              <span onclick="toggleCaliberMode('auto')" style="padding:2px 8px; border-radius:4px; cursor:pointer; background:transparent; color:var(--text-mute);">Авто-умный</span>
-            </div>
-            <button onclick="openCaliberModal(event)" style="background:none; border:none; color:#3b82f6; font-size:11px; font-weight:bold; cursor:pointer; padding:0 2px;">⚙️</button>
-          </div>
-        </div>
-
-        
-          <div style="display:flex; flex-direction:column; gap:5px; font-size:11px;">
-            <div onclick="showCaliberChecks('dust')" style="cursor:pointer; display:flex; justify-content:space-between; padding:4px 8px; border-radius:6px; background:var(--bg-card); border:1px solid var(--border);">
-              <span>💨 <b>«Пыль» (до 500 ₽):</b></span>
-              <span style="color:#3b82f6; font-weight:900;">5&nbsp;937 ₽ (40 шт, 26%) </span>
-            </div>
-            <div onclick="showCaliberChecks('mid')" style="cursor:pointer; display:flex; justify-content:space-between; padding:4px 8px; border-radius:6px; background:var(--bg-card); border:1px solid var(--border);">
-              <span>🛒 <b>Средние (500–2000 ₽):</b></span>
-              <span style="font-weight:900;">15&nbsp;146 ₽ (16 шт, 65%)</span>
-            </div>
-            <div onclick="showCaliberChecks('large')" style="cursor:pointer; display:flex; justify-content:space-between; padding:4px 8px; border-radius:6px; background:var(--bg-card); border:1px solid var(--border);">
-              <span>📦 <b>Крупные (от 2000 ₽):</b></span>
-              <span style="font-weight:900;">2&nbsp;173 ₽ (1 шт, 9%)</span>
-            </div>
-          </div>
-          <div style="height:6px; width:100%; border-radius:3px; background:var(--border); overflow:hidden; display:flex; margin-top:8px;">
-            <div style="width:26%; background:#3b82f6;" title="Пыль: 26%"></div>
-            <div style="width:65%; background:#f59e0b;" title="Средние: 65%"></div>
-            <div style="width:9%; background:#10b981;" title="Крупные: 9%"></div>
-          </div>
-        
-
-        <!-- ДИАГНОЗ МЕСЯЦА -->
-        <div style="margin-top:8px; padding-top:6px; border-top:1px dashed var(--border); font-size:10.5px; color:var(--text-mute); line-height:1.4;">
-          🛒 <b>Диагноз:</b> Здоровый бытовой режим. Деньги тратятся понятными средними корзинами.
-        </div>
-      </div>
-
-      <div style="margin-top:6px; padding-top:4px; border-top:1px dashed var(--border); line-height:1.4;">
-        <b>🏆 Крупнейшие личные чеки:</b><br>• «Подарки» — <b>2&nbsp;173 ₽</b> <span style="color:var(--text-mute); font-size:10px;">(16.09.2026, Игорю на ДР:
-1074 - ваттметр в розетку
-181 - джибитсы как приручить дракона 
-918 - 3 вида наклеек как приручить дракона )</span><br>• «Курение» — <b>1&nbsp;856 ₽</b> <span style="color:var(--text-mute); font-size:10px;">(16.09.2026, 4 жижи в мостабаке Дмитровская )</span><br>• «Самокаты» — <b>1&nbsp;529 ₽</b> <span style="color:var(--text-mute); font-size:10px;">(16.09.2026, Вуш 250 минут на 3 месяца)</span>
-      </div>
-    </div>
+            <div id="analyticsSmartInsightsContent" style="display:flex; flex-direction:column; gap:6px;"></div>
           </div>
         </div>
 
@@ -1248,13 +632,13 @@
           <span>📊</span><span>Анализ</span>
         </button>
       </div>
-      <div id="totalSum" class="sensitive-money" style="font-size: 36px; font-weight: 900;">164&nbsp;624 ₽ <div style="font-size:12px; font-weight:700; color:var(--text-mute); margin-top:4px;">~5&nbsp;487 ₽/день • ~164&nbsp;624 ₽/мес</div></div>
+      <div id="totalSum" class="sensitive-money" style="font-size: 36px; font-weight: 900;"></div>
       <div id="chartArea" style="position: relative; margin: 20px 0px; height: 250px; display: block;">
         <div id="chartCenterBtn" onclick="chartLevel='main';renderA()" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; z-index:0; width:130px; height:130px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); box-shadow:0 4px 10px rgba(0,0,0,0.05); flex-direction:column; justify-content:center; align-items:center; padding:10px; overflow:hidden;">
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -3032,649 +2416,7 @@
         </div>
       </div>
 
-      <div id="travelSectionStatsContainer">
-      <div id="travelSectionStatsBody" style="display: none; padding-top: 12px; line-height: 1.5;">
-        
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-          <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-            <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Всего времени</div>
-            <div style="font-size:13.5px; font-weight:900; color:var(--text-main); margin-top:2px;">14 дн. в 5 соб.</div>
-          </div>
-          <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-            <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Средний чек дня</div>
-            <div style="font-size:13.5px; font-weight:900; color:#3b82f6; margin-top:2px;">16&nbsp;442 ₽/день</div>
-          </div>
-          <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-            <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Средний бюджет</div>
-            <div style="font-size:13.5px; font-weight:900; color:var(--text-main); margin-top:2px;">46&nbsp;038 ₽</div>
-          </div>
-          <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-            <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Топ-статья трат</div>
-            <div style="font-size:12.5px; font-weight:900; color:var(--text-main); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Туры (39.3%)</div>
-          </div>
-        </div>
-
-        <div style="font-size:11px; display:flex; flex-direction:column; gap:4px; margin-bottom:12px; background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-          <div>🏆 <b>Самое затратное:</b> «Дагестан» — <b style="color:#ef4444;">206&nbsp;897 ₽</b></div>
-          <div>🌿 <b>Самое экономное:</b> «Тула "смотри как красиво"» — <b style="color:#10b981;">3&nbsp;347 ₽</b></div>
-        </div>
-
-        <div style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Структура расходов (клик для раскрытия):</div>
-        <div style="height:10px; width:100%; border-radius:6px; overflow:hidden; display:flex; background:var(--border); margin-bottom:10px;">
-          
-          <div onclick="toggleTravelStatCat('Туры')" title="Туры: 90&nbsp;496 ₽ (39.3%)" style="width:39.31378128407526%; background:#3b82f6; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Транспорт туда/обратно')" title="Транспорт туда/обратно: 50&nbsp;694 ₽ (22.0%)" style="width:22.02277259121852%; background:#10b981; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Еда в путешествиях')" title="Еда в путешествиях: 31&nbsp;330 ₽ (13.6%)" style="width:13.610554804964616%; background:#f59e0b; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Сувениры и тд в путешествиях')" title="Сувениры и тд в путешествиях: 13&nbsp;670 ₽ (5.9%)" style="width:5.938598282281083%; background:#ec4899; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Продукты в путешествиях')" title="Продукты в путешествиях: 12&nbsp;163 ₽ (5.3%)" style="width:5.283918866670432%; background:#8b5cf6; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Жилье в путешествиях')" title="Жилье в путешествиях: 11&nbsp;544 ₽ (5.0%)" style="width:5.015009405314763%; background:#06b6d4; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Перемещение по локации (такси/автобусы/тд)')" title="Перемещение по локации (такси/автобусы/тд): 11&nbsp;289 ₽ (4.9%)" style="width:4.904230871153705%; background:#f97316; height:100%; cursor:pointer;"></div>
-          <div onclick="toggleTravelStatCat('Бензин в путешествиях')" title="Бензин в путешествиях: 4&nbsp;803 ₽ (2.1%)" style="width:2.0865462728453577%; background:#64748b; height:100%; cursor:pointer;"></div>
-        </div>
-
-        <div style="margin-top:8px;">
-          
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Туры')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#3b82f6;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Туры</span>
-              <span style="font-size:10px; color:var(--text-mute);">39.3%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">90&nbsp;496 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Туры', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагестан - - 03.08.26 - Дагестан - июль-август 2026</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">90&nbsp;496 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1301', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Транспорт туда/обратно')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#10b981;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Транспорт туда/обратно</span>
-              <span style="font-size:10px; color:var(--text-mute);">22.0%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">50&nbsp;694 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Транспорт туда/обратно', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">1792 - автобус от Котельников до Луховиц на двоих,
-902 - поезд от Коломны до выхино</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">2&nbsp;694 ₽</b>
-              <button onclick="toggleTravelTxExclusion('160', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан - билеты на самолет В ДАГЕСТАН И ОБРАТНО</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">48&nbsp;000 ₽</b>
-              <button onclick="toggleTravelTxExclusion('811', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Еда в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#f59e0b;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Еда в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">13.6%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">31&nbsp;330 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Еда в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">1168 - мак в Луховицах, 
-470 - кофе и печенька в патифонке,  
-1040 - калачи, 1 с гусем и 5 обычных нам с ручкой и Алине...</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">2&nbsp;678 ₽</b>
-              <button onclick="toggleTravelTxExclusion('156', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">06.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[БМО]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 06.08.2026 - БМО - додо пицца в Александрове</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">629 ₽</b>
-              <button onclick="toggleTravelTxExclusion('339', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан -:
-26.07.26:
-259 — вода в аэропорту
-1307 — пончики и напитки в Махачкале  
-3110 — кафе гостиница - много еды...  
-760 — сладости в кафе гостиница  
----
-27.07.26:  
-1800 — ужин в санатории в Гунибе  
----
-28.07.26:  
-150 — кофе в гостинице в Гунибе  
-600 — чурчхела  
-400 — мед акация  
-700 — ужин в Гунибе  
----
-29.07.26:  
-3115 — ужин в ресторане в Дербенте  
----
-30.07.26:  
-1000 — пахлава и кофе в крепости в Дербенте  
-3010 — ужин в ресторане "папаха"  
-200 — на чай официанту в папахе  
----
-01.08.26:  
-2530 — нутелла кафе в Дербенте с Лейлой  
-200 — на чай официанту в нутелле  
----
-02.08.26:  
-1428 — кфс на Гамзатова  
----
-03.08.26:  
-1320 — серф кофе матча и ТД  
-320 — серф кофе лимонадики  
-1200 — бургерная модная новая</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">23&nbsp;409 ₽</b>
-              <button onclick="toggleTravelTxExclusion('402', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">15.03.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 15.03.2026 - Коломна - кафе 2720 + 560(кофе)+ 350</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">3&nbsp;630 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1876', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">18.09.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Тула "смотри как красиво"]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">вода кб - 90
-колбаса, хлеб, сырок в кб - 809
-перекус кб - 85</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">984 ₽</b>
-              <button onclick="toggleTravelTxExclusion('2465', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Сувениры и тд в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#ec4899;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Сувениры и тд в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">5.9%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">13&nbsp;670 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Сувениры и тд в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">1750 - открытки в магазинчике в Коломне "арша", наличка 
-250 - калач магнит</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">2&nbsp;000 ₽</b>
-              <button onclick="toggleTravelTxExclusion('159', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;"> *28.07.26:
-* 200 — магнит с дасечкой и другой 
-* 1300 — магнитики с ковром и с кувшином и открытки  
-
-*01.08.26:*  
-* 250 — магнит в Дербенте
-* 1000 — открытки и магниты в Дербенте  
-
-*02.08.26:
-* 2100 — открытки и магнитики в Махачкале около отеля 
-* 1650 — открытки в сундучке 
-* 50 — книга в 18:57 
-* 2090 — открытки где-то на проспекте Петра 1 
-* 1980 — матча в ТЦ гранд Делюкс  
-
-*03.08.26:
-* 700 — рамка со стеклом и местная фотопленка</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">11&nbsp;320 ₽</b>
-              <button onclick="toggleTravelTxExclusion('397', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">15.03.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 15.03.2026 - Коломна - сувениры</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">350 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1875', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Продукты в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#8b5cf6;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Продукты в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">5.3%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">12&nbsp;163 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Продукты в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">80 - КБ у дома, 
-3 воды 121 - вода в Дикси</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">201 ₽</b>
-              <button onclick="toggleTravelTxExclusion('158', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">06.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[БМО]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 06.08.2026 - БМО - вода, перекус, выпивка в КБ, выпечка в пятёрочке,</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">1&nbsp;746 ₽</b>
-              <button onclick="toggleTravelTxExclusion('338', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан - :  *28.07.26:*  * 70 — вода и корм котику около отеля * 140 — вода в магазе около отеля * 100 — вода у карадахской теснины * 1065 — пиво и чипсы с шоколадкой в Гунибе * 500 — местное вино в Гунибе  *29.07.26:*  * 300 — водичка, мороженое и газировка в магазинчике в Гунибе * 140 — вода и платочки в магните в Дербенте  *30.07.26:*  * 100 — вода в крепости в Дербенте * 35 — вода в аптеке после ручкиной тошноты  *31.07.26:*  * 1587 — хлеб, колбаса, сыр, шоколад, молоко, вода в супермаркете "зелёное яблоко" * 481 — доставка магнит, отмена заказа * 586 — доставка магнит - колбаса, масло, кофе, чай и по мелочи * 50 — вода  *01.08.26:*  * 150 — вода у стен крепости в Дербенте * 40 — вода около пляжа Дербента * 380 — хлеб, курица, Милка в магазе у пляжа Дербента  *02.08.26:*  * 25 — вода * 1979 — продуктовый около отеля, много еды * 115 — лепешка в соседнем продуктовом  *03.08.26:*  * 1730 — зелёное яблоко, много шоколадок Милка * 498 — магнит доставка 3 ветчины индилайт * 100 — вода в аэропорту  ---</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">10&nbsp;171 ₽</b>
-              <button onclick="toggleTravelTxExclusion('395', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">15.03.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 15.03.2026 - Коломна - вода</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">45 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1868', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Жилье в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#06b6d4;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Жилье в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">5.0%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">11&nbsp;544 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Жилье в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">06.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[БМО]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 06.08.2026 - БМО - 3 часа в компьютерном клубе, наличка</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">600 ₽</b>
-              <button onclick="toggleTravelTxExclusion('337', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан - отель якорь 3 дня 9444 + продление на полсуток 1500</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">10&nbsp;944 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1303', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Перемещение по локации (такси/автобусы/тд)')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#f97316;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Перемещение по локации (такси/автобусы/тд)</span>
-              <span style="font-size:10px; color:var(--text-mute);">4.9%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">11&nbsp;289 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Перемещение по локации (такси/автобусы/тд)', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">943 - такси от Луховиц до Коломны</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">943 ₽</b>
-              <button onclick="toggleTravelTxExclusion('161', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">06.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[БМО]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 06.08.2026 - БМО - 178 - от Останкино до поваровки 39 - проезд в автобусе в Александрове 61 - билет, чтобы выйти в куровской.  219 - от комп клуба до станции Куровская  92 - маршрутка от поварово до Зеленограда</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">589 ₽</b>
-              <button onclick="toggleTravelTxExclusion('335', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан - * 1258 — такси от Яблочкова до аэропорта * 446 — такси из отеля в кафе "гостиная" * 861 — такси от пляжа до отеля  *30.07.26:*  * 483 — такси от отеля до кафе "папаха" * 588 — такси от папахи до отеля  *31.07.26:*  * 148 — такси от отеля до военной комендатуры, чтобы отметиться * 349 — такси от комендатуры до супермаркета "зелёное яблоко" * 162 — такси от зелёного яблока до отеля якорь  *01.08.26:*  * 360 — 2 билета до Дербента из Махачкалы * 244 — такси от вокзала Дербента до лейлы * 286 — такси от пляжа Дербента до вокзала * 360 — 2 билета из Дербента в Махачкалу  *02.08.26:*  * 106 — такси от озона до отеля * 352 — такси от пляжа до ТЦ берега * 335 — такси от ТЦ берега до КФС около зелёного яблока * 244 — от КФС до дома  *03.08.26:*  * 93 — от пляжа до зелёного яблока * 147 — от зелёного яблока до дома * 218 — от дома до комендатуры * 287 — от комендатуры до дома * 199 — от дома до "маникен" * 241 — от "маникен" до магазина платьев * 228 — от платьев до нутелы на пешеходной улице * 311 — от нутелы до бургерной модной * 301 — от бургерной до дома * 1150 — от дома до аэропорта</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">9&nbsp;757 ₽</b>
-              <button onclick="toggleTravelTxExclusion('399', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Бензин в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#64748b;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Бензин в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">2.1%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">4&nbsp;803 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Бензин в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">15.03.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 15.03.2026 - Коломна - 40 лоитров+-</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">2&nbsp;440 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1881', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">18.09.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Тула "смотри как красиво"]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">газпромнефть в туле 28 литров  - 1363
-роснефть в москве еще 10 литров - 1000</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">2&nbsp;363 ₽</b>
-              <button onclick="toggleTravelTxExclusion('2466', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Досуг и развлечения в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#3b82f6;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Досуг и развлечения в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">1.0%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">2&nbsp;210 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Досуг и развлечения в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">22.08.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна, Луховицы]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">200 - музей путешествующего человека 
-200 - фотобудка</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">400 ₽</b>
-              <button onclick="toggleTravelTxExclusion('157', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан -  *28.07.26:*  * 100 — подержать козу * 100 — танцы лезгинка  *29.07.26:*  * 200 — потрогать ослика * 10 — бинокль в Гунибе * 100 — оставить 100 рублей в кофейне, кнопкой к стене  *02.08.26:*  * 300 — фотобудка</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">810 ₽</b>
-              <button onclick="toggleTravelTxExclusion('396', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">15.03.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Коломна]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 15.03.2026 - Коломна - макет</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">1&nbsp;000 ₽</b>
-              <button onclick="toggleTravelTxExclusion('1874', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:1;">
-          <div class="click-header" onclick="toggleTravelStatCat('Иные траты в путешествиях')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div style="width:10px; height:10px; border-radius:3px; background:#10b981;"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ">Иные траты в путешествиях</span>
-              <span style="font-size:10px; color:var(--text-mute);">0.9%</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="font-size:12px; color:var(--text-main);">1&nbsp;990 ₽</b>
-              <button onclick="toggleTravelCatExclusion('Иные траты в путешествиях', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="Исключить статью во всех поездках">
-                Выкл 🚫
-              </button>
-              <span style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div style="display: none; padding: 6px 12px; background: var(--bg-card);">
-            
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:1;">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ">26.07.2026</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[Дагестан]</span>
-              <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">- 03.08.2026 - Дагстан - - 03.08.26 - Дагестан - * 60 — туалет на барханах песчаных  *28.07.26:*  * 100 — туалет у водопада * 200 — 2 пары сапог в аренду у карадахской теснины  *29.07.26:*  * 30 — туалет около самолета лунь  *02.08.26:*  * 200 — дал какой-то тётке денег  *03.08.26:*  * 600 — полотенце пляжное * 800 — упаковка чемодана</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--text-main); font-size:11px; ">1&nbsp;990 ₽</b>
-              <button onclick="toggleTravelTxExclusion('398', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="Исключить чек из расчета">
-                🚫
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      
-        </div>
-      </div>
-    </div>
+      <div id="travelSectionStatsContainer"></div>
     </div>
 
     <!-- КАРТОЧКА 2: Сортировка и список событий -->
@@ -4290,8 +3032,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -4435,6 +3177,7 @@
     if (role === 'guest' || role === 'admin') {
       document.getElementById('pinOverlay').style.display = 'none';
       updateUserRoleUI();
+      fetchAllData();
       return;
     }
 
@@ -4487,6 +3230,7 @@
         document.getElementById('pinOverlay').style.display = 'none';
         input.value = '';
         updateUserRoleUI();
+        fetchAllData();
       } else {
         let fails = parseInt(localStorage.getItem('__bank_pin_fails') || '0', 10) + 1;
         localStorage.setItem('__bank_pin_fails', fails);
@@ -4691,7 +3435,6 @@
     if (document.getElementById('capEnd')) document.getElementById('capEnd').value = toISOLocal(now);
 
     updatePeriodUI();
-    fetchAllData();
     initExportDefaults(); // Авто-подстановка текущего месяца и года в экспорт
   };
 
@@ -4727,7 +3470,7 @@
         db.from('debtors').select('*'),
         db.from('events').select('*'),
         db.from('debt_archive').select('*').order('date', { ascending: true }),
-        db.from('app_settings').select('*')
+        db.from('app_settings').select('key, value').in('key', ['ap_included_pool_accounts', 'ap_manual_rent_reserve', 'ap_override_pool_sum', 'app_system_roles'])
       ]);
 
       // Синхронизация счетов свободного пула и брони из базы данных (работает и в инкогнито)
@@ -5120,7 +3863,7 @@
 
       // Подготовка данных для единого атомарного пакета (фильтруем NaN и архивы)
       const deleteIds = allTxQueue
-        .filter(q => q.action === 'delete' && !String(q.r).startsWith('local_') && !String(q.r).startsWith('arch_'))
+        .filter(q => (q.action === 'delete' || q.action === 'split_parent') && !String(q.r).startsWith('local_') && !String(q.r).startsWith('arch_'))
         .map(q => parseInt(q.r, 10))
         .filter(id => !isNaN(id) && id > 0);
 
@@ -5240,7 +3983,7 @@
             addParts.forEach((p, pIdx) => {
               partsHtml += `
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; padding:3px 0; border-bottom:1px dashed rgba(16,185,129,0.2);">
-                  <span>├─ <b>${p.catE}</b> ${p.comE ? `<i style="color:var(--text-mute);">(${p.comE})</i>` : ''}</span>
+                  <span>├─ <b>${escapeHtml(p.catE)}</b> ${p.comE ? `<i style="color:var(--text-mute);">(${escapeHtml(p.comE)})</i>` : ''}</span>
                   <b style="color:#10b981;">+${p.sumE.toLocaleString()} ₽</b>
                 </div>
               `;
@@ -5467,6 +4210,9 @@
       }
       // Полностью стираем из памяти
       appData.transactions = appData.transactions.filter(x => String(x.r) !== String(id));
+
+      const orphanRound = localQueue.find(x => x.item && x.item.parentTxId === id);
+      if (orphanRound) removeFromQueue(orphanRound.r);
     }
     // 2. Если редактировался чек, который УЖЕ ЕСТЬ в базе
     else if (qObj.action === 'edit') {
@@ -6021,6 +4767,7 @@
         if (remainingBal >= diff) {
           const roundTr = {
             r: 'local_round_' + Date.now(),
+            parentTxId: tr.r,
             fd: d,
             d: d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0],
             type: 'Перевод',
@@ -6177,8 +4924,10 @@
   async function uploadCatQueue() {
     if(catQueue.length === 0) return;
     let btn = document.getElementById('btnUploadCatQueue');
-    btn.innerText = '⏳ Сохранение...';
-    btn.disabled = true;
+    if (btn) {
+      btn.innerText = '⏳ Сохранение...';
+      btn.disabled = true;
+    }
 
     try {
       for (const q of catQueue) {
@@ -6206,8 +4955,10 @@
     } catch(err) {
       alert("Ошибка сохранения категорий: " + err.message);
     } finally {
-      btn.innerText = '🚀 Отправить на сервер';
-      btn.disabled = false;
+      if (btn) {
+        btn.innerText = '🚀 Отправить на сервер';
+        btn.disabled = false;
+      }
     }
   }
 
@@ -6683,7 +5434,7 @@
       h += `
         <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:8px 10px; border-radius:8px; border:1px solid var(--border); font-size:11.5px;" onclick="clI(event, '${t.r}')">
           <div>
-            <b>${t.d}</b> ${t.comE ? `<span style="color:var(--text-mute); font-style:italic;">(${t.comE})</span>` : ''}
+            <b>${t.d}</b> ${t.comE ? `<span style="color:var(--text-mute); font-style:italic;">(${escapeHtml(t.comE)})</span>` : ''}
           </div>
           <b style="color:var(--text-main);">${t.sumE.toLocaleString()} ₽</b>
         </div>
@@ -7340,11 +6091,11 @@ function renderA() {
               if (cL && cL[els[0].index] !== undefined) {
                 activeChartGroup = cL[els[0].index];
                 chartLevel = 'sub';
-                renderA();
+                setTimeout(() => renderA(), 0);
               }
             } else if (chartLevel === 'sub') {
               chartLevel = 'main';
-              renderA();
+              setTimeout(() => renderA(), 0);
             }
           }
         }
@@ -7593,7 +6344,7 @@ function renderA() {
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:11px; color:${sStat.sum > 0 ? 'var(--text-main)' : 'var(--text-mute)'};">${sStat.sum.toLocaleString()}&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" ${isChecked ? 'checked' : ''} onchange="toggleExportSubcat('${sName}', event)">
+              <input type="checkbox" class="export-subcat-cb" ${isChecked ? 'checked' : ''} onchange="toggleExportSubcat('${escapeJsStr(sName)}', event)">
             </div>
           </label>`;
       });
@@ -7605,7 +6356,7 @@ function renderA() {
         <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="${isProject}">
           <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('${bodyId}', '${arrId}')">
             <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
-              <div class="tristate-btn" data-state="${grpState}" onclick="toggleExportGroupTriState('${grpName}', event)" title="Выбрать / снять всю группу">
+              <div class="tristate-btn" data-state="${grpState}" onclick="toggleExportGroupTriState('${escapeJsStr(grpName)}', event)" title="Выбрать / снять всю группу">
                 ${stateIcon}
               </div>
               <span style="font-size:13px;">${isProject ? '🎯' : '📂'}</span>
@@ -8014,22 +6765,28 @@ function renderA() {
     const oldAcc = (tx.type === 'Расход' ? tx.accE : (tx.type === 'Доход' ? tx.accI : tx.accF)) || '';
     const oldSum = parseFloat(tx.type === 'Расход' ? tx.sumE : (tx.type === 'Доход' ? tx.sumI : tx.sumTr)) || 0;
 
-    if (oldAcc === newAcc) {
-      // Счёт тот же — меняем баланс ровно на разницу сумм!
-      const diff = sum - oldSum;
-      if (diff !== 0) {
-        if (type === 'Расход') updateAccBal(newAcc, -diff);
-        else if (type === 'Доход') updateAccBal(newAcc, diff);
-      }
+    if (type === 'Перевод') {
+      // Для перевода откатываем старые балансы и накатываем новые (accT не меняется в UI)
+      updateAccBal(tx.accF, oldSum);
+      updateAccBal(tx.accT, -oldSum);
+      updateAccBal(newAcc, -sum);
+      updateAccBal(tx.accT, sum);
     } else {
-      // Счёт сменился — возвращаем на старый и списываем с нового
-      if (oldAcc) {
-        if (tx.type === 'Расход') updateAccBal(oldAcc, oldSum);
-        else if (tx.type === 'Доход') updateAccBal(oldAcc, -oldSum);
-      }
-      if (newAcc) {
-        if (type === 'Расход') updateAccBal(newAcc, -sum);
-        else if (type === 'Доход') updateAccBal(newAcc, sum);
+      if (oldAcc === newAcc) {
+        const diff = sum - oldSum;
+        if (diff !== 0) {
+          if (type === 'Расход') updateAccBal(newAcc, -diff);
+          else if (type === 'Доход') updateAccBal(newAcc, diff);
+        }
+      } else {
+        if (oldAcc) {
+          if (tx.type === 'Расход') updateAccBal(oldAcc, oldSum);
+          else if (tx.type === 'Доход') updateAccBal(oldAcc, -oldSum);
+        }
+        if (newAcc) {
+          if (type === 'Расход') updateAccBal(newAcc, -sum);
+          else if (type === 'Доход') updateAccBal(newAcc, sum);
+        }
       }
     }
 
@@ -8323,8 +7080,9 @@ function renderA() {
     if (!confirm(`Вы действительно хотите простить/обнулить долг должника ${name}?`)) return;
 
     const todayISO = toISOLocal(new Date());
+    const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
     const comment = netBalance > 0 ? `Прощение долга (Списание)` : `Списание моего долга (Прощение)`;
-    const arch = { r: 'local_arch_' + Date.now(), fd: todayISO, n: name, amt: -netBalance, c: comment };
+    const arch = { r: 'local_arch_' + Date.now(), fd: todayISO, d: dFmt, n: name, amt: -netBalance, c: comment };
 
     appData.archiveDebts.push(arch);
     pushToLocalQueue('archive_debt', arch.r, arch);
@@ -8361,11 +7119,12 @@ function renderA() {
       if(r.amt > 0) { dS[r.n].s += r.amt; } else { dS[r.n].r += Math.abs(r.amt); }
     });
 
+    const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
     Object.entries(dS).forEach(([name, v]) => {
         const net = v.s - v.r;
         if (Math.abs(net) > 0.1 && !hiddenDebtors.includes(name)) {
             const comment = net > 0 ? `Прощение долга (Списание всех)` : `Списание моего долга (Прощение всех)`;
-            const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, n: name, amt: -net, c: comment };
+            const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: -net, c: comment };
             appData.archiveDebts.push(arch);
             pushToLocalQueue('archive_debt', arch.r, arch);
         }
@@ -8377,6 +7136,7 @@ function renderA() {
   // ПЕРЕИМЕНОВАНИЕ ДОЛЖНИКА НАПРЯМУЮ В SUPABASE (БЕЗ GOOGLE СКРИПТА!)
   async function renameP(e, o) {
     e.stopPropagation();
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Переименование заблокировано!");
     let n = prompt(`Новое имя для ${o}:`);
     if(n && n.trim() && n.trim() !== o) {
       const newName = n.trim();
@@ -8461,7 +7221,8 @@ function renderA() {
     if (isVirtual) {
         let comment = a.includes('Расход') ? `Дал в долг (Виртуально) | ${c}` : `Вернули долг (Виртуально) | ${c}`;
         let amount = a.includes('Расход') ? parseFloat(s) : -parseFloat(s);
-        const arch = { r: 'local_arch_' + Date.now(), fd: d, n: n, amt: amount, c: comment };
+        const dFmt = d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0];
+        const arch = { r: 'local_arch_' + Date.now(), fd: d, d: dFmt, n: n, amt: amount, c: comment };
         appData.archiveDebts.push(arch);
         pushToLocalQueue('archive_debt', arch.r, arch);
     } else {
@@ -8508,8 +7269,9 @@ function renderA() {
     if (!sum || 0 >= parseFloat(sum)) return alert("Введите корректную сумму!");
 
     const date = toISOLocal(new Date());
-    const arch1 = { r: genLocalId('local_arch_tr1'), fd: date, n: fromName, amt: -parseFloat(sum), c: `Перевод долга на: ${toName}` };
-    const arch2 = { r: genLocalId('local_arch_tr2'), fd: date, n: toName, amt: parseFloat(sum), c: `Перенос долга от: ${fromName}` };
+    const dFmt = date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0];
+    const arch1 = { r: genLocalId('local_arch_tr1'), fd: date, d: dFmt, n: fromName, amt: -parseFloat(sum), c: `Перевод долга на: ${toName}` };
+    const arch2 = { r: genLocalId('local_arch_tr2'), fd: date, d: dFmt, n: toName, amt: parseFloat(sum), c: `Перенос долга от: ${fromName}` };
 
     appData.archiveDebts.push(arch1); pushToLocalQueue('archive_debt', arch1.r, arch1);
     appData.archiveDebts.push(arch2); pushToLocalQueue('archive_debt', arch2.r, arch2);
@@ -8799,9 +7561,10 @@ function renderA() {
           updateAccBal(account, -myShare);
         }
     } else {
+        const dFmt = date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0];
         participants.forEach(p => {
            const finalComment = comment ? `${category} — ${comment}` : category;
-           const arch = { r: genLocalId('local_arch'), fd: date, n: p.name, amt: p.amt, c: finalComment };
+           const arch = { r: genLocalId('local_arch'), fd: date, d: dFmt, n: p.name, amt: p.amt, c: finalComment };
            appData.archiveDebts.push(arch);
            pushToLocalQueue('archive_debt', arch.r, arch);
         });
@@ -8852,11 +7615,12 @@ function renderA() {
 
   function saveBulk() {
       const todayISO = toISOLocal(new Date());
+      const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
       bulkParsed.forEach((_, i) => {
           const name = document.getElementById(`bN_${i}`).value;
           const amount = document.getElementById(`bA_${i}`).value;
           const comment = document.getElementById(`bC_${i}`).value;
-          const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, n: name, amt: parseFloat(amount)||0, c: comment };
+          const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: parseFloat(amount)||0, c: comment };
           appData.archiveDebts.push(arch);
           pushToLocalQueue('archive_debt', arch.r, arch);
       });
@@ -9101,6 +7865,7 @@ function renderA() {
 
   async function deleteCurrentTrip() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Удаление событий заблокировано!");
+    if (localQueue && localQueue.length > 0) return alert("⚠️ Сначала отправьте текущую очередь изменений на сервер!");
     if (!window.currentTravelEventId) return;
     const evId = window.currentTravelEventId;
     const ev = (appData.events || []).find(e => String(e.id) === String(evId));
@@ -9264,6 +8029,7 @@ function renderA() {
 
   async function saveBatchTravelEvent() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Добавление событий заблокировано!");
+    if (localQueue && localQueue.length > 0) return alert("⚠️ Сначала отправьте текущую очередь изменений на сервер!");
     const title = document.getElementById('batchTripTitle').value.trim();
     const startDate = document.getElementById('batchTripStart').value;
     const endDate = document.getElementById('batchTripEnd').value;
@@ -9731,6 +8497,7 @@ function renderA() {
   // Быстрое добавление одного чека в открытую поездку
   async function addQuickReceiptToCurrentTrip() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Добавление чеков заблокировано!");
+    if (localQueue && localQueue.length > 0) return alert("⚠️ Сначала отправьте текущую очередь изменений на сервер!");
     if (!window.currentTravelEventId) return;
     const cat = prompt("Категория (например: Еда в путешествиях, Бензин, Досуг):", "Еда в путешествиях");
     if (!cat) return;
@@ -9879,8 +8646,8 @@ function renderA() {
       // Отключенные статьи
       excludedCats.forEach(cName => {
         chips += `
-          <span onclick="toggleTravelCatExclusion('${cName}', event)" style="cursor:pointer; background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; padding:3px 8px; border-radius:6px; font-size:10.5px; font-weight:bold; display:inline-flex; align-items:center; gap:4px;" title="Вернуть статью во всех поездках">
-            Статья «${cName}» ✕
+          <span onclick="toggleTravelCatExclusion('${escapeJsStr(cName)}', event)" style="cursor:pointer; background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; padding:3px 8px; border-radius:6px; font-size:10.5px; font-weight:bold; display:inline-flex; align-items:center; gap:4px;" title="Вернуть статью во всех поездках">
+            Статья «${escapeHtml(cName)}» ✕
           </span>`;
       });
 
@@ -9948,7 +8715,7 @@ function renderA() {
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
               <b style="font-size:12px; color:var(--text-main);">${cData.sum.toLocaleString()} ₽</b>
-              <button onclick="toggleTravelCatExclusion('${cName}', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="${isCatEx ? 'Вернуть статью во всех поездках' : 'Исключить статью во всех поездках'}">
+              <button onclick="toggleTravelCatExclusion('${escapeJsStr(cName)}', event)" style="background:var(--border); border:none; border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; font-weight:bold;" title="${isCatEx ? 'Вернуть статью во всех поездках' : 'Исключить статью во всех поездках'}">
                 ${isCatEx ? 'Вкл ✅' : 'Выкл 🚫'}
               </button>
               <span style="font-size:9px; color:var(--text-mute);">${isOpen ? '▲' : '▼'}</span>
@@ -10388,7 +9155,18 @@ function renderA() {
     // 1. Помечаем старый чек на удаление с привязкой к сплиту
     updateAccBal(orig.accE, origTotal);
     appData.transactions = appData.transactions.filter(x => String(x.r) !== String(orig.r));
-    pushToLocalQueue('delete', orig.r, { ...orig, splitGroupId, isSplitOrigin: true, splitNewCount: newItems.length });
+
+    let existingAddIdx = localQueue.findIndex(q => String(q.r) === String(orig.r) && q.action === 'add');
+    if (existingAddIdx > -1) {
+      localQueue.splice(existingAddIdx, 1);
+    }
+    localQueue.push({
+      action: 'split_parent',
+      r: orig.r,
+      item: JSON.parse(JSON.stringify(orig)),
+      splitGroupId: splitGroupId,
+      wasLocalAdd: existingAddIdx > -1
+    });
 
     // 2. Добавляем новые части с тем же splitGroupId
     newItems.forEach((it, idx) => {
@@ -10426,11 +9204,15 @@ function renderA() {
     if (items.length === 0) return;
 
     // 1. Возвращаем исходный чек
-    const delObj = items.find(q => q.action === 'delete');
+    const delObj = items.find(q => q.action === 'delete' || q.action === 'split_parent');
     if (delObj && delObj.item) {
       const orig = delObj.item;
       appData.transactions.push(orig);
       updateAccBal(orig.accE, -orig.sumE);
+
+      if (delObj.wasLocalAdd) {
+        localQueue.push({ action: 'add', r: orig.r, item: JSON.parse(JSON.stringify(orig)) });
+      }
     }
 
     // 2. Удаляем все новые доли сплита и возвращаем их деньги
@@ -10579,7 +9361,7 @@ function renderA() {
     let h = '';
     parsed.forEach(([tag, data]) => {
       h += `<div style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
-              <b style="color:var(--text-main);">${tag}</b>
+              <b style="color:var(--text-main);">${escapeHtml(tag)}</b>
               <span style="color:var(--text-mute);">• ${data.count} шт</span>
             </div>`;
     });
@@ -11115,16 +9897,16 @@ function renderA() {
           if (catDrill.level === 'years') {
             catDrill.year = keysMapping[idx];
             catDrill.level = 'months';
-            renderCategoryDrillDown();
+            setTimeout(() => renderCategoryDrillDown(), 0);
           } else if (catDrill.level === 'months') {
             catDrill.month = idx;
             catDrill.monthName = ruMonthFullNames[idx];
             catDrill.level = 'days';
-            renderCategoryDrillDown();
+            setTimeout(() => renderCategoryDrillDown(), 0);
           } else if (catDrill.level === 'days') {
             catDrill.day = keysMapping[idx];
             catDrill.level = 'txs';
-            renderCategoryDrillDown();
+            setTimeout(() => renderCategoryDrillDown(), 0);
           }
         }
       }
@@ -11257,8 +10039,10 @@ function renderA() {
 
   function toggleBudgetWidget() {
     isBudgetWidgetOpen = !isBudgetWidgetOpen;
-    document.getElementById('budgetWidgetBody').style.display = isBudgetWidgetOpen ? 'block' : 'none';
-    document.getElementById('budgetWidgetArrow').innerText = isBudgetWidgetOpen ? '▲' : '▼';
+    const body = document.getElementById('autopilotWidgetBody');
+    const arrow = document.getElementById('autopilotWidgetArrow');
+    if (body) body.style.display = isBudgetWidgetOpen ? 'flex' : 'none';
+    if (arrow) arrow.innerText = isBudgetWidgetOpen ? '▲' : '▼';
   }
 
   function openBudgetConfigModal(event) {
@@ -12219,7 +11003,8 @@ function renderA() {
 
     const startISO = toISOLocal(cycleStart);
     const endISO = toISOLocal(cycleEnd);
-    const daysLeft = Math.max(1, Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000));
+    const rawDays = Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000);
+    const daysLeft = rawDays <= 0 ? 1 : rawDays;
     const weeksToSalary = Math.max(0.1, daysLeft / 7);
 
     // СВОБОДНЫЙ ПУЛ СРЕДСТВ (Сумма выбранных счетов для жизни)
@@ -12293,7 +11078,9 @@ function renderA() {
     const eFmt = `${String(cycleEnd.getDate()).padStart(2,'0')}.${String(cycleEnd.getMonth()+1).padStart(2,'0')}`;
 
     if (subStatus) {
-      subStatus.innerText = `До ЗП ${daysLeft} дн. (${sFmt} — ${eFmt})`;
+      subStatus.innerText = rawDays <= 0
+        ? `Ожидание поступления ЗП...`
+        : `До ЗП ${daysLeft} дн. (${sFmt} — ${eFmt})`;
     }
 
     if (dailyBadge) {
@@ -13900,7 +12687,10 @@ function toggleEnvelopeAccordion(prefix) {
 
         const containersToPurge = [
           '#bankCardsList', '#categoriesList', '#debtsByName',
-          '#travelsList', '#histList', '#tableRowsList', '#queueListRender'
+          '#travelsList', '#histList', '#tableRowsList', '#queueListRender',
+          '#autopilotFreePool', '#totalSum', '#autopilotEnvelopesWrap',
+          '#analyticsSmartInsightsContent', '#streakHistoryList',
+          '#travelSectionStatsContainer', '#catDeepPeriodPurchases'
         ];
         containersToPurge.forEach(sel => {
           const box = docClone.querySelector(sel);
@@ -13917,6 +12707,7 @@ function toggleEnvelopeAccordion(prefix) {
           if (el) {
             el.value = '';
             el.removeAttribute('value');
+            el.setAttribute('value', '');
             el.textContent = '';
           }
         });
@@ -13987,6 +12778,14 @@ function toggleEnvelopeAccordion(prefix) {
   // Смена логина, ключа и слова сброса входного шлюза калькулятора
   async function updateGatewayCredentials() {
     if (isGuest()) return alert("🔒 Вы вошли как гость! Изменение настроек доступно только администратору с мастер-PIN.");
+
+    const curPin = prompt("Введите текущий мастер-PIN для подтверждения:");
+    if (!curPin) return;
+
+    const { data: vData, error: vErr } = await db.rpc('verify_pin_v2', { p_pin: curPin });
+    if (vErr || !vData || vData.role !== 'admin') {
+      return alert("Текущий мастер-пароль введен неверно!");
+    }
 
     const newId = document.getElementById('newGatewayId')?.value.trim();
     const newKey = document.getElementById('newGatewayKey')?.value.trim();
@@ -14219,16 +13018,16 @@ function toggleEnvelopeAccordion(prefix) {
     </div>
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Текущий мастер-PIN:</label>
-    <input type="password" id="curMasterPin" maxlength="8" class="input-ui">
+    <input type="password" id="curMasterPin" maxlength="8" class="input-ui" value="">
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Новый мастер-PIN:</label>
-    <input type="password" id="newMasterPin" maxlength="8" class="input-ui" placeholder="4-8 цифр">
+    <input type="password" id="newMasterPin" maxlength="8" class="input-ui" placeholder="4-8 цифр" value="">
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Гостевой PIN (только просмотр):</label>
-    <input type="password" id="newGuestPin" maxlength="8" class="input-ui" placeholder="например 0000">
+    <input type="password" id="newGuestPin" maxlength="8" class="input-ui" placeholder="например 0000" value="">
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Секретное слово сброса блокировки PIN:</label>
-    <input type="text" id="newBankResetWord" class="input-ui" placeholder="По умолчанию: сброс">
+    <input type="text" id="newBankResetWord" class="input-ui" placeholder="По умолчанию: сброс" value="">
 
     <button type="button" onclick="updateAppPins()" style="width:100%; background:#3b82f6; color:white; padding:12px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">💾 Обновить PIN и слово сброса</button>
 
@@ -14236,13 +13035,13 @@ function toggleEnvelopeAccordion(prefix) {
     <div style="border-top:1px dashed var(--border); padding-top:12px; margin-top:14px;">
       <div style="font-size:11px; font-weight:900; color:var(--text-main); margin-bottom:8px;">🚪 Реквизиты шлюза (вход из Калькулятора):</div>
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ID сотрудника (логин шлюза):</label>
-      <input type="text" id="newGatewayId" class="input-ui" placeholder="Оставьте пустым, если не меняете">
+      <input type="text" id="newGatewayId" class="input-ui" placeholder="Оставьте пустым, если не меняете" value="">
 
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Ключ авторизации (пароль шлюза):</label>
-      <input type="password" id="newGatewayKey" class="input-ui" placeholder="Оставьте пустым, если не меняете">
+      <input type="password" id="newGatewayKey" class="input-ui" placeholder="Оставьте пустым, если не меняете" value="">
 
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Слово сброса блокировки шлюза:</label>
-      <input type="text" id="newGatewayResetWord" class="input-ui" placeholder="По умолчанию: сброс">
+      <input type="text" id="newGatewayResetWord" class="input-ui" placeholder="По умолчанию: сброс" value="">
 
       <button type="button" onclick="updateGatewayCredentials()" style="width:100%; background:#10b981; color:white; padding:11px; border-radius:10px; font-weight:bold; border:none; cursor:pointer; font-size:11.5px;">🔑 Сохранить настройки шлюза</button>
     </div>
@@ -14453,7 +13252,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4040; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14470,7 +13269,7 @@ function toggleEnvelopeAccordion(prefix) {
     <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px;">
       <div>
         <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Заголовок коммита:</label>
-        <input type="text" id="deployCommitTitle" class="input-ui" placeholder="Например: Обновление сплитов и безопасность" style="margin:0; padding:8px 10px; font-size:12px;">
+        <input type="text" id="deployCommitTitle" class="input-ui" placeholder="Например: Обновление сплитов и безопасность" style="margin:0; padding:8px 10px; font-size:12px;" value="">
       </div>
       <div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -14479,7 +13278,7 @@ function toggleEnvelopeAccordion(prefix) {
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 70px;"></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 70px;" value=""></textarea>
       </div>
     </div>
 
@@ -14500,10 +13299,10 @@ function toggleEnvelopeAccordion(prefix) {
       </label>
 
       <!-- Выбор файла калькулятора (появляется при выборе) -->
-      <div id="deployIndexFileWrap" style="display: flex; padding-left: 24px; flex-direction: column; gap: 4px;">
+      <div id="deployIndexFileWrap" style="display:none; padding-left:24px; flex-direction:column; gap:4px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:10.5px; color:var(--text-mute);">Файл index.html с компьютера:</span>
-          <span id="deployIndexStatusBadge" style="font-size: 9.5px; font-weight: bold; color: rgb(16, 185, 129);">✓ Готов (22.0 КБ)</span>
+          <span id="deployIndexStatusBadge" style="font-size:9.5px; font-weight:bold; color:var(--text-mute);">Не выбран</span>
         </div>
         <input type="file" id="deployIndexFileInput" accept=".html" style="font-size:11px;" onchange="onDeployIndexFileSelected(this)">
       </div>
@@ -14512,7 +13311,7 @@ function toggleEnvelopeAccordion(prefix) {
     <!-- КНОПКА ЗАПУСКА -->
     <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;" disabled="">⏳ Публикация в GitHub...</button>
 
-    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка и обновление фасада index.html в GitHub...</div><div style="color:#10b981; margin-top:2px;">✅ Фасад index.html успешно обновлён в GitHub!</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
+    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
 
     <!-- КНОПКА ОТКРЫТИЯ НАСТРОЕК В ОТДЕЛЬНОМ ОКНЕ -->
     <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:2px;">
@@ -14524,7 +13323,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
-<div id="deploySettingsModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deploySettingsModal" class="modal" style="z-index: 16000; display: none;">
   <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
     <div class="modal-header-sticky">
       <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
@@ -14544,11 +13343,11 @@ function toggleEnvelopeAccordion(prefix) {
     </div>
     <div>
       <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">GitHub Personal Access Token (PAT):</label>
-      <input type="password" id="cfgGhToken" class="input-ui" placeholder="ghp_xxxxxxxxxxxx..." style="margin:0; padding:8px 10px; font-size:11.5px;">
+      <input type="password" id="cfgGhToken" class="input-ui" placeholder="ghp_xxxxxxxxxxxx..." style="margin:0; padding:8px 10px; font-size:11.5px;" value="">
     </div>
     <div>
       <label style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:2px;">URL вебхука сервера РФ:</label>
-      <input type="text" id="cfgDeployWebhook" class="input-ui" placeholder="https://ваш-сайт.рф/api/deploy-webhook" style="margin:0; padding:8px 10px; font-size:11.5px;">
+      <input type="text" id="cfgDeployWebhook" class="input-ui" placeholder="https://ваш-сайт.рф/api/deploy-webhook" style="margin:0; padding:8px 10px; font-size:11.5px;" value="">
     </div>
     <button type="button" onclick="saveDeployConfig()" style="background:#10b981; color:white; border:none; padding:11px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer; margin-top:4px;">
       💾 Сохранить настройки в базу
