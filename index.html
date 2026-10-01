@@ -301,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -1552,7 +1552,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -7034,7 +7034,7 @@
   </div>
 
 <!-- ЭКРАН 5: БОЛЬШИЕ ТРАТЫ / ПРОЕКТЫ -->
-  <div id="viewTravels" class="app-view active">
+  <div id="viewTravels" class="app-view">
     <!-- Вкладки разделов -->
     <div style="display: flex; justify-content:space-between; align-items:center; margin-bottom: 12px; gap:8px;">
       <div style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; flex:1;" id="travelCustomTabsBar"><div id="btnTab_travel" class="btn-toggle active" onclick="setTravelTab('travel')" style="white-space:nowrap; padding:8px 14px;">✈️ Путешествия</div><div id="btnTab_dacha" class="btn-toggle " onclick="setTravelTab('dacha')" style="white-space:nowrap; padding:8px 14px;">🏡 Дача</div><button type="button" onclick="promptNewProjectType()" style="background:var(--border); color:var(--text-main); border:none; border-radius:10px; padding:6px 14px; font-weight:900; cursor:pointer;" title="Создать новый раздел">➕</button></div>
@@ -8454,10 +8454,10 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
-  <div class="nav-item active" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
+  <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
@@ -8789,6 +8789,13 @@
       .replace(/"/g, '\\x22')
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '');
+  }
+
+  function genLocalId(prefix = 'local') {
+    const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+    return `${prefix}_${uuid}`;
   }
 
   function adjustTextareaHeight(el) {
@@ -11470,9 +11477,11 @@ function renderA() {
           elements: { arc: { borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff' } },
           onClick: (e, els) => {
             if(els.length > 0 && chartLevel === 'main') {
-              activeChartGroup = cL[els[0].index];
-              chartLevel = 'sub';
-              renderA();
+              if (cL && cL[els[0].index] !== undefined) {
+                activeChartGroup = cL[els[0].index];
+                chartLevel = 'sub';
+                renderA();
+              }
             } else if (chartLevel === 'sub') {
               chartLevel = 'main';
               renderA();
@@ -12639,8 +12648,8 @@ function renderA() {
     if (!sum || 0 >= parseFloat(sum)) return alert("Введите корректную сумму!");
 
     const date = toISOLocal(new Date());
-    const arch1 = { r: 'local_arch_' + Math.random(), fd: date, n: fromName, amt: -parseFloat(sum), c: `Перевод долга на: ${toName}` };
-    const arch2 = { r: 'local_arch_' + Math.random(), fd: date, n: toName, amt: parseFloat(sum), c: `Перенос долга от: ${fromName}` };
+    const arch1 = { r: genLocalId('local_arch_tr1'), fd: date, n: fromName, amt: -parseFloat(sum), c: `Перевод долга на: ${toName}` };
+    const arch2 = { r: genLocalId('local_arch_tr2'), fd: date, n: toName, amt: parseFloat(sum), c: `Перенос долга от: ${fromName}` };
 
     appData.archiveDebts.push(arch1); pushToLocalQueue('archive_debt', arch1.r, arch1);
     appData.archiveDebts.push(arch2); pushToLocalQueue('archive_debt', arch2.r, arch2);
@@ -12897,7 +12906,7 @@ function renderA() {
     if (realSpend) {
         participants.forEach(p => {
            const tr = {
-             r: 'local_' + Math.random(), fd: date, d: date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0],
+             r: genLocalId('local_split'), fd: date, d: date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0],
              type: 'Расход', catE: category, sumE: p.amt, accE: account, comE: comment,
              catI: '', sumI: 0, accI: '', comI: '', accF: '', accT: '', sumTr: 0,
              debtor_name: p.name
@@ -12906,10 +12915,31 @@ function renderA() {
            pushToLocalQueue('add', tr.r, tr);
            updateAccBal(account, -p.amt);
         });
+
+        // Если часть чека осталась за владельцем (личная доля) — сохраняем её как личный расход
+        const myShare = Math.round(total - shareSum);
+        if (myShare > 0 && window.originalTxRowIdToReplace) {
+          const origTx = appData.transactions.find(x => String(x.r) === String(window.originalTxRowIdToReplace)) || {};
+          const myTr = {
+            r: genLocalId('local_split_my'),
+            fd: date,
+            d: date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0],
+            type: 'Расход',
+            catE: origTx.catE || category,
+            sumE: myShare,
+            accE: account,
+            comE: (comment ? comment + ' ' : '') + '(моя доля)',
+            catI: '', sumI: 0, accI: '', comI: '', accF: '', accT: '', sumTr: 0,
+            debtor_name: null
+          };
+          appData.transactions.push(myTr);
+          pushToLocalQueue('add', myTr.r, myTr);
+          updateAccBal(account, -myShare);
+        }
     } else {
         participants.forEach(p => {
            const finalComment = comment ? `${category} — ${comment}` : category;
-           const arch = { r: 'local_arch_' + Math.random(), fd: date, n: p.name, amt: p.amt, c: finalComment };
+           const arch = { r: genLocalId('local_arch'), fd: date, n: p.name, amt: p.amt, c: finalComment };
            appData.archiveDebts.push(arch);
            pushToLocalQueue('archive_debt', arch.r, arch);
         });
@@ -14940,16 +14970,27 @@ function renderA() {
         }
       }
 
-      const allTimeTop = catTxs.slice().sort((a, b) => b.sumE - a.sumE).slice(0, 4);
+      const allTimeTop = catTxs.slice().sort((a, b) => {
+        const valA = isIncMode ? (a.sumI || 0) : (a.sumE || 0);
+        const valB = isIncMode ? (b.sumI || 0) : (b.sumE || 0);
+        return valB - valA;
+      }).slice(0, 4);
+
       let topH = '';
       allTimeTop.forEach(t => {
+        const catTitle = isIncMode ? t.catI : t.catE;
+        const comText = isIncMode ? t.comI : t.comE;
+        const sumVal = isIncMode ? t.sumI : t.sumE;
+        const colorVal = isIncMode ? '#10b981' : '#ef4444';
+        const signVal = isIncMode ? '+' : '';
+
         topH += `
           <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-card); padding:6px 9px; border-radius:8px; border:1px solid var(--border); font-size:11px;" onclick="clI(event, '${t.r}')">
             <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>${t.d}</b> — <span>${t.catE}</span>
-              ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${t.comE}</div>` : ''}
+              <b>${t.d}</b> — <span>${escapeHtml(catTitle)}</span>
+              ${comText ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(comText)}</div>` : ''}
             </div>
-            <b style="color:#ef4444; font-size:11.5px; flex-shrink:0;">${t.sumE.toLocaleString()} ₽</b>
+            <b style="color:${colorVal}; font-size:11.5px; flex-shrink:0;">${signVal}${sumVal.toLocaleString()} ₽</b>
           </div>`;
       });
       if (allTimeContainer) allTimeContainer.innerHTML = topH;
@@ -17767,7 +17808,7 @@ function toggleEnvelopeAccordion(prefix) {
     document.getElementById('cfgGhBranch').value = localStorage.getItem('deploy_gh_branch') || 'main';
     document.getElementById('cfgGhPath').value = localStorage.getItem('deploy_gh_path') || 'index.html';
     document.getElementById('cfgGhToken').value = localStorage.getItem('deploy_gh_token') || '';
-    document.getElementById('cfgDeployWebhook').value = localStorage.getItem('deploy_webhook_url') || 'https://debetus-creditus.ru/api/deploy-webhook?token=MySuperSecretToken2026';
+    document.getElementById('cfgDeployWebhook').value = localStorage.getItem('deploy_webhook_url') || '';
 
     openModal('deployModal');
 
@@ -17850,7 +17891,15 @@ function toggleEnvelopeAccordion(prefix) {
       return;
     }
 
-    const commitMsg = document.getElementById('deployCommitMsg')?.value.trim() || `Обновление Банк PRO (${new Date().toLocaleString('ru-RU')})`;
+    const titleInput = document.getElementById('deployCommitTitle')?.value.trim();
+    const descInput = document.getElementById('deployCommitDesc')?.value.trim();
+    const defaultTitle = `Обновление Банк PRO (${new Date().toLocaleString('ru-RU')})`;
+
+    let commitMsg = titleInput || defaultTitle;
+    if (descInput) {
+      commitMsg += `\n\n${descInput}`;
+    }
+
     const btn = document.getElementById('btnRunDeploy');
     const logBox = document.getElementById('deployStatusLog');
 
@@ -17921,13 +17970,14 @@ function toggleEnvelopeAccordion(prefix) {
       const sensitiveInputIds = [
         'cfgGhToken', 'cfgDeployWebhook', 'pinInput', 'curMasterPin',
         'newMasterPin', 'newGuestPin', 'newBankResetWord', 'newGatewayId',
-        'newGatewayKey', 'newGatewayResetWord'
+        'newGatewayKey', 'newGatewayResetWord', 'deployCommitTitle', 'deployCommitDesc'
       ];
       sensitiveInputIds.forEach(id => {
         const el = docClone.querySelector('#' + id);
         if (el) {
           el.value = '';
           el.removeAttribute('value');
+          el.textContent = '';
         }
       });
 
@@ -18478,9 +18528,20 @@ function toggleEnvelopeAccordion(prefix) {
       Страница автоматически отправит текущий код в репозиторий GitHub и обновит рабочий сайт на РФ-сервере.
     </div>
 
-    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
-      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Сообщение коммита (необязательно):</label>
-      <input type="text" id="deployCommitMsg" class="input-ui" placeholder="Обновление Банк PRO (автодеплой)" style="margin:0; padding:8px 10px; font-size:12px;">
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px;">
+      <div>
+        <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Заголовок коммита:</label>
+        <input type="text" id="deployCommitTitle" class="input-ui" placeholder="Например: Обновление сплитов и безопасность" style="margin:0; padding:8px 10px; font-size:12px;">
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Подробное описание (по пунктам):</label>
+          <span style="font-size:9.5px; color:var(--text-mute);">Enter — новый пункт</span>
+        </div>
+        <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
+- закрыты уязвимости
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 121px;"></textarea>
+      </div>
     </div>
 
     <!-- КНОПКА ЗАПУСКА -->
