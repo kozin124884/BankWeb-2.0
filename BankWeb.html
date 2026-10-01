@@ -49,7 +49,9 @@
     body {
       background: var(--bg-body);
       color: var(--text-main);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       margin: 0;
       padding: 20px;
       padding-bottom: 125px; /* Было 90px — увеличили, чтобы контент не залезал под кнопки */
@@ -301,7 +303,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -2440,7 +2442,7 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view">
+  <div id="viewAdd" class="app-view active">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
         <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
@@ -2490,7 +2492,7 @@
       </div>
 
         <div style="display:flex; gap:8px;">
-          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Пятерочка">Пятерочка</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Дикси">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option></optgroup><optgroup label="Бабушка"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Сборы денег на работе">Сборы денег на работе</option><option value="Еда/что-то на работу для себя">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить">Кафе чисто перекусить</option><option value="Кофейни">Кофейни</option><option value="Фастфуд">Фастфуд</option><option value="Кафе в честь чего-то">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома">Перекус/джанкфуд продукты вне дома</option></optgroup><optgroup label="Продукты"><option value="Доставка">Доставка</option><option value="КБ">КБ</option><option value="Пятерочка">Пятерочка</option><option value="Чижик">Чижик</option><option value="Магнит">Магнит</option><option value="Дикси">Дикси</option><option value="Перекресток">Перекресток</option><option value="Спар">Спар</option><option value="Вкусвилл">Вкусвилл</option><option value="Ароматный мир/винлаб">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины">Другие продуктовые магазины</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары"><option value="-">-</option><option value="еще">еще</option><option value="Фикс прайс">Фикс прайс</option><option value="Другие непродуктовые магазины">Другие непродуктовые магазины</option><option value="Маркеты">Маркеты</option><option value="Одежда">Одежда</option><option value="Техника">Техника</option><option value="Мебель">Мебель</option><option value="Товары для дома онлайн">Товары для дома онлайн</option><option value="Товары для себя/аксессуары">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы">Алкоголь бары пабы</option><option value="Курение">Курение</option><option value="Алкоголь из магазина домой">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь">Сотовая связь</option><option value="Интернет домашний">Интернет домашний</option><option value="Аренда квартиры">Аренда квартиры</option><option value="Онлайн - Подписки">Онлайн - Подписки</option><option value="Консьержка">Консьержка</option><option value="ЖКХ - вода">ЖКХ - вода</option><option value="ЖКХ - свет">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка">Парковка</option><option value="Запчасти на машину">Запчасти на машину</option><option value="Ремонт машины">Ремонт машины</option><option value="Мойка машины">Мойка машины</option><option value="Штрафы">Штрафы</option><option value="ОСАГО">ОСАГО</option><option value="Бензин">Бензин</option><option value="Не запчасти">Не запчасти</option><option value="Вода в машину">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси">Такси</option><option value="Каршеринг">Каршеринг</option><option value="Самокаты">Самокаты</option><option value="Транспорт городской общественный">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты">Ручка продукты</option><option value="Ручка красота">Ручка красота</option><option value="Подарки ручке">Подарки ручке</option><option value="Цветы ручке">Цветы ручке</option><option value="Ручке деньги">Ручке деньги</option><option value="Пленка проявка">Пленка проявка</option><option value="Ручка одежда">Ручка одежда</option><option value="Ручка другое">Ручка другое</option></optgroup><optgroup label="Здоровье"><option value="Аптека">Аптека</option><option value="Здоровье (обследования итд)">Здоровье (обследования итд)</option><option value="Стрижка">Стрижка</option><option value="Интим">Интим</option><option value="Лекарства">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино">Кино</option><option value="Театр">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд">Открытки/сувениры и тд</option><option value="Иной досуг">Иной досуг</option><option value="Музеи">Музеи</option><option value="Иные развлечения">Иные развлечения</option><option value="Фотобудка и тд">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки">Подарки</option><option value="Не сошёлся дебет кредит">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Еда в продуктовых без ручки">Еда в продуктовых без ручки</option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option></optgroup></select>
+          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые" style="display: block;"><option value="Обед/столовая на работе" style="display: block;">Обед/столовая на работе</option><option value="Пятерочка" style="display: block;">Пятерочка</option><option value="Бабушка Магазины" style="display: block;">Бабушка Магазины</option><option value="Дикси" style="display: block;">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" style="display: block;">Домой перекус/готовая еда/джанкфуд из магазина</option></optgroup><optgroup label="Бабушка" style="display: block;"><option value="Бабушка Аптека" style="display: block;">Бабушка Аптека</option><option value="Бабушка Магазины" style="display: block;">Бабушка Магазины</option><option value="Бабушка другое" style="display: block;">Бабушка другое</option></optgroup><optgroup label="Работа" style="display: block;"><option value="Обед/столовая на работе" style="display: block;">Обед/столовая на работе</option><option value="Сборы денег на работе" style="display: block;">Сборы денег на работе</option><option value="Еда/что-то на работу для себя" style="display: block;">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой" style="display: block;"><option value="Кафе чисто перекусить" style="display: block;">Кафе чисто перекусить</option><option value="Кофейни" style="display: block;">Кофейни</option><option value="Фастфуд" style="display: block;">Фастфуд</option><option value="Кафе в честь чего-то" style="display: block;">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома" style="display: block;">Перекус/джанкфуд продукты вне дома</option></optgroup><optgroup label="Продукты" style="display: block;"><option value="Доставка" style="display: block;">Доставка</option><option value="КБ" style="display: block;">КБ</option><option value="Пятерочка" style="display: block;">Пятерочка</option><option value="Чижик" style="display: block;">Чижик</option><option value="Магнит" style="display: block;">Магнит</option><option value="Дикси" style="display: block;">Дикси</option><option value="Перекресток" style="display: block;">Перекресток</option><option value="Спар" style="display: block;">Спар</option><option value="Вкусвилл" style="display: block;">Вкусвилл</option><option value="Ароматный мир/винлаб" style="display: block;">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины" style="display: block;">Другие продуктовые магазины</option><option value="Вода в еще" style="display: block;">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары" style="display: block;"><option value="-" style="display: block;">-</option><option value="еще" style="display: block;">еще</option><option value="Фикс прайс" style="display: block;">Фикс прайс</option><option value="Другие непродуктовые магазины" style="display: block;">Другие непродуктовые магазины</option><option value="Маркеты" style="display: block;">Маркеты</option><option value="Одежда" style="display: block;">Одежда</option><option value="Техника" style="display: block;">Техника</option><option value="Мебель" style="display: block;">Мебель</option><option value="Товары для дома онлайн" style="display: block;">Товары для дома онлайн</option><option value="Товары для себя/аксессуары" style="display: block;">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки" style="display: block;"><option value="Алкоголь бары пабы" style="display: block;">Алкоголь бары пабы</option><option value="Курение" style="display: block;">Курение</option><option value="Алкоголь из магазина домой" style="display: block;">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома" style="display: block;">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье" style="display: block;"><option value="Сотовая связь" style="display: block;">Сотовая связь</option><option value="Интернет домашний" style="display: block;">Интернет домашний</option><option value="Аренда квартиры" style="display: block;">Аренда квартиры</option><option value="Онлайн - Подписки" style="display: block;">Онлайн - Подписки</option><option value="Консьержка" style="display: block;">Консьержка</option><option value="ЖКХ - вода" style="display: block;">ЖКХ - вода</option><option value="ЖКХ - свет" style="display: block;">ЖКХ - свет</option></optgroup><optgroup label="Машина" style="display: block;"><option value="Парковка" style="display: block;">Парковка</option><option value="Запчасти на машину" style="display: block;">Запчасти на машину</option><option value="Ремонт машины" style="display: block;">Ремонт машины</option><option value="Мойка машины" style="display: block;">Мойка машины</option><option value="Штрафы" style="display: block;">Штрафы</option><option value="ОСАГО" style="display: block;">ОСАГО</option><option value="Бензин" style="display: block;">Бензин</option><option value="Не запчасти" style="display: block;">Не запчасти</option><option value="Вода в машину" style="display: block;">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто" style="display: block;"><option value="Такси" style="display: block;">Такси</option><option value="Каршеринг" style="display: block;">Каршеринг</option><option value="Самокаты" style="display: block;">Самокаты</option><option value="Транспорт городской общественный" style="display: block;">Транспорт городской общественный</option></optgroup><optgroup label="Ручка" style="display: block;"><option value="Ручка продукты" style="display: block;">Ручка продукты</option><option value="Ручка красота" style="display: block;">Ручка красота</option><option value="Подарки ручке" style="display: block;">Подарки ручке</option><option value="Цветы ручке" style="display: block;">Цветы ручке</option><option value="Ручке деньги" style="display: block;">Ручке деньги</option><option value="Пленка проявка" style="display: block;">Пленка проявка</option><option value="Ручка одежда" style="display: block;">Ручка одежда</option><option value="Ручка другое" style="display: block;">Ручка другое</option></optgroup><optgroup label="Здоровье" style="display: block;"><option value="Аптека" style="display: block;">Аптека</option><option value="Здоровье (обследования итд)" style="display: block;">Здоровье (обследования итд)</option><option value="Стрижка" style="display: block;">Стрижка</option><option value="Интим" style="display: block;">Интим</option><option value="Лекарства" style="display: block;">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения" style="display: block;"><option value="Кино" style="display: block;">Кино</option><option value="Театр" style="display: block;">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ" style="display: block;">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд" style="display: block;">Открытки/сувениры и тд</option><option value="Иной досуг" style="display: block;">Иной досуг</option><option value="Музеи" style="display: block;">Музеи</option><option value="Иные развлечения" style="display: block;">Иные развлечения</option><option value="Фотобудка и тд" style="display: block;">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы" style="display: block;"><option value="Подарки" style="display: block;">Подарки</option><option value="Не сошёлся дебет кредит" style="display: block;">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома" style="display: block;"><option value="Доставка еды" style="display: block;">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" style="display: block;">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома" style="display: block;">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки" style="display: block;"><option value="Еда в продуктовых без ручки" style="display: block;">Еда в продуктовых без ручки</option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки" style="display: block;">Фастфуд/кафешки/рестораны/шаурма без ручки</option></optgroup></select>
           <button type="button" onclick="openCatManager()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 15px; margin-bottom:12px; border:none; cursor:pointer;">⚙️</button>
         </div>
 
@@ -2519,7 +2521,7 @@
 
       <button type="button" onclick="queueTransaction()" style="width:100%; background:#10b981; color:white; padding:16px; border-radius:12px; font-weight:900; border:none; margin-top:10px; cursor:pointer;">В очередь ⚡</button>
 
-      <div id="addQueueListContainer" style="margin-top:20px; display:none;">
+      <div id="addQueueListContainer" style="margin-top: 20px; display: none;">
         <h4 style="font-size:12px; color:var(--text-mute); margin-bottom:8px;">ОБЫЧНЫЕ ОПЕРАЦИИ В ОЧЕРЕДИ:</h4>
         <div id="addQueueListRender"></div>
       </div>
@@ -2529,7 +2531,7 @@
 </div><!-- Конец max-width контейнера -->
 
 <div id="syncBar" class="sync-bar" onclick="openGlobalQueue()" style="display: none;">
-    <span id="syncText">В очереди: 0 шт.</span>
+    <span id="syncText">В очереди: 1 шт.</span>
     <span id="syncBtnText" style="background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px;">👀 Открыть</span>
 </div>
 
@@ -2625,8 +2627,8 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
-              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">Яндекс</h2>
+              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display: block; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
         </div>
@@ -3035,11 +3037,11 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -3618,6 +3620,7 @@
     if(t === 'analytics') applyDatesLocally();
     if(t === 'travels') renderTravels();
     if(t === 'debts') renderDebts();
+    updateSyncBar();
   }
 
   // 1. Проверка расходного счёта без риска ошибки необъявленной n
@@ -3799,8 +3802,9 @@
   function updateSyncBar() {
     const bar = document.getElementById('syncBar');
     const totalQueueCount = (localQueue ? localQueue.length : 0) + (catQueue ? catQueue.length : 0);
+    const isAddTabActive = document.getElementById('viewAdd') && document.getElementById('viewAdd').classList.contains('active');
 
-    if (totalQueueCount === 0) {
+    if (totalQueueCount === 0 || isAddTabActive) {
       if (bar) bar.style.display = 'none';
       // Если очередь опустела, автоматически закрываем модальное окно очереди
       const modal = document.getElementById('globalQueueModal');
@@ -4633,7 +4637,7 @@
     }
 
     let h = '', res = [];
-    appData.transactions.forEach(r => {
+    appData.transactions.forEach((r, idx) => {
         if(dType === 'single' && dSing && r.fd !== dSing) return;
         if(dType === 'range' && dStart && dEnd && (dStart > r.fd || r.fd > dEnd)) return;
         if(dType === 'month' && (bounds.s > r.fd || r.fd > bounds.e)) return;
@@ -4642,22 +4646,23 @@
         if(q && !str.includes(q)) return;
 
         if(r.type === 'Расход' && (matchAll || r.accE === n)) {
-          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Расход', cat: r.catE, s: r.sumE, c: r.comE, acc: r.accE });
+          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Расход', cat: r.catE, s: r.sumE, c: r.comE, acc: r.accE, idx: idx });
         } else if(r.type === 'Доход' && (matchAll || r.accI === n)) {
-          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Доход', cat: r.catI, s: r.sumI, c: r.comI, acc: r.accI });
+          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Доход', cat: r.catI, s: r.sumI, c: r.comI, acc: r.accI, idx: idx });
         } else if(r.type === 'Между своими' || r.type === 'Перевод') {
           if(matchAll) {
-            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '' });
+            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '', idx: idx });
           } else {
-            if(r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '' });
-            if(r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '' });
+            if(r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '', idx: idx });
+            if(r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '', idx: idx });
           }
         }
     });
 
     const sortVal = document.getElementById('histSortType').value;
-    if (sortVal === 'date_desc') res.sort((a, b) => new Date(b.fd).getTime() - new Date(a.fd).getTime());
-    else if (sortVal === 'date_asc') res.sort((a, b) => new Date(a.fd).getTime() - new Date(b.fd).getTime());
+    // Вторичная сортировка по индексу в массиве БД, чтобы чеки одного дня не перемешивались
+    if (sortVal === 'date_desc') res.sort((a, b) => new Date(b.fd).getTime() - new Date(a.fd).getTime() || b.idx - a.idx);
+    else if (sortVal === 'date_asc') res.sort((a, b) => new Date(a.fd).getTime() - new Date(b.fd).getTime() || a.idx - b.idx);
     else if (sortVal === 'sum_desc') res.sort((a, b) => b.s - a.s);
     else if (sortVal === 'sum_asc') res.sort((a, b) => a.s - b.s);
     else if (sortVal === 'name_asc') res.sort((a, b) => a.cat.localeCompare(b.cat));
@@ -13304,7 +13309,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4030; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -13375,7 +13380,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
-<div id="deploySettingsModal" class="modal" style="z-index: 4030; display: none;">
+<div id="deploySettingsModal" class="modal" style="z-index: 16000; display: none;">
   <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
     <div class="modal-header-sticky">
       <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
