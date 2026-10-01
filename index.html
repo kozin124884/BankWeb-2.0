@@ -287,8 +287,13 @@
         balance += mProfit; profit += mProfit;
       }
     } else {
-      if (hasTopup) invested += topup * (months - 1);
-      profit = invested * (rate / 100) * (months / 12);
+      if (hasTopup) {
+        for (var m = 1; m < months; m++) {
+          invested += topup;
+          profit += topup * (rate / 100) * ((months - m) / 12);
+        }
+      }
+      profit += sum * (rate / 100) * (months / 12);
       balance = invested + profit;
     }
 
