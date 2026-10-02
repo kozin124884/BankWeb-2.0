@@ -49,9 +49,7 @@
     body {
       background: var(--bg-body);
       color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 20px;
       padding-bottom: 125px; /* Было 90px — увеличили, чтобы контент не залезал под кнопки */
@@ -303,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -372,11 +370,11 @@
           <span style="font-size:16px;">🧭</span>
           <div>
             <b style="font-size:13px; color:var(--text-main);">Автопилот финансов</b>
-            <div id="autopilotSubStatus" style="font-size:10px; color:var(--text-mute); font-weight:bold;">До ЗП 15 дн. (15.09 — 15.10)</div>
+            <div id="autopilotSubStatus" style="font-size:10px; color:var(--text-mute); font-weight:bold;">До ЗП 14 дн. (15.09 — 15.10)</div>
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(239, 68, 68);">-7 ₽/день</span>
+          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;208 ₽/день</span>
           <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
@@ -385,15 +383,15 @@
       <div style="padding: 10px 16px 14px 16px; border-top: 1px solid var(--border); background: var(--bg-card);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:11.5px; gap:8px;">
           <div style="min-width:0; flex:1; line-height:1.3;">
-            <span id="todayStatusText" style="font-weight: 800; font-size: 11.5px; color: rgb(239, 68, 68);">🚨 Лимит дня превышен на <b>7 ₽</b> <span style="font-size:10.5px; opacity:0.9;"><span style="color:#ef4444; font-weight:bold;">(завтра: ~1&nbsp;206 ₽ ▼)</span></span></span>
+            <span id="todayStatusText" style="font-weight: 800; font-size: 11.5px; color: rgb(16, 185, 129);">🟢 В норме: <b>+1&nbsp;208 ₽</b> <span style="font-size:10.5px; opacity:0.85;"><span style="color:#10b981; font-weight:bold;">(завтра: ~1&nbsp;301 ₽ ▲)</span></span></span>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-            <span id="streakBadge" onclick="openStreakModal()" style="display: inline-flex; align-items: center; cursor: pointer; background: rgba(245, 158, 11, 0.15); color: rgb(245, 158, 11); border: 1px solid rgba(245, 158, 11, 0.3); padding: 2px 7px; border-radius: 6px; font-weight: 900; font-size: 10.5px; margin-right: 8px;" title="История дней в лимите">🔥 2 дн.</span>
-            <b id="todayMathSummary" style="font-size:12px; color:var(--text-main); white-space:nowrap;">1&nbsp;248 из 1&nbsp;241 ₽</b>
+            <span id="streakBadge" onclick="openStreakModal()" style="display: inline-flex; align-items: center; cursor: pointer; background: rgba(245, 158, 11, 0.15); color: rgb(245, 158, 11); border: 1px solid rgba(245, 158, 11, 0.3); padding: 2px 7px; border-radius: 6px; font-weight: 900; font-size: 10.5px; margin-right: 8px;" title="История дней в лимите">🔥 1 дн.</span>
+            <b id="todayMathSummary" style="font-size:12px; color:var(--text-main); white-space:nowrap;">0 из 1&nbsp;208 ₽</b>
           </div>
         </div>
         <div style="height:8px; width:100%; border-radius:5px; background:var(--border); overflow:hidden;">
-          <div id="todayProgressBar" style="height: 100%; width: 100%; background: rgb(239, 68, 68); transition: width 0.3s;"></div>
+          <div id="todayProgressBar" style="height: 100%; width: 0%; background: rgb(16, 185, 129); transition: width 0.3s;"></div>
         </div>
       </div>
 
@@ -454,15 +452,15 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); box-sizing: border-box;">
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Капитал:</div>
-                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">185&nbsp;451 ₽</b>
+                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">135&nbsp;264 ₽</b>
               </div>
               <div>
                 <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за всё время:</div>
-                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +64&nbsp;451 ₽ (53.3%)</b>
+                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +135&nbsp;264 ₽ (0%)</b>
               </div>
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Темп:</div>
-                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+264 ₽/дн</b>
+                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+552 ₽/дн</b>
               </div>
             </div>
 
@@ -2398,7 +2396,7 @@
         <div class="click-header" onclick="toggleTravelSectionStats()" style="padding: 4px 6px; margin: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 8px;">
           <span style="font-size: 14px;">📊</span>
           <span style="font-size: 11px; font-weight: 900; color: var(--text-mute); text-transform: uppercase;">Сводная аналитика</span>
-          <span id="travelSectionStatsSumBadge" style="font-size: 12px; font-weight: 900; color: #10b981;">327&nbsp;375 ₽ (6)</span>
+          <span id="travelSectionStatsSumBadge" style="font-size: 12px; font-weight: 900; color: #10b981;">230&nbsp;189 ₽ (5)</span>
           <span id="travelSectionStatsArrow" style="font-size: 10px; color: var(--text-mute);">▼</span>
         </div>
 
@@ -2442,7 +2440,7 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view active">
+  <div id="viewAdd" class="app-view">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
         <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
@@ -2492,7 +2490,7 @@
       </div>
 
         <div style="display:flex; gap:8px;">
-          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые" style="display: block;"><option value="Обед/столовая на работе" style="display: block;">Обед/столовая на работе</option><option value="Пятерочка" style="display: block;">Пятерочка</option><option value="Бабушка Магазины" style="display: block;">Бабушка Магазины</option><option value="Дикси" style="display: block;">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" style="display: block;">Домой перекус/готовая еда/джанкфуд из магазина</option></optgroup><optgroup label="Бабушка" style="display: block;"><option value="Бабушка Аптека" style="display: block;">Бабушка Аптека</option><option value="Бабушка Магазины" style="display: block;">Бабушка Магазины</option><option value="Бабушка другое" style="display: block;">Бабушка другое</option></optgroup><optgroup label="Работа" style="display: block;"><option value="Обед/столовая на работе" style="display: block;">Обед/столовая на работе</option><option value="Сборы денег на работе" style="display: block;">Сборы денег на работе</option><option value="Еда/что-то на работу для себя" style="display: block;">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой" style="display: block;"><option value="Кафе чисто перекусить" style="display: block;">Кафе чисто перекусить</option><option value="Кофейни" style="display: block;">Кофейни</option><option value="Фастфуд" style="display: block;">Фастфуд</option><option value="Кафе в честь чего-то" style="display: block;">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома" style="display: block;">Перекус/джанкфуд продукты вне дома</option></optgroup><optgroup label="Продукты" style="display: block;"><option value="Доставка" style="display: block;">Доставка</option><option value="КБ" style="display: block;">КБ</option><option value="Пятерочка" style="display: block;">Пятерочка</option><option value="Чижик" style="display: block;">Чижик</option><option value="Магнит" style="display: block;">Магнит</option><option value="Дикси" style="display: block;">Дикси</option><option value="Перекресток" style="display: block;">Перекресток</option><option value="Спар" style="display: block;">Спар</option><option value="Вкусвилл" style="display: block;">Вкусвилл</option><option value="Ароматный мир/винлаб" style="display: block;">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины" style="display: block;">Другие продуктовые магазины</option><option value="Вода в еще" style="display: block;">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары" style="display: block;"><option value="-" style="display: block;">-</option><option value="еще" style="display: block;">еще</option><option value="Фикс прайс" style="display: block;">Фикс прайс</option><option value="Другие непродуктовые магазины" style="display: block;">Другие непродуктовые магазины</option><option value="Маркеты" style="display: block;">Маркеты</option><option value="Одежда" style="display: block;">Одежда</option><option value="Техника" style="display: block;">Техника</option><option value="Мебель" style="display: block;">Мебель</option><option value="Товары для дома онлайн" style="display: block;">Товары для дома онлайн</option><option value="Товары для себя/аксессуары" style="display: block;">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки" style="display: block;"><option value="Алкоголь бары пабы" style="display: block;">Алкоголь бары пабы</option><option value="Курение" style="display: block;">Курение</option><option value="Алкоголь из магазина домой" style="display: block;">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома" style="display: block;">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье" style="display: block;"><option value="Сотовая связь" style="display: block;">Сотовая связь</option><option value="Интернет домашний" style="display: block;">Интернет домашний</option><option value="Аренда квартиры" style="display: block;">Аренда квартиры</option><option value="Онлайн - Подписки" style="display: block;">Онлайн - Подписки</option><option value="Консьержка" style="display: block;">Консьержка</option><option value="ЖКХ - вода" style="display: block;">ЖКХ - вода</option><option value="ЖКХ - свет" style="display: block;">ЖКХ - свет</option></optgroup><optgroup label="Машина" style="display: block;"><option value="Парковка" style="display: block;">Парковка</option><option value="Запчасти на машину" style="display: block;">Запчасти на машину</option><option value="Ремонт машины" style="display: block;">Ремонт машины</option><option value="Мойка машины" style="display: block;">Мойка машины</option><option value="Штрафы" style="display: block;">Штрафы</option><option value="ОСАГО" style="display: block;">ОСАГО</option><option value="Бензин" style="display: block;">Бензин</option><option value="Не запчасти" style="display: block;">Не запчасти</option><option value="Вода в машину" style="display: block;">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто" style="display: block;"><option value="Такси" style="display: block;">Такси</option><option value="Каршеринг" style="display: block;">Каршеринг</option><option value="Самокаты" style="display: block;">Самокаты</option><option value="Транспорт городской общественный" style="display: block;">Транспорт городской общественный</option></optgroup><optgroup label="Ручка" style="display: block;"><option value="Ручка продукты" style="display: block;">Ручка продукты</option><option value="Ручка красота" style="display: block;">Ручка красота</option><option value="Подарки ручке" style="display: block;">Подарки ручке</option><option value="Цветы ручке" style="display: block;">Цветы ручке</option><option value="Ручке деньги" style="display: block;">Ручке деньги</option><option value="Пленка проявка" style="display: block;">Пленка проявка</option><option value="Ручка одежда" style="display: block;">Ручка одежда</option><option value="Ручка другое" style="display: block;">Ручка другое</option></optgroup><optgroup label="Здоровье" style="display: block;"><option value="Аптека" style="display: block;">Аптека</option><option value="Здоровье (обследования итд)" style="display: block;">Здоровье (обследования итд)</option><option value="Стрижка" style="display: block;">Стрижка</option><option value="Интим" style="display: block;">Интим</option><option value="Лекарства" style="display: block;">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения" style="display: block;"><option value="Кино" style="display: block;">Кино</option><option value="Театр" style="display: block;">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ" style="display: block;">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд" style="display: block;">Открытки/сувениры и тд</option><option value="Иной досуг" style="display: block;">Иной досуг</option><option value="Музеи" style="display: block;">Музеи</option><option value="Иные развлечения" style="display: block;">Иные развлечения</option><option value="Фотобудка и тд" style="display: block;">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы" style="display: block;"><option value="Подарки" style="display: block;">Подарки</option><option value="Не сошёлся дебет кредит" style="display: block;">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома" style="display: block;"><option value="Доставка еды" style="display: block;">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" style="display: block;">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома" style="display: block;">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки" style="display: block;"><option value="Еда в продуктовых без ручки" style="display: block;">Еда в продуктовых без ручки</option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки" style="display: block;">Фастфуд/кафешки/рестораны/шаурма без ручки</option></optgroup></select>
+          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Дикси">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Онлайн - Подписки">Онлайн - Подписки</option></optgroup><optgroup label="Бабушка"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Сборы денег на работе">Сборы денег на работе</option><option value="Еда/что-то на работу для себя">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить">Кафе чисто перекусить</option><option value="Кофейни">Кофейни</option><option value="Фастфуд">Фастфуд</option><option value="Кафе в честь чего-то">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома">Перекус/джанкфуд продукты вне дома</option></optgroup><optgroup label="Продукты"><option value="Доставка">Доставка</option><option value="КБ">КБ</option><option value="Пятерочка">Пятерочка</option><option value="Чижик">Чижик</option><option value="Магнит">Магнит</option><option value="Дикси">Дикси</option><option value="Перекресток">Перекресток</option><option value="Спар">Спар</option><option value="Вкусвилл">Вкусвилл</option><option value="Ароматный мир/винлаб">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины">Другие продуктовые магазины</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары"><option value="-">-</option><option value="еще">еще</option><option value="Фикс прайс">Фикс прайс</option><option value="Другие непродуктовые магазины">Другие непродуктовые магазины</option><option value="Маркеты">Маркеты</option><option value="Одежда">Одежда</option><option value="Техника">Техника</option><option value="Мебель">Мебель</option><option value="Товары для дома онлайн">Товары для дома онлайн</option><option value="Товары для себя/аксессуары">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы">Алкоголь бары пабы</option><option value="Курение">Курение</option><option value="Алкоголь из магазина домой">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь">Сотовая связь</option><option value="Интернет домашний">Интернет домашний</option><option value="Аренда квартиры">Аренда квартиры</option><option value="Онлайн - Подписки">Онлайн - Подписки</option><option value="Консьержка">Консьержка</option><option value="ЖКХ - вода">ЖКХ - вода</option><option value="ЖКХ - свет">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка">Парковка</option><option value="Запчасти на машину">Запчасти на машину</option><option value="Ремонт машины">Ремонт машины</option><option value="Мойка машины">Мойка машины</option><option value="Штрафы">Штрафы</option><option value="ОСАГО">ОСАГО</option><option value="Бензин">Бензин</option><option value="Не запчасти">Не запчасти</option><option value="Вода в машину">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси">Такси</option><option value="Каршеринг">Каршеринг</option><option value="Самокаты">Самокаты</option><option value="Транспорт городской общественный">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты">Ручка продукты</option><option value="Ручка красота">Ручка красота</option><option value="Подарки ручке">Подарки ручке</option><option value="Цветы ручке">Цветы ручке</option><option value="Ручке деньги">Ручке деньги</option><option value="Пленка проявка">Пленка проявка</option><option value="Ручка одежда">Ручка одежда</option><option value="Ручка другое">Ручка другое</option></optgroup><optgroup label="Здоровье"><option value="Аптека">Аптека</option><option value="Здоровье (обследования итд)">Здоровье (обследования итд)</option><option value="Стрижка">Стрижка</option><option value="Интим">Интим</option><option value="Лекарства">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино">Кино</option><option value="Театр">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд">Открытки/сувениры и тд</option><option value="Иной досуг">Иной досуг</option><option value="Музеи">Музеи</option><option value="Иные развлечения">Иные развлечения</option><option value="Фотобудка и тд">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки">Подарки</option><option value="Не сошёлся дебет кредит">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Еда в продуктовых без ручки">Еда в продуктовых без ручки</option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option></optgroup></select>
           <button type="button" onclick="openCatManager()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 15px; margin-bottom:12px; border:none; cursor:pointer;">⚙️</button>
         </div>
 
@@ -2521,7 +2519,7 @@
 
       <button type="button" onclick="queueTransaction()" style="width:100%; background:#10b981; color:white; padding:16px; border-radius:12px; font-weight:900; border:none; margin-top:10px; cursor:pointer;">В очередь ⚡</button>
 
-      <div id="addQueueListContainer" style="margin-top: 20px; display: none;">
+      <div id="addQueueListContainer" style="margin-top:20px; display:none;">
         <h4 style="font-size:12px; color:var(--text-mute); margin-bottom:8px;">ОБЫЧНЫЕ ОПЕРАЦИИ В ОЧЕРЕДИ:</h4>
         <div id="addQueueListRender"></div>
       </div>
@@ -2531,7 +2529,7 @@
 </div><!-- Конец max-width контейнера -->
 
 <div id="syncBar" class="sync-bar" onclick="openGlobalQueue()" style="display: none;">
-    <span id="syncText">В очереди: 1 шт.</span>
+    <span id="syncText">В очереди: 0 шт.</span>
     <span id="syncBtnText" style="background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px;">👀 Открыть</span>
 </div>
 
@@ -2554,7 +2552,7 @@
         <h3 style="font-weight:900; margin:0;">👁️ Скрытые должники</h3>
         <button class="close-btn" onclick="closeModal('hiddenDebtorsModal')">✕</button>
     </div>
-    <div id="hiddenDebtorsList"></div>
+    <div id="hiddenDebtorsList"><div style="color:var(--text-mute); text-align:center;">Нет скрытых должников</div></div>
   </div>
 </div>
 
@@ -2626,10 +2624,7 @@
   <div class="modal-content" style="padding: 0;">
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">Яндекс</h2>
-              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display: block; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
-            </div>
+            <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
         </div>
         <div style="background:var(--input-bg); padding:12px; border-radius:12px; border:1px solid var(--border);">
@@ -3037,11 +3032,11 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -3206,7 +3201,7 @@
     const now = Date.now();
 
     // 1. Блокируем сетевой запрос, если таймер активен (защита от брутфорса)
-    if (lockUntil > now && !val) {
+    if (lockUntil > now && val.toLowerCase() !== 'сброс') {
       const remainingSec = Math.ceil((lockUntil - now) / 1000);
       const min = Math.floor(remainingSec / 60);
       const sec = remainingSec % 60;
@@ -3406,7 +3401,7 @@
   }
 
   function initTheme() {
-    const t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const t = localStorage.getItem('theme') || 'dark'; // По умолчанию всегда темная тема
     document.documentElement.setAttribute('data-theme', t);
   }
 
@@ -3452,6 +3447,7 @@
 
     updatePeriodUI();
     initExportDefaults(); // Авто-подстановка текущего месяца и года в экспорт
+    switchTab('accounts'); // Принудительно открываем вкладку счетов при старте
   };
 
   async function fetchAllData(silent = false) {
@@ -3620,7 +3616,6 @@
     if(t === 'analytics') applyDatesLocally();
     if(t === 'travels') renderTravels();
     if(t === 'debts') renderDebts();
-    updateSyncBar();
   }
 
   // 1. Проверка расходного счёта без риска ошибки необъявленной n
@@ -3802,9 +3797,8 @@
   function updateSyncBar() {
     const bar = document.getElementById('syncBar');
     const totalQueueCount = (localQueue ? localQueue.length : 0) + (catQueue ? catQueue.length : 0);
-    const isAddTabActive = document.getElementById('viewAdd') && document.getElementById('viewAdd').classList.contains('active');
 
-    if (totalQueueCount === 0 || isAddTabActive) {
+    if (totalQueueCount === 0) {
       if (bar) bar.style.display = 'none';
       // Если очередь опустела, автоматически закрываем модальное окно очереди
       const modal = document.getElementById('globalQueueModal');
@@ -4563,58 +4557,11 @@
   function openAccHistory(n) {
     activeHistoryAcc = n;
     document.getElementById('histTitle').innerText = n === 'Все операции' ? 'Сводка' : n;
-    const btnRecalc = document.getElementById('btnRecalcBal');
-    if (btnRecalc) btnRecalc.style.display = (n === 'Все операции') ? 'none' : 'block';
     document.getElementById('histSearchInput').value = '';
     document.getElementById('accHistoryModal').style.display = 'flex';
     document.getElementById('histDateType').value = 'all';
     document.getElementById('histSortType').value = 'date_desc';
     updateHistDateUI();
-  }
-
-  async function recalculateCurrentAccountBalance() {
-    if (isGuest()) return alert("🔒 Вы вошли как гость. Пересчет балансов заблокирован!");
-    if (!activeHistoryAcc || activeHistoryAcc === 'Все операции') return;
-    if (localQueue && localQueue.length > 0) return alert("⚠️ Сначала отправьте текущую очередь изменений на сервер (зеленая плашка внизу)!");
-
-    if (!confirm(`Выполнить жесткий пересчет баланса счета «${activeHistoryAcc}»?\n\nСистема сложит все доходы и вычтет все расходы из истории, чтобы исправить рассинхрон.`)) return;
-
-    const btn = document.getElementById('btnRecalcBal');
-    btn.innerText = '⏳...';
-    btn.disabled = true;
-
-    try {
-      let exactBalance = 0;
-      appData.transactions.forEach(t => {
-        if (t.type === 'Расход' && t.accE === activeHistoryAcc) exactBalance -= (parseFloat(t.sumE) || 0);
-        if (t.type === 'Доход' && t.accI === activeHistoryAcc) exactBalance += (parseFloat(t.sumI) || 0);
-        if (t.type === 'Перевод' || t.type === 'Между своими') {
-          if (t.accF === activeHistoryAcc) exactBalance -= (parseFloat(t.sumTr) || 0);
-          if (t.accT === activeHistoryAcc) exactBalance += (parseFloat(t.sumTr) || 0);
-        }
-      });
-
-      // Округляем до копеек, чтобы убить баги JS с плавающей точкой (типа 0.00000001)
-      exactBalance = Math.round(exactBalance * 100) / 100;
-
-      // Обновляем в БД
-      const { error } = await db.from('accounts').update({ balance: exactBalance }).eq('name', activeHistoryAcc);
-      if (error) throw error;
-
-      // Обновляем локально
-      const accObj = appData.accounts.find(a => a.name === activeHistoryAcc);
-      if (accObj) accObj.balance = exactBalance;
-      updateAllAccountsBalance();
-
-      alert(`✅ Баланс успешно восстановлен!\nНовый остаток: ${exactBalance.toLocaleString()} ₽`);
-      renderBankCards();
-      executeHistSearch();
-    } catch (err) {
-      alert("Ошибка пересчета: " + err.message);
-    } finally {
-      btn.innerText = '🔄 Пересчитать';
-      btn.disabled = false;
-    }
   }
 
   function executeHistSearch() {
@@ -4637,7 +4584,7 @@
     }
 
     let h = '', res = [];
-    appData.transactions.forEach((r, idx) => {
+    appData.transactions.forEach(r => {
         if(dType === 'single' && dSing && r.fd !== dSing) return;
         if(dType === 'range' && dStart && dEnd && (dStart > r.fd || r.fd > dEnd)) return;
         if(dType === 'month' && (bounds.s > r.fd || r.fd > bounds.e)) return;
@@ -4646,23 +4593,22 @@
         if(q && !str.includes(q)) return;
 
         if(r.type === 'Расход' && (matchAll || r.accE === n)) {
-          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Расход', cat: r.catE, s: r.sumE, c: r.comE, acc: r.accE, idx: idx });
+          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Расход', cat: r.catE, s: r.sumE, c: r.comE, acc: r.accE });
         } else if(r.type === 'Доход' && (matchAll || r.accI === n)) {
-          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Доход', cat: r.catI, s: r.sumI, c: r.comI, acc: r.accI, idx: idx });
+          res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Доход', cat: r.catI, s: r.sumI, c: r.comI, acc: r.accI });
         } else if(r.type === 'Между своими' || r.type === 'Перевод') {
           if(matchAll) {
-            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '', idx: idx });
+            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '' });
           } else {
-            if(r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '', idx: idx });
-            if(r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '', idx: idx });
+            if(r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '' });
+            if(r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '' });
           }
         }
     });
 
     const sortVal = document.getElementById('histSortType').value;
-    // Вторичная сортировка по индексу в массиве БД, чтобы чеки одного дня не перемешивались
-    if (sortVal === 'date_desc') res.sort((a, b) => new Date(b.fd).getTime() - new Date(a.fd).getTime() || b.idx - a.idx);
-    else if (sortVal === 'date_asc') res.sort((a, b) => new Date(a.fd).getTime() - new Date(b.fd).getTime() || a.idx - b.idx);
+    if (sortVal === 'date_desc') res.sort((a, b) => new Date(b.fd).getTime() - new Date(a.fd).getTime());
+    else if (sortVal === 'date_asc') res.sort((a, b) => new Date(a.fd).getTime() - new Date(b.fd).getTime());
     else if (sortVal === 'sum_desc') res.sort((a, b) => b.s - a.s);
     else if (sortVal === 'sum_asc') res.sort((a, b) => a.s - b.s);
     else if (sortVal === 'name_asc') res.sort((a, b) => a.cat.localeCompare(b.cat));
@@ -5749,7 +5695,7 @@
     periodTxs.sort((a, b) => b.fullVal - a.fullVal);
     const top3 = periodTxs.slice(0, 3);
     let top3Html = top3.map(x =>
-      `«${escapeHtml(x.catE)}» — <b>${x.sumE.toLocaleString()} ₽</b>${x.points > 0 ? ` (+${x.points} бал.)` : ''} <span style="color:var(--text-mute); font-size:10px;">(${x.d}${x.comE ? `, ${escapeHtml(x.comE)}` : ''})</span>`
+      `«${x.catE}» — <b>${x.sumE.toLocaleString()} ₽</b>${x.points > 0 ? ` (+${x.points} бал.)` : ''} <span style="color:var(--text-mute); font-size:10px;">(${x.d}${x.comE ? `, ${x.comE}` : ''})</span>`
     ).join('<br>• ');
 
     const sortedCats = Object.entries(catSums).sort((a, b) => b[1] - a[1]);
@@ -6750,7 +6696,7 @@ function renderA() {
     document.getElementById('editDate').value = dateVal;
 
     document.getElementById('editCat').value = tx.type === 'Расход' ? tx.catE : tx.catI;
-    document.getElementById('editSum').value = tx.type === 'Расход' ? tx.sumE : (tx.type === 'Доход' ? tx.sumI : tx.sumTr);
+    document.getElementById('editSum').value = tx.type === 'Расход' ? tx.sumE : tx.sumI;
     document.getElementById('editComment').value = tx.type === 'Расход' ? tx.comE : tx.comI;
 
     const editAccSelect = document.getElementById('editAcc');
@@ -6803,9 +6749,6 @@ function renderA() {
     if (!tx) return;
 
     if (!confirm(`Вы действительно хотите удалить эту операцию на ${tx.sumE || tx.sumI || tx.sumTr} ₽?`)) return;
-
-    const orphanRound = localQueue.find(x => x.item && x.item.parentTxId === r);
-    if (orphanRound) removeFromQueue(orphanRound.r);
 
     // Возврат средств на счет
     if (tx.type === 'Расход') updateAccBal(tx.accE, tx.sumE);
@@ -7036,9 +6979,6 @@ function renderA() {
          dS[r.n].i.push({ r: r.r, d: r.d, cat: 'Архив', s: r.amt, c: r.c, t: 'exp' });
        } else {
          dS[r.n].r += Math.abs(r.amt);
-         if ((r.c || '').toLowerCase().includes('дали в долг') || (r.c || '').toLowerCase().includes('мой долг')) {
-           dS[r.n].b = true;
-         }
          dS[r.n].i.push({ r: r.r, d: r.d, cat: 'Архив возврат', s: Math.abs(r.amt), c: r.c, t: 'inc' });
        }
     });
@@ -7586,11 +7526,7 @@ function renderA() {
     const category = document.getElementById('splitAction').value;
     const comment = document.getElementById('splitComment').value.trim();
     const realSpend = document.getElementById('splitRealSpend').checked;
-    let date = toISOLocal(new Date());
-    if (window.originalTxRowIdToReplace) {
-      const orig = appData.transactions.find(x => String(x.r) === String(window.originalTxRowIdToReplace));
-      if (orig && orig.fd) date = orig.fd;
-    }
+    const date = toISOLocal(new Date());
     const rows = document.querySelectorAll('#splitRowsContainer > div');
 
     if (rows.length === 0) return alert("⚠️ Добавьте хотя бы одного участника!");
@@ -8165,7 +8101,6 @@ function renderA() {
       }]).select();
 
       if (evError) throw evError;
-      if (!createdEvent || !createdEvent.length) throw new Error("Событие не было создано (пустой ответ от БД).");
       const eventId = createdEvent[0].id;
 
       const txRows = itemsToSave.map(it => ({
@@ -8756,7 +8691,7 @@ function renderA() {
         const sumText = tx ? `${tx.sumE.toLocaleString()} ₽` : 'Чек';
         const catText = tx ? (tx.catE || '') : '';
         const cityText = cityName ? `, ${cityName}` : '';
-        const fullLabel = `${sumText}, ${escapeHtml(catText)}${escapeHtml(cityText)}`;
+        const fullLabel = `${sumText}, ${catText}${cityText}`;
 
         chips += `
           <span onclick="toggleTravelTxExclusion('${txId}', event)" style="cursor:pointer; background:#fef3c7; color:#b45309; border:1px solid #fcd34d; padding:3px 8px; border-radius:6px; font-size:10.5px; font-weight:bold; display:inline-flex; align-items:center; gap:4px;" title="Вернуть чек в расчет">
@@ -9702,7 +9637,6 @@ function renderA() {
       };
 
       if (document.getElementById('catDeepAvgCheck')) document.getElementById('catDeepAvgCheck').innerText = `${avgCheck.toLocaleString()} ₽`;
-      if (document.getElementById('catDeepAvgCheckAllTime')) document.getElementById('catDeepAvgCheckAllTime').innerText = `${avgCheck.toLocaleString()} ₽`;
       if (document.getElementById('catDeepAllTimeAvgMonth')) document.getElementById('catDeepAllTimeAvgMonth').innerText = `${allTimeMonthAvg.toLocaleString()} ₽/мес`;
 
       if (document.getElementById('catDeepFrequency')) {
@@ -12208,7 +12142,7 @@ function renderA() {
         catsHtml += `<div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">`;
         catEntries.forEach(([cat, sum]) => {
           const pct = d.spent > 0 ? Math.round((sum / d.spent) * 100) : 0;
-          catsHtml += `<span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>${escapeHtml(cat)}</b>: <span>${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(${pct}%)</span></span>`;
+          catsHtml += `<span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>${cat}</b>: <span>${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(${pct}%)</span></span>`;
         });
         catsHtml += `</div>`;
       }
@@ -12744,10 +12678,7 @@ function toggleEnvelopeAccordion(prefix) {
           '#travelsList', '#histList', '#tableRowsList', '#queueListRender',
           '#autopilotFreePool', '#totalSum', '#autopilotEnvelopesWrap',
           '#analyticsSmartInsightsContent', '#streakHistoryList',
-          '#travelSectionStatsContainer', '#catDeepPeriodPurchases',
-          '#poolAccountsListContainer', '#capitalAccountsListContainer',
-          '#simAccountsCheckboxesList', '#apPoolAccountsCheckboxes',
-          '#hiddenDebtorsList', '#bulkResults', '#simBaselineBox', '#simTasksList'
+          '#travelSectionStatsContainer', '#catDeepPeriodPurchases'
         ];
         containersToPurge.forEach(sel => {
           const box = docClone.querySelector(sel);
@@ -12959,7 +12890,7 @@ function toggleEnvelopeAccordion(prefix) {
       <div style="background:var(--input-bg); padding:10px 12px; border-radius:12px; border:1px solid var(--border);">
         <div id="catDeepPeriodCheckLabel" style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Средний чек:</div>
         <div id="catDeepPeriodAvgCheck" class="sensitive-money" style="font-size:15px; font-weight:900; color:#3b82f6; margin-top:2px;">0 ₽</div>
-        <div id="catDeepCheckSubLabel" style="font-size:9.5px; color:var(--text-mute); margin-top:3px;">За всё время: <b id="catDeepAvgCheckAllTime" class="sensitive-money" style="color:var(--text-main);">0 ₽</b></div>
+        <div id="catDeepCheckSubLabel" style="font-size:9.5px; color:var(--text-mute); margin-top:3px;">За всё время: <b id="catDeepAvgCheck" class="sensitive-money" style="color:var(--text-main);">0 ₽</b></div>
       </div>
       <div style="background:var(--input-bg); padding:10px 12px; border-radius:12px; border:1px solid var(--border);">
         <div id="catDeepPeriodPaceLabel" style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">В среднем в год:</div>
@@ -13309,7 +13240,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4030; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -13356,10 +13287,10 @@ function toggleEnvelopeAccordion(prefix) {
       </label>
 
       <!-- Выбор файла калькулятора (появляется при выборе) -->
-      <div id="deployIndexFileWrap" style="display:none; padding-left:24px; flex-direction:column; gap:4px;">
+      <div id="deployIndexFileWrap" style="display: flex; padding-left: 24px; flex-direction: column; gap: 4px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:10.5px; color:var(--text-mute);">Файл index.html с компьютера:</span>
-          <span id="deployIndexStatusBadge" style="font-size:9.5px; font-weight:bold; color:var(--text-mute);">Не выбран</span>
+          <span id="deployIndexStatusBadge" style="font-size: 9.5px; font-weight: bold; color: rgb(16, 185, 129);">✓ Готов (22.1 КБ)</span>
         </div>
         <input type="file" id="deployIndexFileInput" accept=".html" style="font-size:11px;" onchange="onDeployIndexFileSelected(this)">
       </div>
@@ -13368,7 +13299,7 @@ function toggleEnvelopeAccordion(prefix) {
     <!-- КНОПКА ЗАПУСКА -->
     <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;" disabled="">⏳ Публикация в GitHub...</button>
 
-    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
+    <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка и обновление фасада index.html в GitHub...</div><div style="color:#10b981; margin-top:2px;">✅ Фасад index.html успешно обновлён в GitHub!</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
 
     <!-- КНОПКА ОТКРЫТИЯ НАСТРОЕК В ОТДЕЛЬНОМ ОКНЕ -->
     <div style="border-top:1px dashed var(--border); padding-top:10px; margin-top:2px;">
@@ -13380,7 +13311,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
-<div id="deploySettingsModal" class="modal" style="z-index: 16000; display: none;">
+<div id="deploySettingsModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
     <div class="modal-header-sticky">
       <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
