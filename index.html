@@ -350,40 +350,53 @@
     var lockUntil = parseInt(localStorage.getItem('__gw_lock_until') || '0', 10);
     var now = Date.now();
 
-    if (lockUntil > now && !id && !key) {
-      var remMin = Math.ceil((lockUntil - now) / 60000);
-      return alert("🚨 Шлюз заблокирован! Попробуйте через " + remMin + " мин.");
+    if (!id && !key) {
+      if (lockUntil > now) {
+        var remMin = Math.ceil((lockUntil - now) / 60000);
+        return alert("🚨 Шлюз заблокирован! Введите кодовое слово сброса. Осталось: " + remMin + " мин.");
+      }
+      return alert("Заполните поля!");
     }
 
-    if (!id && !key) return alert("Заполните поля!");
     if (btn) { btn.disabled = true; btn.innerText = "Проверка..."; }
 
+    // Если заполнено только одно поле (слово сброса) — дублируем его во второе, чтобы Python не ругался на пустоту
+    var sendId = id || key;
+    var sendKey = key || id;
+
     try {
-      // Прямой запрос к серверному демону (в коде фасада больше нет ключей и URL базы)
       var sRes = await fetch('/api/issue-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ p_id: id, p_key: key })
+        body: JSON.stringify({ p_id: sendId, p_key: sendKey })
       });
 
       var data = await sRes.json().catch(function() { return {}; });
 
+      // 1. Успешный сброс блокировки кодовым словом
       if (data && data.reset === true) {
         localStorage.removeItem('__gw_fails');
         localStorage.removeItem('__gw_lock_until');
         if (idInp) idInp.value = '';
         if (keyInp) keyInp.value = '';
-        alert("✅ Блокировка шлюза снята!\nТеперь введите ваш настоящий ID и Ключ для входа.");
+        // Если сервер случайно выдал куку при сбросе — уничтожаем её
+        fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
+        alert("✅ Блокировка успешно снята!\nТеперь введите ваши настоящие ID и Ключ для входа.");
         if (idInp) idInp.focus();
         return;
       }
 
+      // 2. Если вход заблокирован, а ввели НЕ слово сброса
       if (lockUntil > now) {
+        // Жестко сбрасываем куку, если сервер попытался авторизовать по логину во время блокировки
+        fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
         var remMinWait = Math.ceil((lockUntil - now) / 60000);
-        return alert("🚨 Шлюз заблокирован! Осталось " + remMinWait + " мин.");
+        if (keyInp) keyInp.value = '';
+        return alert("🚨 Шлюз заблокирован! Вход по паролю запрещен.\nВведите кодовое слово для разблокировки (осталось " + remMinWait + " мин).");
       }
 
+      // 3. Обычный успешный вход
       if (sRes.ok && data && data.success === true) {
         localStorage.removeItem('__gw_fails');
         localStorage.removeItem('__gw_lock_until');
