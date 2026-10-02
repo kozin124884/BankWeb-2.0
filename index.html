@@ -351,15 +351,13 @@
     var now = Date.now();
     var isLocked = lockUntil > now;
 
-    // 1. ПРОВЕРКА ВВОДА
+    // 1. Проверка заполнения
     if (isLocked) {
-      // При блокировке достаточно заполнить хотя бы одно поле кодовым словом
       if (!id && !key) {
         var remMin = Math.ceil((lockUntil - now) / 60000);
         return alert("🚨 Шлюз заблокирован на 15 мин!\nВведите кодовое слово в любое поле для сброса (осталось " + remMin + " мин).");
       }
     } else {
-      // В обычном режиме требуем строго оба поля
       if (!id || !key) {
         return alert("Заполните оба поля: ID сотрудника и Ключ авторизации!");
       }
@@ -367,38 +365,51 @@
 
     if (btn) { btn.disabled = true; btn.innerText = "Проверка..."; }
 
+    var sendId = id || key;
+    var sendKey = key || id;
+
     try {
       var sRes = await fetch('/api/issue-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ p_id: id || key, p_key: key || id })
+        body: JSON.stringify({ p_id: sendId, p_key: sendKey })
       });
 
       var data = await sRes.json().catch(function() { return {}; });
 
-      // 2. ОБРАБОТКА СБРОСА КОДОВЫМ СЛОВОМ
-      if (data && data.reset === true) {
-        localStorage.removeItem('__gw_fails');
-        localStorage.removeItem('__gw_lock_until');
-        if (idInp) idInp.value = '';
-        if (keyInp) keyInp.value = '';
-        // Гарантируем, что сессия не создана
-        fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
-        alert("✅ Блокировка успешно снята!\nТеперь введите ваши настоящие ID и Ключ для входа.");
-        if (idInp) idInp.focus();
-        return;
-      }
-
-      // 3. ЕСЛИ ЗАБЛОКИРОВАН, А ВВЕЛИ НЕ СЛОВО СБРОСА
+      // 2. РЕЖИМ БЛОКИРОВКИ: СБРОС КОДОВЫМ СЛОВОМ
       if (isLocked) {
-        var remMinWait = Math.ceil((lockUntil - now) / 60000);
-        if (keyInp) keyInp.value = '';
-        return alert("❌ Неверное кодовое слово сброса!\nШлюз остаётся заблокирован (осталось " + remMinWait + " мин).");
+        if (sRes.ok) {
+          // Сервер подтвердил слово (200 OK)! Снимаем блокировку
+          localStorage.removeItem('__gw_fails');
+          localStorage.removeItem('__gw_lock_until');
+          if (idInp) idInp.value = '';
+          if (keyInp) keyInp.value = '';
+          // Уничтожаем сессию, которую выдал Python, чтобы НЕ входить в банк без пароля
+          fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
+          alert("✅ Блокировка успешно снята!\nТеперь введите ваши настоящие ID и Ключ для входа.");
+          if (idInp) idInp.focus();
+          return;
+        } else {
+          // Сервер вернул 401 — слово не подошло
+          var remMinWait = Math.ceil((lockUntil - now) / 60000);
+          if (idInp) idInp.value = '';
+          if (keyInp) keyInp.value = '';
+          return alert("❌ Неверное кодовое слово сброса!\nШлюз остаётся заблокирован (осталось " + remMinWait + " мин).");
+        }
       }
 
-      // 4. ОБЫЧНЫЙ ВХОД ПО ЛОГИНУ И ПАРОЛЮ
+      // 3. ОБЫЧНЫЙ ВХОД (НЕ ЗАБЛОКИРОВАН)
       if (sRes.ok && data && data.success === true) {
+        // Защита: если кто-то ввел слово сброса в обычном режиме — не пускаем без пароля
+        if (data.reset === true) {
+          fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
+          if (idInp) idInp.value = '';
+          if (keyInp) keyInp.value = '';
+          return alert("ℹ️ Блокировки нет. Введите настоящий ID сотрудника и Ключ авторизации для входа.");
+        }
+
         localStorage.removeItem('__gw_fails');
         localStorage.removeItem('__gw_lock_until');
         window.location.replace('bank.html');
@@ -416,7 +427,7 @@
         }
       }
     } catch (err) {
-      alert("Ошибка: " + err.message);
+      alert("Ошибка сети или сервера: " + err.message);
     } finally {
       if (btn) { btn.disabled = false; btn.innerText = "Войти ➔"; }
     }
