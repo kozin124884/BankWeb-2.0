@@ -413,7 +413,7 @@
 
 
   window.onload = function() {
-    var t = localStorage.getItem('theme') || 'light';
+    var t = localStorage.getItem('theme') || 'dark'; // По умолчанию всегда темная тема
     document.documentElement.setAttribute('data-theme', t);
     runCalc();
   };
