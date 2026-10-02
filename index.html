@@ -349,54 +349,55 @@
     var fails = parseInt(localStorage.getItem('__gw_fails') || '0', 10);
     var lockUntil = parseInt(localStorage.getItem('__gw_lock_until') || '0', 10);
     var now = Date.now();
+    var isLocked = lockUntil > now;
 
-    if (!id && !key) {
-      if (lockUntil > now) {
+    // 1. ПРОВЕРКА ВВОДА
+    if (isLocked) {
+      // При блокировке достаточно заполнить хотя бы одно поле кодовым словом
+      if (!id && !key) {
         var remMin = Math.ceil((lockUntil - now) / 60000);
-        return alert("🚨 Шлюз заблокирован! Введите кодовое слово сброса. Осталось: " + remMin + " мин.");
+        return alert("🚨 Шлюз заблокирован на 15 мин!\nВведите кодовое слово в любое поле для сброса (осталось " + remMin + " мин).");
       }
-      return alert("Заполните поля!");
+    } else {
+      // В обычном режиме требуем строго оба поля
+      if (!id || !key) {
+        return alert("Заполните оба поля: ID сотрудника и Ключ авторизации!");
+      }
     }
 
     if (btn) { btn.disabled = true; btn.innerText = "Проверка..."; }
-
-    // Если заполнено только одно поле (слово сброса) — дублируем его во второе, чтобы Python не ругался на пустоту
-    var sendId = id || key;
-    var sendKey = key || id;
 
     try {
       var sRes = await fetch('/api/issue-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ p_id: sendId, p_key: sendKey })
+        body: JSON.stringify({ p_id: id || key, p_key: key || id })
       });
 
       var data = await sRes.json().catch(function() { return {}; });
 
-      // 1. Успешный сброс блокировки кодовым словом
+      // 2. ОБРАБОТКА СБРОСА КОДОВЫМ СЛОВОМ
       if (data && data.reset === true) {
         localStorage.removeItem('__gw_fails');
         localStorage.removeItem('__gw_lock_until');
         if (idInp) idInp.value = '';
         if (keyInp) keyInp.value = '';
-        // Если сервер случайно выдал куку при сбросе — уничтожаем её
+        // Гарантируем, что сессия не создана
         fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
         alert("✅ Блокировка успешно снята!\nТеперь введите ваши настоящие ID и Ключ для входа.");
         if (idInp) idInp.focus();
         return;
       }
 
-      // 2. Если вход заблокирован, а ввели НЕ слово сброса
-      if (lockUntil > now) {
-        // Жестко сбрасываем куку, если сервер попытался авторизовать по логину во время блокировки
-        fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }).catch(function(){});
+      // 3. ЕСЛИ ЗАБЛОКИРОВАН, А ВВЕЛИ НЕ СЛОВО СБРОСА
+      if (isLocked) {
         var remMinWait = Math.ceil((lockUntil - now) / 60000);
         if (keyInp) keyInp.value = '';
-        return alert("🚨 Шлюз заблокирован! Вход по паролю запрещен.\nВведите кодовое слово для разблокировки (осталось " + remMinWait + " мин).");
+        return alert("❌ Неверное кодовое слово сброса!\nШлюз остаётся заблокирован (осталось " + remMinWait + " мин).");
       }
 
-      // 3. Обычный успешный вход
+      // 4. ОБЫЧНЫЙ ВХОД ПО ЛОГИНУ И ПАРОЛЮ
       if (sRes.ok && data && data.success === true) {
         localStorage.removeItem('__gw_fails');
         localStorage.removeItem('__gw_lock_until');
@@ -409,15 +410,12 @@
         if (fails >= 3) {
           localStorage.setItem('__gw_lock_until', Date.now() + 15 * 60 * 1000);
           localStorage.removeItem('__gw_fails');
-          closeGateway();
-          alert("🚨 3 неверные попытки! Вход заблокирован на 15 минут.");
+          alert("🚨 3 неверные попытки! Вход заблокирован на 15 минут.\nДля досрочного сброса введите кодовое слово.");
         } else {
-          closeGateway();
           alert("❌ Неверный ID или ключ! Осталось попыток: " + (3 - fails));
         }
       }
     } catch (err) {
-      closeGateway();
       alert("Ошибка: " + err.message);
     } finally {
       if (btn) { btn.disabled = false; btn.innerText = "Войти ➔"; }
