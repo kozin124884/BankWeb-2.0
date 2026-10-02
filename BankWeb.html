@@ -12516,7 +12516,7 @@ function toggleEnvelopeAccordion(prefix) {
     localStorage.setItem('deploy_gh_token', token);
     localStorage.setItem('deploy_webhook_url', webhook);
 
-    // Сохраняем в таблицу app_settings Supabase, чтобы настройки были доступны на всех ваших устройствах
+    /// Сохраняем в таблицу app_settings Supabase, чтобы настройки были доступны на всех ваших устройствах
     try {
       await db.rpc('update_app_settings_batch', { p_updates: [
         { key: 'deploy_gh_repo', value: repo },
@@ -12787,7 +12787,6 @@ function toggleEnvelopeAccordion(prefix) {
     try {
       console.log("Попытка сохранения реквизитов шлюза...");
       const updates = [];
-
       if (newId) updates.push({ key: 'gateway_id_hash', value: await sha256(newId) });
       if (newKey) updates.push({ key: 'gateway_key_hash', value: await sha256(newKey) });
       if (newResetWord) updates.push({ key: 'gateway_reset_word_hash', value: await sha256(newResetWord.toLowerCase()) });
