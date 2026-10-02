@@ -374,8 +374,8 @@
         localStorage.removeItem('__gw_lock_until');
         if (idInp) idInp.value = '';
         if (keyInp) keyInp.value = '';
-        alert("✅ Блокировка шлюза снята.");
-        closeGateway();
+        alert("✅ Блокировка шлюза снята!\nТеперь введите ваш настоящий ID и Ключ для входа.");
+        if (idInp) idInp.focus();
         return;
       }
 
