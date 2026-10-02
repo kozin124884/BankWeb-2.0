@@ -265,7 +265,7 @@
 </head>
 <body>
 <!-- ЭКРАН ВВОДА PIN-КОДА -->
-<div id="pinOverlay" style="display: none; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+<div id="pinOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
   <div style="font-size:44px; margin-bottom:12px;">🔒</div>
   <h2 id="pinTitle" style="margin:0 0 6px 0; font-weight:900; font-size:20px;">Вход в Банк PRO</h2>
   <div id="pinSubtitle" style="font-size:12px; color:var(--text-mute); margin-bottom:20px;">Введите 4-значный PIN</div>
@@ -3350,7 +3350,7 @@
 
     if (updates.length === 0) return alert("Заполните хотя бы одно поле для изменения!");
 
-    const { error: upErr } = await db.from('app_settings').upsert(updates);
+    const { error: upErr } = await db.rpc('update_app_settings_batch', { p_updates: updates });
     if (upErr) return alert("Ошибка сохранения: " + upErr.message);
 
     alert("✅ PIN-коды и секретное слово сброса успешно обновлены в базе!");
@@ -3594,6 +3594,7 @@
       renderMonthlyBudgetWidget();
       renderCapitalOnlyChart();
       applyExportDates();
+      if (!silent) switchTab('accounts'); // Гарантированно открываем счета после загрузки
     } catch (err) {
       alert("Ошибка загрузки: " + err.message);
     } finally {
@@ -10876,10 +10877,10 @@ function renderA() {
 
     if (!isGuest()) {
       try {
-        await db.from('app_settings').upsert([
+        await db.rpc('update_app_settings_batch', { p_updates: [
           { key: 'ap_included_pool_accounts', value: poolJson },
           { key: 'ap_override_pool_sum', value: manVal || '' }
-        ]);
+        ]});
       } catch (err) {
         console.warn('Не удалось синхронизировать пул с базой:', err);
       }
@@ -12517,13 +12518,13 @@ function toggleEnvelopeAccordion(prefix) {
 
     // Сохраняем в таблицу app_settings Supabase, чтобы настройки были доступны на всех ваших устройствах
     try {
-      await db.from('app_settings').upsert([
+      await db.rpc('update_app_settings_batch', { p_updates: [
         { key: 'deploy_gh_repo', value: repo },
         { key: 'deploy_gh_branch', value: branch },
         { key: 'deploy_gh_path', value: filePath },
         { key: 'deploy_gh_token', value: token },
         { key: 'deploy_webhook_url', value: webhook }
-      ]);
+      ]});
       alert("✅ Настройки репозитория и токена сохранены в Supabase!");
       closeModal('deploySettingsModal');
     } catch (e) {
@@ -12785,27 +12786,14 @@ function toggleEnvelopeAccordion(prefix) {
 
     try {
       console.log("Попытка сохранения реквизитов шлюза...");
+      const updates = [];
 
-      if (newId) {
-        const idHash = await sha256(newId);
-        console.log("Отправка gateway_id_hash:", idHash);
-        const res1 = await db.from('app_settings').upsert({ key: 'gateway_id_hash', value: idHash });
-        if (res1.error) throw res1.error;
-      }
+      if (newId) updates.push({ key: 'gateway_id_hash', value: await sha256(newId) });
+      if (newKey) updates.push({ key: 'gateway_key_hash', value: await sha256(newKey) });
+      if (newResetWord) updates.push({ key: 'gateway_reset_word_hash', value: await sha256(newResetWord.toLowerCase()) });
 
-      if (newKey) {
-        const keyHash = await sha256(newKey);
-        console.log("Отправка gateway_key_hash:", keyHash);
-        const res2 = await db.from('app_settings').upsert({ key: 'gateway_key_hash', value: keyHash });
-        if (res2.error) throw res2.error;
-      }
-
-      if (newResetWord) {
-        const resetHash = await sha256(newResetWord.toLowerCase());
-        console.log("Отправка gateway_reset_word_hash для слова:", newResetWord, "=>", resetHash);
-        const res3 = await db.from('app_settings').upsert({ key: 'gateway_reset_word_hash', value: resetHash });
-        if (res3.error) throw res3.error;
-      }
+      const { error } = await db.rpc('update_app_settings_batch', { p_updates: updates });
+      if (error) throw error;
 
       alert("✅ Настройки шлюза успешно сохранены в Supabase!");
       document.getElementById('newGatewayId').value = '';
@@ -13240,7 +13228,7 @@ function toggleEnvelopeAccordion(prefix) {
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
