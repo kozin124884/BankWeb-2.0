@@ -9225,65 +9225,82 @@ function renderA() {
   // (parseCommentsBreakdown удалена — кафе работает на целых комментариях.)
 
 // ─── КУДА СХОДИТЬ СЕГОДНЯ ───────────────────────────────────────────────
-  // Лотерея: случайный чек с фильтрацией по порогам от медианы
+  // Авторежим сам подбирает изолированную корзину по остатку к дням ЗП.
+  // В свёрнутом виде — тонкая информативная строка с кнопкой рандома прямо в ней.
   function renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysSinceCycleStart) {
     if (!cafeTxs || cafeTxs.length === 0) return '';
 
     const mode = localStorage.getItem('cafe_caliber_mode') || 'auto';
-    const manualTier = localStorage.getItem('cafe_manual_tier') || 'all';
+    const manualTier = localStorage.getItem('cafe_manual_tier') || 'mid';
+    // По умолчанию свёрнуто в аккуратную тонкую полоску
+    const isExpanded = localStorage.getItem('cafe_suggestion_expanded') === 'true';
 
-    // В авто-режиме пороги строго строятся от медианы всех чеков кафе
-    const autoThresholds = calcAutoCafeThresholds();
+    // 1. Автоматические границы по медиане всех походов
+    const auto = calcAutoCafeThresholds();
 
-    const cfg = {
-      median: autoThresholds.median,
-      lowMax: (mode === 'auto') ? autoThresholds.lowMax : (parseFloat(localStorage.getItem('cafe_caliber_low_max')) || autoThresholds.lowMax),
-      midMax: (mode === 'auto') ? autoThresholds.midMax : (parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || autoThresholds.midMax),
-      useAccount: localStorage.getItem('cafe_use_account') !== 'false',
-      fullAccountMin: parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000
-    };
+    // 2. Ручные границы пользователя
+    const manualLowMax = parseFloat(localStorage.getItem('cafe_caliber_low_max')) || 1000;
+    const manualMidMax = parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || 2200;
 
-    let level = 'mid';
-    let label = '';
+    const lowBorder = (mode === 'auto') ? auto.lowMax : manualLowMax;
+    const midBorder = (mode === 'auto') ? auto.midMax : manualMidMax;
+
+    // 3. Строго изолированные корзины чеков
+    const poolLow = cafeTxs.filter(t => t.sumE <= lowBorder);
+    const poolMid = cafeTxs.filter(t => t.sumE > lowBorder && t.sumE <= midBorder);
+    const poolHigh = cafeTxs.filter(t => t.sumE > midBorder);
+
+    // 4. Расчёт баланса к дням ЗП для Авторежима
+    const cafeAcc = appData.accounts.find(a => (a.name || '').toLowerCase().includes('кафе'));
+    const cafeBal = cafeAcc ? Math.max(0, parseFloat(cafeAcc.balance) || 0) : 0;
+    const daysLeft = Math.max(1, 30 - daysSinceCycleStart);
+    const weeksLeft = Math.max(0.5, daysLeft / 7);
+
+    const visitsLeft = auto.median > 0 ? (cafeBal / auto.median) : 0;
+    const visitsPerWeek = (visitsLeft / weeksLeft);
+
+    let activeLevel = 'mid';
+    let statusExplanation = '';
 
     if (mode === 'auto') {
-      let position = (daysSinceCycleStart < 10) ? 'early' : (daysSinceCycleStart < 20 ? 'middle' : 'late');
-      const cafeAcc = appData.accounts.find(a => (a.name || '').toLowerCase().includes('кафе'));
-      const cafeBal = cafeAcc ? (parseFloat(cafeAcc.balance) || 0) : 0;
-      const isFull = cafeBal >= cfg.fullAccountMin;
-
-      if (cfg.useAccount) {
-        if (position === 'early') level = isFull ? 'high' : 'mid';
-        else if (position === 'middle') level = isFull ? 'both' : 'low';
-        else level = isFull ? 'high' : 'mid';
+      // АВТОРЕЖИМ САМ ОПРЕДЕЛЯЕТ КОРЗИНУ:
+      if (visitsPerWeek >= 2.0 && cafeBal >= auto.midMax) {
+        activeLevel = 'high';
+        statusExplanation = `✨ <b>Можно разгуляться:</b> на счёте ${Math.round(cafeBal).toLocaleString()} ₽ на ${daysLeft} дн. (~${visitsPerWeek.toFixed(1)} похода/нед.) ➔ Корзина Дорогие (от ${auto.midMax.toLocaleString()} ₽)`;
+      } else if (visitsPerWeek >= 0.8 || cafeBal >= auto.median * 1.5) {
+        activeLevel = 'mid';
+        statusExplanation = `👍 <b>Средний бюджет:</b> на счёте ${Math.round(cafeBal).toLocaleString()} ₽ на ${daysLeft} дн. (~${visitsPerWeek.toFixed(1)} похода/нед.) ➔ Корзина Средние (${auto.lowMax.toLocaleString()}–${auto.midMax.toLocaleString()} ₽)`;
       } else {
-        if (position === 'early') level = 'high';
-        else if (position === 'middle') level = 'mid';
-        else level = 'low';
+        activeLevel = 'low';
+        statusExplanation = `💰 <b>Экономный режим:</b> на счёте ${Math.round(cafeBal).toLocaleString()} ₽ на ${daysLeft} дн. ➔ Корзина Эконом (до ${auto.lowMax.toLocaleString()} ₽)`;
       }
-
-      label = level === 'low' ? '💰 Экономный режим (до ' + cfg.lowMax.toLocaleString() + ' ₽)'
-             : level === 'high' ? '✨ Можно разгуляться (от ' + cfg.midMax.toLocaleString() + ' ₽)'
-             : level === 'both' ? '👍 Средний или дорогой (от ' + cfg.lowMax.toLocaleString() + ' ₽)'
-             : '👍 Средний бюджет (' + cfg.lowMax.toLocaleString() + ' – ' + cfg.midMax.toLocaleString() + ' ₽)';
     } else {
-      level = manualTier;
-      label = level === 'low' ? '💰 Выбран эконом (до ' + cfg.lowMax.toLocaleString() + ' ₽)'
-             : level === 'mid' ? '🛒 Выбран средний (' + cfg.lowMax.toLocaleString() + ' – ' + cfg.midMax.toLocaleString() + ' ₽)'
-             : level === 'high' ? '✨ Выбран дорогой (от ' + cfg.midMax.toLocaleString() + ' ₽)'
-             : '🌍 Все заведения без ограничений';
+      activeLevel = manualTier;
+      if (activeLevel === 'low') statusExplanation = `📝 <b>Ручной выбор:</b> Эконом (до ${manualLowMax.toLocaleString()} ₽)`;
+      else if (activeLevel === 'high') statusExplanation = `📝 <b>Ручной выбор:</b> Дорогие (от ${manualMidMax.toLocaleString()} ₽)`;
+      else if (activeLevel === 'all') statusExplanation = `📝 <b>Ручной выбор:</b> Все чеки без ограничения`;
+      else statusExplanation = `📝 <b>Ручной выбор:</b> Средние (${manualLowMax.toLocaleString()}–${manualMidMax.toLocaleString()} ₽)`;
     }
 
-    let filtered = cafeTxs.slice();
-    if (level === 'low') filtered = cafeTxs.filter(t => t.sumE <= cfg.lowMax);
-    else if (level === 'mid') filtered = cafeTxs.filter(t => t.sumE > cfg.lowMax && t.sumE <= cfg.midMax);
-    else if (level === 'high') filtered = cafeTxs.filter(t => t.sumE > cfg.midMax);
-    else if (level === 'both') filtered = cafeTxs.filter(t => t.sumE > cfg.lowMax);
+    let targetPool = [];
+    if (activeLevel === 'low') targetPool = poolLow;
+    else if (activeLevel === 'high') targetPool = poolHigh;
+    else if (activeLevel === 'all') targetPool = cafeTxs;
+    else targetPool = poolMid;
 
-    if (filtered.length === 0) filtered = cafeTxs.slice();
-    window.cafeSuggestionPool = filtered;
+    if (targetPool.length === 0) targetPool = cafeTxs;
+    window.cafeSuggestionPool = targetPool;
 
-    // Генерация чипов выбора для ручного режима
+    // Выбираем текущий чек для отображения
+    let curPick = window.cafeSuggestionCurrent;
+    if (!curPick || !targetPool.some(t => t.r === curPick.r)) {
+      curPick = targetPool[Math.floor(Math.random() * targetPool.length)] || targetPool[0];
+      window.cafeSuggestionCurrent = curPick;
+    }
+
+    const pickLabel = curPick ? (curPick.comE || curPick.catE) : 'Кафе';
+    const pickSum = curPick ? curPick.sumE : 0;
+
     let manualChipsHtml = '';
     if (mode === 'manual') {
       const getChipStyle = (tier) => (manualTier === tier)
@@ -9291,22 +9308,40 @@ function renderA() {
         : 'background:var(--bg-card); color:var(--text-mute); border-color:var(--border);';
 
       manualChipsHtml = `
-        <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
-          <button type="button" onclick="setCafeSuggestionTier('all', event)" style="flex:1; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('all')}">Все</button>
-          <button type="button" onclick="setCafeSuggestionTier('low', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('low')}">💰 До ${cfg.lowMax} ₽</button>
-          <button type="button" onclick="setCafeSuggestionTier('mid', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('mid')}">🛒 Средние</button>
-          <button type="button" onclick="setCafeSuggestionTier('high', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('high')}">✨ От ${cfg.midMax} ₽</button>
+        <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;" onclick="event.stopPropagation()">
+          <button type="button" onclick="setCafeSuggestionTier('low', event)" style="flex:1; border:1px solid; border-radius:6px; padding:5px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('low')}">
+            💰 До ${manualLowMax} ₽
+          </button>
+          <button type="button" onclick="setCafeSuggestionTier('mid', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:5px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('mid')}">
+            🛒 ${manualLowMax}–${manualMidMax} ₽
+          </button>
+          <button type="button" onclick="setCafeSuggestionTier('high', event)" style="flex:1; border:1px solid; border-radius:6px; padding:5px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('high')}">
+            ✨ От ${manualMidMax} ₽
+          </button>
+          <button type="button" onclick="setCafeSuggestionTier('all', event)" style="flex:0.7; border:1px solid; border-radius:6px; padding:5px 4px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('all')}">
+            Все
+          </button>
         </div>
       `;
     }
 
     return `
-      <div id="cafeSuggestionBox" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1.5px solid rgba(245,158,11,0.3); border-radius:12px; padding:10px 12px; margin-bottom:8px; box-sizing:border-box;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
-          <span style="font-size:10px; font-weight:900; color:#f59e0b; text-transform:uppercase; letter-spacing:0.3px; display:flex; align-items:center; gap:5px;">
-            <span>☕</span> Куда сходить сегодня
-          </span>
-          <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;">
+      <div id="cafeSuggestionBox" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1.5px solid rgba(245,158,11,0.3); border-radius:12px; overflow:hidden; box-sizing:border-box; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        
+        <!-- ТОНКАЯ ШАПКА: В СВЁРНУТОМ ВИДЕ СРАЗУ ПОКАЗЫВАЕТ ЗАВЕДЕНИЕ И СУММУ -->
+        <div onclick="toggleCafeSuggestionCollapse(event)" style="display:flex; justify-content:space-between; align-items:center; padding:9px 12px; cursor:pointer; user-select:none; background:rgba(245,158,11,0.06); gap:6px;">
+          <div style="display:flex; align-items:center; gap:6px; min-width:0; flex:1; padding-right:4px;">
+            <span style="font-size:14px; flex-shrink:0;">☕</span>
+            <div style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px;">
+              <b style="font-size:11px; color:#f59e0b; text-transform:uppercase; letter-spacing:0.3px; flex-shrink:0;">Куда сходить:</b>
+              <span id="cafeSuggestMiniPreview" style="font-size:11.5px; color:var(--text-main); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:${isExpanded ? 'none' : 'inline'};">
+                ${escapeHtml(pickLabel)} <b style="color:#10b981;">(${pickSum.toLocaleString()} ₽)</b>
+              </span>
+            </div>
+            <span id="cafeSuggestArrow" style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 5px; border-radius:4px; border:1px solid var(--border); flex-shrink:0;">${isExpanded ? '▲' : '▼'}</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;" onclick="event.stopPropagation()">
             <button type="button" onclick="rollCafeSuggestion(event)" style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.4); color:#f59e0b; border-radius:7px; padding:4px 9px; font-size:11px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.15s;" title="Показать другое заведение">
               <span>🎲</span><span>Другой</span>
             </button>
@@ -9316,24 +9351,52 @@ function renderA() {
           </div>
         </div>
 
-        <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ПРЯМО В ПЛАШКЕ -->
-        <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:2px; gap:2px;">
-          <button type="button" onclick="setCafeSuggestionMode('auto', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'auto' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
-            🤖 Авто (по остатку)
-          </button>
-          <button type="button" onclick="setCafeSuggestionMode('manual', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'manual' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
-            📝 Ручной выбор
-          </button>
-        </div>
+        <!-- ТЕЛО ВИДЖЕТА (СВОРАЧИВАЕМОЕ) -->
+        <div id="cafeSuggestCollapsibleBody" style="display:${isExpanded ? 'block' : 'none'}; padding:10px 12px; border-top:1px solid rgba(245,158,11,0.2);" onclick="event.stopPropagation()">
+          
+          <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:2px; gap:2px;">
+            <button type="button" onclick="setCafeSuggestionMode('auto', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'auto' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
+              🤖 Авто (по остатку)
+            </button>
+            <button type="button" onclick="setCafeSuggestionMode('manual', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'manual' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
+              📝 Ручные границы
+            </button>
+          </div>
 
-        ${manualChipsHtml}
+          ${manualChipsHtml}
 
-        <div id="cafeSuggestionBody" style="margin-top:8px;">${renderCafeSuggestionItem()}</div>
-        <div style="font-size:9.5px; color:var(--text-mute); margin-top:6px; font-style:italic; line-height:1.3;">
-          ${label} • <span title="Медианный чек всех походов">мед. ~${cfg.median.toLocaleString()} ₽</span>
+          <div id="cafeSuggestionBody" style="margin-top:8px;">${renderCafeSuggestionItem()}</div>
+          
+          <div style="font-size:10px; color:var(--text-mute); margin-top:6px; line-height:1.4; border-top:1px dashed rgba(245,158,11,0.2); padding-top:5px;">
+            ${statusExplanation}
+          </div>
         </div>
       </div>
     `;
+  }
+
+  function calcAutoCafeThresholds() {
+    const cafeCatNames = [];
+    const grp = appData.config.exp['Еда вне дома с ручкой'] || [];
+    grp.forEach(n => cafeCatNames.push(n));
+
+    ['Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома с ручкой'].forEach(n => {
+      if (!cafeCatNames.includes(n)) cafeCatNames.push(n);
+    });
+
+    const txs = appData.transactions.filter(t =>
+      t.type === 'Расход' && t.sumE > 0 && cafeCatNames.includes(t.catE)
+    );
+
+    if (txs.length === 0) return { median: 1200, lowMax: 750, midMax: 1650 };
+
+    const sums = txs.map(t => t.sumE);
+    const med = calcMedian(sums) || 1200;
+
+    const lowMax = Math.max(350, Math.round(med * 0.7));
+    const midMax = Math.max(lowMax + 400, Math.round(med * 1.5));
+
+    return { median: med, lowMax, midMax };
   }
 
   function setCafeSuggestionMode(mode, evt) {
@@ -9389,16 +9452,58 @@ function renderA() {
     clI(evt, txId);
   }
 
-function rollCafeSuggestion(evt) {
+  function rollCafeSuggestion(evt) {
     if (evt) { evt.stopPropagation(); evt.preventDefault(); }
-    const body = document.getElementById('cafeSuggestionBody');
-    if (!body) return;
-    if (!window.cafeSuggestionPool || window.cafeSuggestionPool.length === 0) {
-      const allCafe = appData.transactions.filter(t => t.type === 'Расход' && t.sumE > 0 && (t.catE || '').toLowerCase().includes('кафе'));
-      window.cafeSuggestionPool = allCafe.length > 0 ? allCafe : appData.transactions.filter(t => t.type === 'Расход');
+    const pool = window.cafeSuggestionPool || [];
+    if (pool.length === 0) return;
+
+    let pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pool.length > 1 && window.cafeSuggestionCurrent && pick.r === window.cafeSuggestionCurrent.r) {
+      const remaining = pool.filter(t => t.r !== window.cafeSuggestionCurrent.r);
+      pick = remaining[Math.floor(Math.random() * remaining.length)] || pick;
     }
-    body.innerHTML = renderCafeSuggestionItem();
+    window.cafeSuggestionCurrent = pick;
+
+    // Обновляем развёрнутое тело
+    const body = document.getElementById('cafeSuggestionBody');
+    if (body) body.innerHTML = renderCafeSuggestionItem();
+
+    // Обновляем текст прямо в свёрнутой шапке
+    const mini = document.getElementById('cafeSuggestMiniPreview');
+    if (mini && pick) {
+      const label = pick.comE || pick.catE || 'Кафе';
+      mini.innerHTML = `${escapeHtml(label)} <b style="color:#10b981;">(${pick.sumE.toLocaleString()} ₽)</b>`;
+    }
+
     haptic(12);
+  }
+
+  function toggleCafeSuggestionCollapse(evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    const body = document.getElementById('cafeSuggestCollapsibleBody');
+    const arr = document.getElementById('cafeSuggestArrow');
+    const mini = document.getElementById('cafeSuggestMiniPreview');
+    if (!body) return;
+    const isHidden = (body.style.display === 'none');
+    body.style.display = isHidden ? 'block' : 'none';
+    if (arr) arr.innerText = isHidden ? '▲' : '▼';
+    if (mini) mini.style.display = isHidden ? 'none' : 'inline';
+    localStorage.setItem('cafe_suggestion_expanded', isHidden);
+    haptic(10);
+  }
+
+  function setCafeSuggestionMode(mode, evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    localStorage.setItem('cafe_caliber_mode', mode);
+    renderMonthlyBudgetWidget();
+    haptic(10);
+  }
+
+  function setCafeSuggestionTier(tier, evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    localStorage.setItem('cafe_manual_tier', tier);
+    renderMonthlyBudgetWidget();
+    haptic(10);
   }
 
   function openCafeCaliberModal(evt) {
@@ -9407,35 +9512,32 @@ function rollCafeSuggestion(evt) {
     const savedMode = localStorage.getItem('cafe_caliber_mode') || 'auto';
     const auto = calcAutoCafeThresholds();
 
-    // Заполняем ручной режим
-    document.getElementById('cfgCafeLowMax').value = parseFloat(localStorage.getItem('cafe_caliber_low_max')) || auto.lowMax;
-    document.getElementById('cfgCafeMidMax').value = parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || auto.midMax;
+    document.getElementById('cfgCafeLowMax').value = parseFloat(localStorage.getItem('cafe_caliber_low_max')) || 1000;
+    document.getElementById('cfgCafeMidMax').value = parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || 2200;
     document.getElementById('cfgCafeFullMin').value = parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000;
 
-    // Заполняем авто-режим
     document.getElementById('cfgCafeFullMinAuto').value = parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000;
 
     const lowEl = document.getElementById('autoCafeLow');
     const midEl = document.getElementById('autoCafeMid');
     const highEl = document.getElementById('autoCafeHigh');
-    if (lowEl) lowEl.innerText = `до ${auto.lowMax.toLocaleString()} ₽ (<75% медианы)`;
+    if (lowEl) lowEl.innerText = `до ${auto.lowMax.toLocaleString()} ₽ (<70% медианы)`;
     if (midEl) midEl.innerText = `${auto.lowMax.toLocaleString()} – ${auto.midMax.toLocaleString()} ₽ (около медианы ~${auto.median.toLocaleString()} ₽)`;
-    if (highEl) highEl.innerText = `от ${auto.midMax.toLocaleString()} ₽ (>140% медианы)`;
+    if (highEl) highEl.innerText = `от ${auto.midMax.toLocaleString()} ₽ (>150% медианы)`;
 
-    // Галочка учёта счёта
     document.getElementById('cfgCafeUseAccount').checked = localStorage.getItem('cafe_use_account') !== 'false';
 
     setCafeCaliberMode(savedMode);
     openModal('cafeCaliberModal');
   }
 
-  // Честный расчёт авто-порогов от реальной медианы чеков кафе
+
+  // Расчёт авто-порогов строго от реальной медианы чеков кафе
   function calcAutoCafeThresholds() {
     const cafeCatNames = [];
     const grp = appData.config.exp['Еда вне дома с ручкой'] || [];
     grp.forEach(n => cafeCatNames.push(n));
 
-    // Дополняем системными категориями кафе
     ['Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома с ручкой'].forEach(n => {
       if (!cafeCatNames.includes(n)) cafeCatNames.push(n);
     });
@@ -9449,7 +9551,7 @@ function rollCafeSuggestion(evt) {
     const sums = txs.map(t => t.sumE);
     const med = calcMedian(sums) || 1200;
 
-    // Эконом — заметно ниже медианы (до 75%), средний — около медианы (75%..140%), дорогой — свыше 140%
+    // Эконом: < 75% от медианы; Средний: 75%–140%; Дорогой: > 140%
     const lowMax = Math.max(300, Math.round(med * 0.75));
     const midMax = Math.max(lowMax + 300, Math.round(med * 1.4));
 
@@ -11170,12 +11272,16 @@ function rollCafeSuggestion(evt) {
       return h;
     };
 
-    const envWrap = document.getElementById('autopilotEnvelopesWrap');
+const envWrap = document.getElementById('autopilotEnvelopesWrap');
     if (envWrap) {
+      const isLunchOpen = openedAnalytics.has('env_lunch');
+      const isCafeOpen = openedAnalytics.has('env_cafe');
+      const isHomeOpen = openedAnalytics.has('env_home');
+
       envWrap.innerHTML = `
-<!-- 1. ОБЕД НА РАБОТЕ -->
+        <!-- 1. ОБЕД НА РАБОТЕ -->
         <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
+          <div onclick="tC(event, this, 'env_lunch')" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
             <div style="min-width:0; flex:1; padding-right:6px;">
               <div style="font-size:11.5px; color:var(--text-main);">
                 <b>🍱 Обед на&nbsp;работе:</b> <span style="color:#38bdf8; font-weight:800;">${Math.round(lunchBal).toLocaleString()}&nbsp;₽</span>
@@ -11187,18 +11293,18 @@ function rollCafeSuggestion(evt) {
                 <b style="color:#10b981; font-size:11.5px;">~${lunchCount}&nbsp;обед.</b>
                 <div style="color:var(--text-mute); font-size:9.5px;">на&nbsp;${daysLeft}&nbsp;дн.&nbsp;до&nbsp;ЗП</div>
               </div>
-              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
+              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">${isLunchOpen ? '▲' : '▼'}</span>
             </div>
           </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:220px; overflow-y:auto; background:var(--bg-card);">
+          <div class="toggle-content" style="display:${isLunchOpen ? 'block' : 'none'}; padding:7px 9px; border-top:1px solid var(--border); max-height:220px; overflow-y:auto; background:var(--bg-card);">
             <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки столовой с ${prevStartISO.slice(5)} (${lunchTxs.length}&nbsp;чек.):</div>
             ${makeTxsListHtml(lunchTxs)}
           </div>
         </div>
 
-        <!-- 2. ЕДА ВНЕ ДОМА С РУЧКОЙ -->
+         <!-- 2. ЕДА ВНЕ ДОМА С РУЧКОЙ -->
         <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
+          <div onclick="tC(event, this, 'env_cafe')" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
             <div style="min-width:0; flex:1; padding-right:6px;">
               <div style="font-size:11.5px; color:var(--text-main);">
                 <b>☕ Еда вне дома с&nbsp;ручкой:</b> <span style="color:#f59e0b; font-weight:800;">${Math.round(cafeBal).toLocaleString()}&nbsp;₽</span>
@@ -11210,19 +11316,28 @@ function rollCafeSuggestion(evt) {
                 <b style="color:#10b981; font-size:11.5px;">~${cafeCount}&nbsp;поход.</b>
                 <div style="color:var(--text-mute); font-size:9.5px;">~${cafePerWeek}&nbsp;раз/нед.&nbsp;до&nbsp;ЗП</div>
               </div>
-              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
+              <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">${openedAnalytics.has('env_cafe') ? '▲' : '▼'}</span>
             </div>
           </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:300px; overflow-y:auto; background:var(--bg-card);">
-            ${renderCafeSuggestionBlock(cafeTxsAllTime.length > 0 ? cafeTxsAllTime : cafeTxs, dailyRemain, fullDailyLimit, daysSinceCycleStart)}
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px; margin-top:6px;">Все чеки с ${prevStartISO.slice(5)} (${cafeTxs.length}&nbsp;чек.):</div>
-            ${makeTxsListHtml(cafeTxs)}
+          
+          <!-- РАСКРЫТАЯ ЧАСТЬ: ПЛАШКА ЗАКРЕПЛЕНА НАМЕРТВО СВЕРХУ (STICKY), ЧЕКИ СКРОЛЛЯТСЯ ПОД НЕЙ -->
+          <div class="toggle-content" style="display:${openedAnalytics.has('env_cafe') ? 'block' : 'none'}; padding:7px 9px; border-top:1px solid var(--border); background:var(--bg-card);">
+            
+            <div style="position:sticky; top:-7px; z-index:30; background:var(--bg-card); padding-top:2px; margin-bottom:8px;">
+              ${renderCafeSuggestionBlock(cafeTxsAllTime.length > 0 ? cafeTxsAllTime : cafeTxs, dailyRemain, fullDailyLimit, daysSinceCycleStart)}
+            </div>
+
+            <div style="max-height:240px; overflow-y:auto; padding-right:2px; border-top:1px dashed var(--border); padding-top:6px;">
+              <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с ${prevStartISO.slice(5)} (${cafeTxs.length}&nbsp;чек.):</div>
+              ${makeTxsListHtml(cafeTxs)}
+            </div>
+
           </div>
         </div>
 
-        <!-- 3. ЕДА ДОМА С РУЧКОЙ (СИММЕТРИЧНАЯ ДВУХКОЛОНОЧНАЯ СЕТКА) -->
+        <!-- 3. ЕДА ДОМА С РУЧКОЙ -->
         <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
-          <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; padding:8px 10px; background:var(--input-bg);">
+          <div onclick="tC(event, this, 'env_home')" style="cursor:pointer; user-select:none; padding:8px 10px; background:var(--input-bg);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="min-width:0; flex:1; padding-right:8px;">
                 <div style="font-size:11.5px; color:var(--text-main);">
@@ -11237,7 +11352,7 @@ function rollCafeSuggestion(evt) {
                   <b style="color:#10b981; font-size:11.5px;">~${homePaceDay.toLocaleString()}&nbsp;₽/день</b>
                   <div style="color:var(--text-mute); font-size:9.5px;">на&nbsp;${daysLeft}&nbsp;дн. (~${homeOrdersForecast}&nbsp;заказ.)</div>
                 </div>
-                <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
+                <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">${isHomeOpen ? '▲' : '▼'}</span>
               </div>
             </div>
 
@@ -11246,7 +11361,7 @@ function rollCafeSuggestion(evt) {
               <span style="color:#10b981; font-weight:bold;">Пул покрывает</span>
             </div>
           </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
+          <div class="toggle-content" style="display:${isHomeOpen ? 'block' : 'none'}; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
             <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с ${prevStartISO.slice(5)} (${homeTxs.length}&nbsp;чек.):</div>
             ${makeTxsListHtml(homeTxs)}
           </div>
@@ -13010,7 +13125,7 @@ function rollCafeSuggestion(evt) {
 </div>
 
 <!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
-<div id="deploySettingsModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deploySettingsModal" class="modal" style="z-index: 16000; display: none;">
   <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
     <div class="modal-header-sticky">
       <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
