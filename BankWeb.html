@@ -375,7 +375,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;208 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
         </div>
       </div>
 
@@ -396,7 +396,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -440,7 +440,7 @@
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px dashed var(--border);">
                 <span style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Масштаб шага:</span>
                 <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:7px; padding:2px; gap:2px;">
-                  <button type="button" class="btn-cap-step" id="capStep_auto" onclick="setCapitalStep('auto')" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); font-size: 9.5px; font-weight: bold; padding: 2px 7px; border-radius: 5px; cursor: pointer;">Авто</button>
+                  <button type="button" class="btn-cap-step" id="capStep_auto" onclick="setCapitalStep('auto')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:5px; cursor:pointer;">Авто</button>
                   <button type="button" class="btn-cap-step" id="capStep_day" onclick="setCapitalStep('day')" style="background:transparent; border:none; color:var(--text-mute); font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:5px; cursor:pointer;">Дни</button>
                   <button type="button" class="btn-cap-step" id="capStep_week" onclick="setCapitalStep('week')" style="background:transparent; border:none; color:var(--text-mute); font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:5px; cursor:pointer;">Недели</button>
                   <button type="button" class="btn-cap-step" id="capStep_month" onclick="setCapitalStep('month')" style="background:transparent; border:none; color:var(--text-mute); font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:5px; cursor:pointer;">Месяцы</button>
@@ -452,15 +452,15 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); box-sizing: border-box;">
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Капитал:</div>
-                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">135&nbsp;264 ₽</b>
+                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">185&nbsp;451 ₽</b>
               </div>
               <div>
                 <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за всё время:</div>
-                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +135&nbsp;264 ₽ (0%)</b>
+                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +64&nbsp;451 ₽ (53.3%)</b>
               </div>
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Темп:</div>
-                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+552 ₽/дн</b>
+                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+263 ₽/дн</b>
               </div>
             </div>
 
@@ -635,7 +635,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 662.4px;" width="828" height="312"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -1118,13 +1118,13 @@
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Перекус/джанкфуд продукты вне дома</span>
+              <span style="color:var(--text-main); font-weight:600;">Перекус/джанкфуд продукты вне дома с ручкой</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Перекус/джанкфуд продукты вне дома', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Перекус/джанкфуд продукты вне дома с ручкой', event)">
             </div>
           </label>
           </div>
@@ -2264,17 +2264,6 @@
             
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Еда в продуктовых без ручки</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Еда в продуктовых без ручки', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
               <span style="color:var(--text-main); font-weight:600;">Фастфуд/кафешки/рестораны/шаурма без ручки</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
             </div>
@@ -2282,6 +2271,17 @@
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
               <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Фастфуд/кафешки/рестораны/шаурма без ручки', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">В магазине еда/джанкфуд вне дома без ручки</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('В магазине еда/джанкфуд вне дома без ручки', event)">
             </div>
           </label>
           </div>
@@ -2393,7 +2393,7 @@
         <div class="click-header" onclick="toggleTravelSectionStats()" style="padding: 4px 6px; margin: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 8px;">
           <span style="font-size: 14px;">📊</span>
           <span style="font-size: 11px; font-weight: 900; color: var(--text-mute); text-transform: uppercase;">Сводная аналитика</span>
-          <span id="travelSectionStatsSumBadge" style="font-size: 12px; font-weight: 900; color: #10b981;">230&nbsp;189 ₽ (5)</span>
+          <span id="travelSectionStatsSumBadge" style="font-size: 12px; font-weight: 900; color: #10b981;">327&nbsp;375 ₽ (6)</span>
           <span id="travelSectionStatsArrow" style="font-size: 10px; color: var(--text-mute);">▼</span>
         </div>
 
@@ -2487,7 +2487,8 @@
       </div>
 
         <div style="display:flex; gap:8px;">
-          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Дикси">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Онлайн - Подписки">Онлайн - Подписки</option></optgroup><optgroup label="Бабушка"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Сборы денег на работе">Сборы денег на работе</option><option value="Еда/что-то на работу для себя">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить">Кафе чисто перекусить</option><option value="Кофейни">Кофейни</option><option value="Фастфуд">Фастфуд</option><option value="Кафе в честь чего-то">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома">Перекус/джанкфуд продукты вне дома</option></optgroup><optgroup label="Продукты"><option value="Доставка">Доставка</option><option value="КБ">КБ</option><option value="Пятерочка">Пятерочка</option><option value="Чижик">Чижик</option><option value="Магнит">Магнит</option><option value="Дикси">Дикси</option><option value="Перекресток">Перекресток</option><option value="Спар">Спар</option><option value="Вкусвилл">Вкусвилл</option><option value="Ароматный мир/винлаб">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины">Другие продуктовые магазины</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары"><option value="-">-</option><option value="еще">еще</option><option value="Фикс прайс">Фикс прайс</option><option value="Другие непродуктовые магазины">Другие непродуктовые магазины</option><option value="Маркеты">Маркеты</option><option value="Одежда">Одежда</option><option value="Техника">Техника</option><option value="Мебель">Мебель</option><option value="Товары для дома онлайн">Товары для дома онлайн</option><option value="Товары для себя/аксессуары">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы">Алкоголь бары пабы</option><option value="Курение">Курение</option><option value="Алкоголь из магазина домой">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь">Сотовая связь</option><option value="Интернет домашний">Интернет домашний</option><option value="Аренда квартиры">Аренда квартиры</option><option value="Онлайн - Подписки">Онлайн - Подписки</option><option value="Консьержка">Консьержка</option><option value="ЖКХ - вода">ЖКХ - вода</option><option value="ЖКХ - свет">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка">Парковка</option><option value="Запчасти на машину">Запчасти на машину</option><option value="Ремонт машины">Ремонт машины</option><option value="Мойка машины">Мойка машины</option><option value="Штрафы">Штрафы</option><option value="ОСАГО">ОСАГО</option><option value="Бензин">Бензин</option><option value="Не запчасти">Не запчасти</option><option value="Вода в машину">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси">Такси</option><option value="Каршеринг">Каршеринг</option><option value="Самокаты">Самокаты</option><option value="Транспорт городской общественный">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты">Ручка продукты</option><option value="Ручка красота">Ручка красота</option><option value="Подарки ручке">Подарки ручке</option><option value="Цветы ручке">Цветы ручке</option><option value="Ручке деньги">Ручке деньги</option><option value="Пленка проявка">Пленка проявка</option><option value="Ручка одежда">Ручка одежда</option><option value="Ручка другое">Ручка другое</option></optgroup><optgroup label="Здоровье"><option value="Аптека">Аптека</option><option value="Здоровье (обследования итд)">Здоровье (обследования итд)</option><option value="Стрижка">Стрижка</option><option value="Интим">Интим</option><option value="Лекарства">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино">Кино</option><option value="Театр">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд">Открытки/сувениры и тд</option><option value="Иной досуг">Иной досуг</option><option value="Музеи">Музеи</option><option value="Иные развлечения">Иные развлечения</option><option value="Фотобудка и тд">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки">Подарки</option><option value="Не сошёлся дебет кредит">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Еда в продуктовых без ручки">Еда в продуктовых без ручки</option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option></optgroup></select>
+          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Дикси">Дикси</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Онлайн - Подписки">Онлайн - Подписки</option></optgroup><optgroup label="Бабушка"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Сборы денег на работе">Сборы денег на работе</option><option value="Еда/что-то на работу для себя">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить">Кафе чисто перекусить</option><option value="Кофейни">Кофейни</option><option value="Фастфуд">Фастфуд</option><option value="Кафе в честь чего-то">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома с ручкой">Перекус/джанкфуд продукты вне дома с ручкой</option></optgroup><optgroup label="Продукты"><option value="Доставка">Доставка</option><option value="КБ">КБ</option><option value="Пятерочка">Пятерочка</option><option value="Чижик">Чижик</option><option value="Магнит">Магнит</option><option value="Дикси">Дикси</option><option value="Перекресток">Перекресток</option><option value="Спар">Спар</option><option value="Вкусвилл">Вкусвилл</option><option value="Ароматный мир/винлаб">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины">Другие продуктовые магазины</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары"><option value="-">-</option><option value="еще">еще</option><option value="Фикс прайс">Фикс прайс</option><option value="Другие непродуктовые магазины">Другие непродуктовые магазины</option><option value="Маркеты">Маркеты</option><option value="Одежда">Одежда</option><option value="Техника">Техника</option><option value="Мебель">Мебель</option><option value="Товары для дома онлайн">Товары для дома онлайн</option><option value="Товары для себя/аксессуары">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы">Алкоголь бары пабы</option><option value="Курение">Курение</option><option value="Алкоголь из магазина домой">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь">Сотовая связь</option><option value="Интернет домашний">Интернет домашний</option><option value="Аренда квартиры">Аренда квартиры</option><option value="Онлайн - Подписки">Онлайн - Подписки</option><option value="Консьержка">Консьержка</option><option value="ЖКХ - вода">ЖКХ - вода</option><option value="ЖКХ - свет">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка">Парковка</option><option value="Запчасти на машину">Запчасти на машину</option><option value="Ремонт машины">Ремонт машины</option><option value="Мойка машины">Мойка машины</option><option value="Штрафы">Штрафы</option><option value="ОСАГО">ОСАГО</option><option value="Бензин">Бензин</option><option value="Не запчасти">Не запчасти</option><option value="Вода в машину">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси">Такси</option><option value="Каршеринг">Каршеринг</option><option value="Самокаты">Самокаты</option><option value="Транспорт городской общественный">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты">Ручка продукты</option><option value="Ручка красота">Ручка красота</option><option value="Подарки ручке">Подарки ручке</option><option value="Цветы ручке">Цветы ручке</option><option value="Ручке деньги">Ручке деньги</option><option value="Пленка проявка">Пленка проявка</option><option value="Ручка одежда">Ручка одежда</option><option value="Ручка другое">Ручка другое</option></optgroup><optgroup label="Здоровье"><option value="Аптека">Аптека</option><option value="Здоровье (обследования итд)">Здоровье (обследования итд)</option><option value="Стрижка">Стрижка</option><option value="Интим">Интим</option><option value="Лекарства">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино">Кино</option><option value="Театр">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд">Открытки/сувениры и тд</option><option value="Иной досуг">Иной досуг</option><option value="Музеи">Музеи</option><option value="Иные развлечения">Иные развлечения</option><option value="Фотобудка и тд">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки">Подарки</option><option value="Не сошёлся дебет кредит">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Фастфуд/кафешки/рестораны/шаурма без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option><option value="В магазине еда/джанкфуд вне дома без ручки">В магазине еда/джанкфуд вне дома без ручки</option></optgroup></select>
+          <button type="button" onclick="openFCatCategoryPicker()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 12px; margin-bottom:12px; border:none; cursor:pointer;" title="Найти категорию">🔍</button>
           <button type="button" onclick="openCatManager()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 15px; margin-bottom:12px; border:none; cursor:pointer;">⚙️</button>
         </div>
 
@@ -8910,9 +8911,23 @@ function renderA() {
 
   // --- ЛОГИКА МИКРО-ШТОРКИ ПОИСКА КАТЕГОРИЙ ДЛЯ СПЛИТА ---
   window.activeSplitPickerRowId = null;
+  window.splitPickerTarget = 'split'; // 'split' | 'fCat'
 
   function openSplitCategoryPicker(rowId) {
+    window.splitPickerTarget = 'split';
     window.activeSplitPickerRowId = rowId;
+    const searchInp = document.getElementById('splitCatSearchInput');
+    if (searchInp) searchInp.value = '';
+    filterSplitCategoryPicker('');
+    openModal('splitCategoryPickerModal');
+    setTimeout(() => {
+      document.getElementById('splitCatSearchInput')?.focus();
+    }, 150);
+  }
+
+  // Пикер категорий для формы «Добавить»
+  function openFCatCategoryPicker() {
+    window.splitPickerTarget = 'fCat';
     const searchInp = document.getElementById('splitCatSearchInput');
     if (searchInp) searchInp.value = '';
     filterSplitCategoryPicker('');
@@ -8947,7 +8962,13 @@ function renderA() {
   }
 
   function selectSplitCategory(catName) {
-    if (window.activeSplitPickerRowId) {
+    if (window.splitPickerTarget === 'fCat') {
+      const fCat = document.getElementById('fCat');
+      if (fCat) {
+        fCat.value = catName;
+        checkAddFormDebtFields();
+      }
+    } else if (window.activeSplitPickerRowId) {
       const row = document.getElementById(window.activeSplitPickerRowId);
       if (row) {
         const valInp = row.querySelector('.ts-cat-val');
@@ -8961,7 +8982,6 @@ function renderA() {
     }
     closeModal('splitCategoryPickerModal');
   }
-
   function clearSplitCatSearch() {
     const inp = document.getElementById('splitCatSearchInput');
     if (inp) {
@@ -9202,93 +9222,294 @@ function renderA() {
 
   let activeDeepSubcatName = null;
 
-  // Парсинг комментариев и группировка повторяющихся покупок
-  function parseCommentsBreakdown(txList) {
-    const stopWords = new Set(['и','в','на','с','по','для','из','до','от','за','к','о','об','через','под','без','или','же','бы','не']);
-    const wordStats = {};
+  // (parseCommentsBreakdown удалена — кафе работает на целых комментариях.)
 
-    (txList || []).forEach(t => {
-      if (!t.comE || typeof t.comE !== 'string') return;
-      const rawParts = t.comE.split(/[,;\/\n\+]/);
-      rawParts.forEach(part => {
-        let cleaned = part.toLowerCase().replace(/[^a-zа-я0-9\s]/gi, '').trim();
-        if (cleaned.length < 3 || stopWords.has(cleaned)) return;
+// ─── КУДА СХОДИТЬ СЕГОДНЯ ───────────────────────────────────────────────
+  // Лотерея: случайный чек с фильтрацией по порогам от медианы
+  function renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysSinceCycleStart) {
+    if (!cafeTxs || cafeTxs.length === 0) return '';
 
-        if (!wordStats[cleaned]) {
-          wordStats[cleaned] = { count: 0, sumEstimate: 0 };
-        }
-        wordStats[cleaned].count += 1;
-        wordStats[cleaned].sumEstimate += (t.sumE || 0);
-      });
-    });
+    const mode = localStorage.getItem('cafe_caliber_mode') || 'auto';
+    const manualTier = localStorage.getItem('cafe_manual_tier') || 'all';
 
-    return Object.entries(wordStats)
-      .filter(([_, data]) => data.count >= 2)
-      .sort((a, b) => b[1].sumEstimate - a[1].sumEstimate)
-      .slice(0, 6);
-  }
+    // В авто-режиме пороги строго строятся от медианы всех чеков кафе
+    const autoThresholds = calcAutoCafeThresholds();
 
-  // Инсайт «Куда сходить»: подбирает 3 варианта кафе по ценовому уровню
-  // в зависимости от остатка дня и близости зарплаты.
-  function renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysLeft) {
-    if (!cafeTxs || cafeTxs.length < 3) return '';
+    const cfg = {
+      median: autoThresholds.median,
+      lowMax: (mode === 'auto') ? autoThresholds.lowMax : (parseFloat(localStorage.getItem('cafe_caliber_low_max')) || autoThresholds.lowMax),
+      midMax: (mode === 'auto') ? autoThresholds.midMax : (parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || autoThresholds.midMax),
+      useAccount: localStorage.getItem('cafe_use_account') !== 'false',
+      fullAccountMin: parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000
+    };
 
-    // 1. Определяем контекст: много/мало денег + ЗП скоро/не скоро
-    const moneyRatio = fullDailyLimit > 0 ? dailyRemain / fullDailyLimit : 0;
-    const isRich = moneyRatio > 0.6;
-    const isPoor = moneyRatio < 0.3;
-    const isSoon = daysLeft <= 5;
+    let level = 'mid';
+    let label = '';
 
-    // 2. Матрица выбора ценового уровня
-    let level;
-    if (isRich && !isSoon) level = 'high';
-    else if (isPoor && !isSoon) level = 'low';
-    else level = 'mid';
+    if (mode === 'auto') {
+      let position = (daysSinceCycleStart < 10) ? 'early' : (daysSinceCycleStart < 20 ? 'middle' : 'late');
+      const cafeAcc = appData.accounts.find(a => (a.name || '').toLowerCase().includes('кафе'));
+      const cafeBal = cafeAcc ? (parseFloat(cafeAcc.balance) || 0) : 0;
+      const isFull = cafeBal >= cfg.fullAccountMin;
 
-    // 3. Фильтруем чеки по уровню
-    let filtered;
-    if (level === 'low') filtered = cafeTxs.filter(t => t.sumE < 500);
-    else if (level === 'high') filtered = cafeTxs.filter(t => t.sumE > 1000);
-    else filtered = cafeTxs.filter(t => t.sumE >= 500 && t.sumE <= 1000);
+      if (cfg.useAccount) {
+        if (position === 'early') level = isFull ? 'high' : 'mid';
+        else if (position === 'middle') level = isFull ? 'both' : 'low';
+        else level = isFull ? 'high' : 'mid';
+      } else {
+        if (position === 'early') level = 'high';
+        else if (position === 'middle') level = 'mid';
+        else level = 'low';
+      }
 
-    if (filtered.length < 2) return '';
+      label = level === 'low' ? '💰 Экономный режим (до ' + cfg.lowMax.toLocaleString() + ' ₽)'
+             : level === 'high' ? '✨ Можно разгуляться (от ' + cfg.midMax.toLocaleString() + ' ₽)'
+             : level === 'both' ? '👍 Средний или дорогой (от ' + cfg.lowMax.toLocaleString() + ' ₽)'
+             : '👍 Средний бюджет (' + cfg.lowMax.toLocaleString() + ' – ' + cfg.midMax.toLocaleString() + ' ₽)';
+    } else {
+      level = manualTier;
+      label = level === 'low' ? '💰 Выбран эконом (до ' + cfg.lowMax.toLocaleString() + ' ₽)'
+             : level === 'mid' ? '🛒 Выбран средний (' + cfg.lowMax.toLocaleString() + ' – ' + cfg.midMax.toLocaleString() + ' ₽)'
+             : level === 'high' ? '✨ Выбран дорогой (от ' + cfg.midMax.toLocaleString() + ' ₽)'
+             : '🌍 Все заведения без ограничений';
+    }
 
-    // 4. Парсим комментарии + добиваем «кафейными» стоп-словами
-    const cafeStopWords = new Set([
-      'кафе','кофейня','кофейни','столовая','забегаловка','обед','ужин','завтрак',
-      'кофе','чай','взял','зашёл','зашел','поел','поход','перекус','был','была',
-      'ели','пили','в','на','с','по','за','для','и','или','но','а','же','бы','не'
-    ]);
+    let filtered = cafeTxs.slice();
+    if (level === 'low') filtered = cafeTxs.filter(t => t.sumE <= cfg.lowMax);
+    else if (level === 'mid') filtered = cafeTxs.filter(t => t.sumE > cfg.lowMax && t.sumE <= cfg.midMax);
+    else if (level === 'high') filtered = cafeTxs.filter(t => t.sumE > cfg.midMax);
+    else if (level === 'both') filtered = cafeTxs.filter(t => t.sumE > cfg.lowMax);
 
-    const tags = parseCommentsBreakdown(filtered)
-      .filter(([tag]) => !cafeStopWords.has(tag));
+    if (filtered.length === 0) filtered = cafeTxs.slice();
+    window.cafeSuggestionPool = filtered;
 
-    if (tags.length === 0) return '';
+    // Генерация чипов выбора для ручного режима
+    let manualChipsHtml = '';
+    if (mode === 'manual') {
+      const getChipStyle = (tier) => (manualTier === tier)
+        ? 'background:#f59e0b; color:#ffffff; border-color:#d97706;'
+        : 'background:var(--bg-card); color:var(--text-mute); border-color:var(--border);';
 
-    const top = tags.slice(0, 3);
-    const avgCheck = Math.round(filtered.reduce((s, t) => s + t.sumE, 0) / filtered.length);
-
-    const names = top.map(([tag]) => tag.charAt(0).toUpperCase() + tag.slice(1)).join(', ');
-
-    const levelLabel = level === 'low' ? '💰 Экономный вариант'
-                     : level === 'high' ? '✨ Можно и разгуляться'
-                     : '👍 Средний вариант';
-
-    const reason = isRich && !isSoon ? 'Денег хватает, до ЗП ещё далеко'
-                 : isPoor && !isSoon ? 'Денег мало, ЗП не скоро — поберегись'
-                 : isRich && isSoon ? 'ЗП на носу, можно чуть-чуть'
-                 : isPoor && isSoon ? 'ЗП скоро — держимся'
-                 : 'Сбалансированный выбор';
+      manualChipsHtml = `
+        <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+          <button type="button" onclick="setCafeSuggestionTier('all', event)" style="flex:1; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('all')}">Все</button>
+          <button type="button" onclick="setCafeSuggestionTier('low', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('low')}">💰 До ${cfg.lowMax} ₽</button>
+          <button type="button" onclick="setCafeSuggestionTier('mid', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('mid')}">🛒 Средние</button>
+          <button type="button" onclick="setCafeSuggestionTier('high', event)" style="flex:1.2; border:1px solid; border-radius:6px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer; ${getChipStyle('high')}">✨ От ${cfg.midMax} ₽</button>
+        </div>
+      `;
+    }
 
     return `
-      <div style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1px solid rgba(245,158,11,0.25); border-radius:8px; padding:8px 10px; margin-bottom:8px;">
-        <div style="font-size:9.5px; font-weight:900; color:#f59e0b; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.3px;">☕ Куда сходить сегодня</div>
-        <div style="font-size:11.5px; color:var(--text-main); font-weight:700; line-height:1.35;">
-          ${escapeHtml(names)} <span style="color:#10b981; font-weight:900;">~${avgCheck.toLocaleString()} ₽</span>
+      <div id="cafeSuggestionBox" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1.5px solid rgba(245,158,11,0.3); border-radius:12px; padding:10px 12px; margin-bottom:8px; box-sizing:border-box;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+          <span style="font-size:10px; font-weight:900; color:#f59e0b; text-transform:uppercase; letter-spacing:0.3px; display:flex; align-items:center; gap:5px;">
+            <span>☕</span> Куда сходить сегодня
+          </span>
+          <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;">
+            <button type="button" onclick="rollCafeSuggestion(event)" style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.4); color:#f59e0b; border-radius:7px; padding:4px 9px; font-size:11px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.15s;" title="Показать другое заведение">
+              <span>🎲</span><span>Другой</span>
+            </button>
+            <button type="button" onclick="openCafeCaliberModal(event)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:7px; padding:4px 7px; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Настройки порогов и счетов">
+              ⚙️
+            </button>
+          </div>
         </div>
-        <div style="font-size:9.5px; color:var(--text-mute); margin-top:3px; font-style:italic;">${levelLabel} • ${reason}</div>
+
+        <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ПРЯМО В ПЛАШКЕ -->
+        <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:2px; gap:2px;">
+          <button type="button" onclick="setCafeSuggestionMode('auto', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'auto' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
+            🤖 Авто (по остатку)
+          </button>
+          <button type="button" onclick="setCafeSuggestionMode('manual', event)" style="flex:1; border:none; border-radius:6px; padding:5px 8px; font-size:10.5px; font-weight:800; cursor:pointer; transition:0.15s; ${mode === 'manual' ? 'background:var(--bg-card); color:var(--text-main); border:1px solid var(--border);' : 'background:transparent; color:var(--text-mute);'}">
+            📝 Ручной выбор
+          </button>
+        </div>
+
+        ${manualChipsHtml}
+
+        <div id="cafeSuggestionBody" style="margin-top:8px;">${renderCafeSuggestionItem()}</div>
+        <div style="font-size:9.5px; color:var(--text-mute); margin-top:6px; font-style:italic; line-height:1.3;">
+          ${label} • <span title="Медианный чек всех походов">мед. ~${cfg.median.toLocaleString()} ₽</span>
+        </div>
       </div>
     `;
+  }
+
+  function setCafeSuggestionMode(mode, evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    localStorage.setItem('cafe_caliber_mode', mode);
+    renderMonthlyBudgetWidget();
+    haptic(10);
+  }
+
+  function setCafeSuggestionTier(tier, evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    localStorage.setItem('cafe_manual_tier', tier);
+    renderMonthlyBudgetWidget();
+    haptic(10);
+  }
+
+  function renderCafeSuggestionItem() {
+    const pool = window.cafeSuggestionPool || [];
+    if (!Array.isArray(pool) || pool.length === 0) {
+      return '<div style="color:var(--text-mute); font-size:11px; padding:8px 0; text-align:center;">Нет чеков в этой категории</div>';
+    }
+
+    let pick = null;
+    // Защита от выбора того же чека, что уже показан (до 10 попыток)
+    for (let i = 0; i < 10; i++) {
+      const candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length === 1 || !window.cafeSuggestionCurrent || candidate.r !== window.cafeSuggestionCurrent.r) {
+        pick = candidate;
+        break;
+      }
+    }
+    if (!pick) pick = pool[0];
+
+    window.cafeSuggestionCurrent = pick;
+
+    const label = pick.comE ? pick.comE : pick.catE;
+    const dateStr = pick.d || pick.fd;
+
+    return `
+      <div onclick="openCafeTxEditor(event, '${pick.r}')" style="background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:8px 10px; cursor:pointer;">
+        <div style="font-size:10px; color:var(--text-mute); font-weight:700; margin-bottom:3px;">📅 ${escapeHtml(dateStr)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span style="flex:1; min-width:0; font-size:12px; color:var(--text-main); font-weight:700; line-height:1.3; word-break:break-word;">${escapeHtml(label)}</span>
+          <b style="color:#10b981; white-space:nowrap; font-size:13px;">${pick.sumE.toLocaleString()} ₽</b>
+        </div>
+      </div>
+    `;
+  }
+
+  // Обёртка для клика по чеку (безопасный stopPropagation)
+  function openCafeTxEditor(evt, txId) {
+    if (evt) evt.stopPropagation();
+    clI(evt, txId);
+  }
+
+function rollCafeSuggestion(evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    const body = document.getElementById('cafeSuggestionBody');
+    if (!body) return;
+    if (!window.cafeSuggestionPool || window.cafeSuggestionPool.length === 0) {
+      const allCafe = appData.transactions.filter(t => t.type === 'Расход' && t.sumE > 0 && (t.catE || '').toLowerCase().includes('кафе'));
+      window.cafeSuggestionPool = allCafe.length > 0 ? allCafe : appData.transactions.filter(t => t.type === 'Расход');
+    }
+    body.innerHTML = renderCafeSuggestionItem();
+    haptic(12);
+  }
+
+  function openCafeCaliberModal(evt) {
+    if (evt) evt.stopPropagation();
+
+    const savedMode = localStorage.getItem('cafe_caliber_mode') || 'auto';
+    const auto = calcAutoCafeThresholds();
+
+    // Заполняем ручной режим
+    document.getElementById('cfgCafeLowMax').value = parseFloat(localStorage.getItem('cafe_caliber_low_max')) || auto.lowMax;
+    document.getElementById('cfgCafeMidMax').value = parseFloat(localStorage.getItem('cafe_caliber_mid_max')) || auto.midMax;
+    document.getElementById('cfgCafeFullMin').value = parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000;
+
+    // Заполняем авто-режим
+    document.getElementById('cfgCafeFullMinAuto').value = parseFloat(localStorage.getItem('cafe_full_account_min')) || 5000;
+
+    const lowEl = document.getElementById('autoCafeLow');
+    const midEl = document.getElementById('autoCafeMid');
+    const highEl = document.getElementById('autoCafeHigh');
+    if (lowEl) lowEl.innerText = `до ${auto.lowMax.toLocaleString()} ₽ (<75% медианы)`;
+    if (midEl) midEl.innerText = `${auto.lowMax.toLocaleString()} – ${auto.midMax.toLocaleString()} ₽ (около медианы ~${auto.median.toLocaleString()} ₽)`;
+    if (highEl) highEl.innerText = `от ${auto.midMax.toLocaleString()} ₽ (>140% медианы)`;
+
+    // Галочка учёта счёта
+    document.getElementById('cfgCafeUseAccount').checked = localStorage.getItem('cafe_use_account') !== 'false';
+
+    setCafeCaliberMode(savedMode);
+    openModal('cafeCaliberModal');
+  }
+
+  // Честный расчёт авто-порогов от реальной медианы чеков кафе
+  function calcAutoCafeThresholds() {
+    const cafeCatNames = [];
+    const grp = appData.config.exp['Еда вне дома с ручкой'] || [];
+    grp.forEach(n => cafeCatNames.push(n));
+
+    // Дополняем системными категориями кафе
+    ['Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома с ручкой'].forEach(n => {
+      if (!cafeCatNames.includes(n)) cafeCatNames.push(n);
+    });
+
+    const txs = appData.transactions.filter(t =>
+      t.type === 'Расход' && t.sumE > 0 && cafeCatNames.includes(t.catE)
+    );
+
+    if (txs.length === 0) return { median: 1200, lowMax: 900, midMax: 1700 };
+
+    const sums = txs.map(t => t.sumE);
+    const med = calcMedian(sums) || 1200;
+
+    // Эконом — заметно ниже медианы (до 75%), средний — около медианы (75%..140%), дорогой — свыше 140%
+    const lowMax = Math.max(300, Math.round(med * 0.75));
+    const midMax = Math.max(lowMax + 300, Math.round(med * 1.4));
+
+    return { median: med, lowMax, midMax };
+  }
+
+  // Переключение режима в модалке калибровки
+  function setCafeCaliberMode(mode) {
+    localStorage.setItem('cafe_caliber_mode', mode);
+
+    const manualTab = document.getElementById('cafeModeTab_manual');
+    const autoTab = document.getElementById('cafeModeTab_auto');
+    const manualBody = document.getElementById('cafeCaliberManualBody');
+    const autoBody = document.getElementById('cafeCaliberAutoBody');
+
+    if (!manualTab || !autoTab || !manualBody || !autoBody) return;
+
+    const isManual = (mode === 'manual');
+
+    manualTab.style.background = isManual ? 'var(--bg-card)' : 'transparent';
+    manualTab.style.color = isManual ? 'var(--text-main)' : 'var(--text-mute)';
+    manualTab.style.border = isManual ? '1px solid var(--border)' : 'none';
+
+    autoTab.style.background = !isManual ? 'var(--bg-card)' : 'transparent';
+    autoTab.style.color = !isManual ? 'var(--text-main)' : 'var(--text-mute)';
+    autoTab.style.border = !isManual ? '1px solid var(--border)' : 'none';
+
+    manualBody.style.display = isManual ? 'block' : 'none';
+    autoBody.style.display = !isManual ? 'block' : 'none';
+  }
+
+  function saveCafeCaliberSettings() {
+    const mode = localStorage.getItem('cafe_caliber_mode') || 'manual';
+    const useAcc = document.getElementById('cfgCafeUseAccount').checked;
+
+    if (mode === 'manual') {
+      const lowMax = parseFloat(document.getElementById('cfgCafeLowMax').value) || 1000;
+      const midMax = parseFloat(document.getElementById('cfgCafeMidMax').value) || 2200;
+      const fullMin = parseFloat(document.getElementById('cfgCafeFullMin').value) || 5000;
+
+      if (lowMax >= midMax) return alert("Порог «Эконом» должен быть меньше порога «Средний»!");
+
+      localStorage.setItem('cafe_caliber_low_max', lowMax);
+      localStorage.setItem('cafe_caliber_mid_max', midMax);
+      localStorage.setItem('cafe_full_account_min', fullMin);
+    } else {
+      // Авто-режим: пересчитываем пороги заново и сохраняем как отпечаток
+      const auto = calcAutoCafeThresholds();
+      const fullMinAuto = parseFloat(document.getElementById('cfgCafeFullMinAuto').value) || 5000;
+
+      localStorage.setItem('cafe_caliber_low_max', auto.lowMax);
+      localStorage.setItem('cafe_caliber_mid_max', auto.midMax);
+      localStorage.setItem('cafe_full_account_min', fullMinAuto);
+    }
+
+    localStorage.setItem('cafe_use_account', useAcc);
+
+    closeModal('cafeCaliberModal');
+    renderMonthlyBudgetWidget();
+    haptic(15);
   }
 
 
@@ -10698,7 +10919,7 @@ function renderA() {
 
     const lunchCatNames = getNamesByIds(SYS_IDS.LUNCH, ['Обед/столовая на работе']);
     const cafeCatNames = getNamesByIds(SYS_IDS.CAFE, [
-      'Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома'
+      'Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома с ручкой'
     ]);
     const homeCatNames = getNamesByIds(SYS_IDS.HOME, [
       'Домой перекус/готовая еда/джанкфуд из магазина', 'Доставка еды'
@@ -10745,6 +10966,14 @@ function renderA() {
     const rawDays = Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000);
     const daysLeft = rawDays <= 0 ? 1 : rawDays;
     const weeksToSalary = Math.max(0.1, daysLeft / 7);
+
+    // Сколько дней прошло с начала ЗП-цикла — для позиции в матрице кафе
+    const daysSinceCycleStart = Math.max(0, Math.round((now.getTime() - cycleStart.getTime()) / 86400000));
+
+    // Пул кафе за ВСЁ ВРЕМЯ (для лотереи «Куда сходить»)
+    const cafeTxsAllTime = appData.transactions.filter(t =>
+      t.type === 'Расход' && t.sumE > 0 && cafeCatNames.includes(t.catE)
+    );
 
     // СВОБОДНЫЙ ПУЛ СРЕДСТВ (Сумма выбранных счетов для жизни)
     const manualPool = localStorage.getItem('ap_override_pool_sum');
@@ -10944,7 +11173,7 @@ function renderA() {
     const envWrap = document.getElementById('autopilotEnvelopesWrap');
     if (envWrap) {
       envWrap.innerHTML = `
-        <!-- 1. ОБЕД НА РАБОТЕ -->
+<!-- 1. ОБЕД НА РАБОТЕ -->
         <div style="border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg-card); margin-bottom:5px; box-sizing:border-box;">
           <div onclick="tC(event, this)" style="cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg);">
             <div style="min-width:0; flex:1; padding-right:6px;">
@@ -10961,8 +11190,8 @@ function renderA() {
               <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
             </div>
           </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с ${prevStartISO.slice(5)} (${lunchTxs.length}&nbsp;чек.):</div>
+          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:220px; overflow-y:auto; background:var(--bg-card);">
+            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки столовой с ${prevStartISO.slice(5)} (${lunchTxs.length}&nbsp;чек.):</div>
             ${makeTxsListHtml(lunchTxs)}
           </div>
         </div>
@@ -10984,9 +11213,9 @@ function renderA() {
               <span style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 4px; border-radius:4px; border:1px solid var(--border);">▼</span>
             </div>
           </div>
-          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
-            ${renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysLeft)}
-            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с ${prevStartISO.slice(5)} (${cafeTxs.length}&nbsp;чек.):</div>
+          <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:300px; overflow-y:auto; background:var(--bg-card);">
+            ${renderCafeSuggestionBlock(cafeTxsAllTime.length > 0 ? cafeTxsAllTime : cafeTxs, dailyRemain, fullDailyLimit, daysSinceCycleStart)}
+            <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px; margin-top:6px;">Все чеки с ${prevStartISO.slice(5)} (${cafeTxs.length}&nbsp;чек.):</div>
             ${makeTxsListHtml(cafeTxs)}
           </div>
         </div>
@@ -12379,6 +12608,60 @@ function renderA() {
   </div>
 </div>
 
+<!-- МОДАЛКА КАЛИБРОВКИ КАФЕ -->
+<div id="cafeCaliberModal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 380px;">
+    <div class="modal-header-sticky">
+      <h3 style="font-weight:900; margin:0; font-size:15px;">⚙️ Настройки «Куда сходить»</h3>
+      <button class="close-btn" type="button" onclick="closeModal('cafeCaliberModal')">✕</button>
+    </div>
+
+    <!-- ТАБЫ РЕЖИМА -->
+    <div style="display:flex; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:3px; margin-bottom:14px;">
+      <button type="button" id="cafeModeTab_manual" onclick="setCafeCaliberMode('manual')" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:11.5px; font-weight:900; cursor:pointer; transition:0.15s;">📝 Ручной</button>
+      <button type="button" id="cafeModeTab_auto" onclick="setCafeCaliberMode('auto')" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:11.5px; font-weight:900; cursor:pointer; transition:0.15s;">🤖 Авто-умный</button>
+    </div>
+
+    <!-- РУЧНОЙ РЕЖИМ -->
+    <div id="cafeCaliberManualBody">
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Порог «Эконом» (до скольких ₽):</label>
+      <input type="number" id="cfgCafeLowMax" class="input-ui" placeholder="1000" style="margin-bottom:8px;">
+
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Порог «Средний» (до скольких ₽):</label>
+      <input type="number" id="cfgCafeMidMax" class="input-ui" placeholder="2200" style="margin-bottom:8px;">
+
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Порог «Полный счёт Кафе» (от скольких ₽):</label>
+      <input type="number" id="cfgCafeFullMin" class="input-ui" placeholder="5000" style="margin-bottom:12px;">
+    </div>
+
+    <!-- АВТО-УМНЫЙ РЕЖИМ -->
+    <div id="cafeCaliberAutoBody" style="display:none;">
+      <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:12px; font-size:11.5px; line-height:1.5; color:var(--text-main);">
+        <div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">Автоматические пороги (по медиане чеков):</div>
+        <div>💰 <b>Эконом:</b> <span id="autoCafeLow">—</span></div>
+        <div>🛒 <b>Средний:</b> <span id="autoCafeMid">—</span></div>
+        <div>📦 <b>Дорого:</b> <span id="autoCafeHigh">—</span></div>
+        <div style="margin-top:8px; font-size:10.5px; color:var(--text-mute); font-style:italic;">Пороги рассчитаны так, чтобы ~33% твоих чеков попадали в каждую группу.</div>
+      </div>
+
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Порог «Полный счёт Кафе» (от скольких ₽):</label>
+      <input type="number" id="cfgCafeFullMinAuto" class="input-ui" placeholder="5000" style="margin-bottom:12px;">
+    </div>
+
+    <!-- ГАЛОЧКА УЧЁТА СЧЁТА -->
+    <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:var(--text-main); cursor:pointer; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:12px;">
+      <input type="checkbox" id="cfgCafeUseAccount" style="width:16px; height:16px; cursor:pointer;">
+      Учитывать остаток на счёте «На кафешки»
+    </label>
+
+    <div style="font-size:10.5px; color:var(--text-mute); line-height:1.4; margin-bottom:12px;">
+      Если галочка снята — режим работает только по позиции в цикле ЗП и не смотрит на баланс счёта.
+    </div>
+
+    <button type="button" onclick="saveCafeCaliberSettings()" style="width:100%; background:#10b981; color:white; padding:12px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">💾 Сохранить настройки</button>
+  </div>
+</div>
+
 <!-- МОДАЛКА НАСТРОЙКИ БЮДЖЕТА -->
 <div id="budgetConfigModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 400px;">
@@ -12713,7 +12996,7 @@ function renderA() {
     </div>
 
     <!-- КНОПКА ЗАПУСКА -->
-    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;" disabled="">⏳ Публикация в GitHub...</button>
+    <button type="button" id="btnRunDeploy" onclick="runOneClickDeploy()" style="width: 100%; background: rgb(16, 185, 129); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: rgba(16, 185, 129, 0.3) 0px 4px 14px; transition: 0.2s; opacity: 1;" disabled="">⏳ Публикация в GitHub...</button>
 
     <div id="deployStatusLog" style="display: block; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: monospace; line-height: 1.4; max-height: 120px; overflow-y: auto;"><div>🚀 Запуск автодеплоя...</div><div style="color:var(--text-main); margin-top:2px;">📡 Проверка файла BankWeb.html в kozin124884/BankWeb-2.0...</div><div style="color:var(--text-main); margin-top:2px;">✓ Файл BankWeb.html найден.</div><div style="color:var(--text-main); margin-top:2px;">📦 Подготовка актуального кода страницы...</div></div>
 
@@ -12727,7 +13010,7 @@ function renderA() {
 </div>
 
 <!-- МОДАЛКА: НАСТРОЙКИ РЕПОЗИТОРИЯ И ТОКЕНА GITHUB (ОТДЕЛЬНОЕ ЧИСТОЕ ОКНО) -->
-<div id="deploySettingsModal" class="modal" style="z-index: 16000; display: none;">
+<div id="deploySettingsModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 400px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
     <div class="modal-header-sticky">
       <h3 style="margin:0; font-size:15px; font-weight:900; color:var(--text-main);">⚙️ Настройки деплоя</h3>
