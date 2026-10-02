@@ -301,7 +301,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -353,7 +353,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view">
+  <div id="viewAnalytics" class="app-view active">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -525,9 +525,6 @@
           </div>
         </div>
 
-        <!-- БЛОК РЕКОМЕНДАЦИЙ -->
-        <div id="autopilotRecommendationBox" style="display:none; background:var(--input-bg); border:1px solid var(--border); padding:12px; border-radius:12px; font-size:11.5px; line-height:1.4; color:var(--text-main);"></div>
-
         <!-- КНОПКИ УПРАВЛЕНИЯ -->
         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
           <button type="button" onclick="openPlanSimulatorModal()" style="flex:1; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:white; border:none; padding:10px 12px; border-radius:10px; font-size:11.5px; font-weight:900; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:0.2s;">🎲 Как мне быть? (Планы)</button>
@@ -638,7 +635,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -2860,7 +2857,7 @@
     <div style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-bottom:6px; text-transform:uppercase;">Предпросмотр:</div>
     <div id="colorPreviewBox" class="bank-card" style="margin-bottom:20px; transition:0.2s; padding:16px; border-radius:12px;">
       <div style="font-size:13px; font-weight:900;" id="colorPreviewName">Название Счёта</div>
-      <div style="font-size:22px; font-weight:900; margin-top:8px;">50 000 ₽</div>
+      <div style="font-size:22px; font-weight:900; margin-top:8px;" id="colorPreviewBalance">50 000 ₽</div>
     </div>
     <div style="display:flex; gap:10px;">
       <button onclick="document.getElementById('accountColorModal').style.display='none'" class="input-ui" style="margin:0; background:var(--border); color:var(--text-main); border:none; flex:1; cursor:pointer;">Отмена</button>
@@ -3032,8 +3029,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -4333,6 +4330,21 @@
     document.getElementById('colorTargetAccount').value = accName;
     const currentHex = localStorage.getItem('acc_color_' + accName) || getBankCol(accName);
     document.getElementById('customColorPicker').value = currentHex;
+
+    // Заполняем предпросмотр реальными данными счёта
+    const nameEl = document.getElementById('colorPreviewName');
+    const balEl = document.getElementById('colorPreviewBalance');
+    if (nameEl && balEl) {
+      if (accName === '__ALL__') {
+        nameEl.innerText = 'Сводка (Выбранные счета)';
+        balEl.innerText = '— ₽';
+      } else {
+        const accObj = appData.accounts.find(a => a.name === accName);
+        nameEl.innerText = accName;
+        balEl.innerText = accObj ? `${Math.round(accObj.balance).toLocaleString()} ₽` : '0 ₽';
+      }
+    }
+
     updateCustomColorSelected(currentHex);
     document.getElementById('accountColorModal').style.display = 'flex';
   }
@@ -4342,7 +4354,7 @@
     if (preview) {
       preview.style.background = `linear-gradient(135deg, ${val}, ${adjustColorHex(val, -45)})`;
       preview.style.color = isColorLight(val) ? '#0f172a' : '#ffffff';
-      preview.innerText = `Цвет: ${val}`;
+      // НЕ затираем содержимое: имя и баланс остаются на месте
     }
   }
 
@@ -4945,49 +4957,6 @@
     }
   }
 
-
-
-  async function uploadCatQueue() {
-    if(catQueue.length === 0) return;
-    let btn = document.getElementById('btnUploadCatQueue');
-    if (btn) {
-      btn.innerText = '⏳ Сохранение...';
-      btn.disabled = true;
-    }
-
-    try {
-      for (const q of catQueue) {
-        if (q.action === 'add_sub') {
-          await db.from('categories').insert([{ type: q.type, group_name: q.group, name: q.newVal }]);
-        } else if (q.action === 'rename_sub') {
-          await db.from('categories').update({ name: q.newVal }).eq('type', q.type).eq('name', q.oldVal);
-          await db.from('transactions').update({ category: q.newVal }).eq('category', q.oldVal);
-        } else if (q.action === 'move_sub') {
-          await db.from('categories').update({ group_name: q.group }).eq('type', q.type).eq('name', q.oldVal);
-        } else if (q.action === 'rename_group') {
-          await db.from('categories').update({ group_name: q.newVal }).eq('type', q.type).eq('group_name', q.oldVal);
-        } else if (q.action === 'delete_sub') {
-          await db.from('categories').delete().eq('type', q.type).eq('name', q.oldVal);
-        } else if (q.action === 'delete_group') {
-          await db.from('categories').delete().eq('type', q.type).eq('group_name', q.oldVal);
-        }
-      }
-
-      catQueue = [];
-      renderCatQueue();
-      document.getElementById('catManagerModal').style.display = 'none';
-      alert('Категории успешно обновлены в базе!');
-      fetchAllData(true);
-    } catch(err) {
-      alert("Ошибка сохранения категорий: " + err.message);
-    } finally {
-      if (btn) {
-        btn.innerText = '🚀 Отправить на сервер';
-        btn.disabled = false;
-      }
-    }
-  }
-
   async function manageAccounts(a) {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Управление счетами заблокировано!");
     if(a === 'add_acc') {
@@ -5146,24 +5115,23 @@
     applyDatesLocally();
   }
 
-  function applyDatesLocally() {
-    chartLevel = 'main';
-    const pt = document.getElementById('periodType').value;
+    // Единый парсер периода для аналитики и экспорта.
+  // prefix — префикс id полей ('p' для аналитики, 'exp' для экспорта).
+  function parsePeriodBounds(pt, prefix) {
+    const now = new Date();
+    const curYear = now.getFullYear();
     let s, e;
 
-   const now = new Date();
-    const curYear = now.getFullYear();
-
-    if(pt === 'month') {
-      let [yy, mm] = document.getElementById('pMonth').value.split('-');
+    if (pt === 'month') {
+      let [yy, mm] = document.getElementById(prefix + 'Month').value.split('-');
       s = new Date(yy, mm - 1, 1);
       e = new Date(yy, mm, 0);
-    } else if(pt === 'salary') {
-      let [yy, mm] = document.getElementById('pMonth').value.split('-').map(Number);
+    } else if (pt === 'salary') {
+      let [yy, mm] = document.getElementById(prefix + 'Month').value.split('-').map(Number);
       s = new Date(yy, mm - 1, 16);
       e = new Date(yy, mm, 15, 23, 59, 59, 999);
-    } else if(pt === 'year') {
-      let yy = parseInt(document.getElementById('pYear').value, 10) || curYear;
+    } else if (pt === 'year') {
+      let yy = parseInt(document.getElementById(prefix + 'Year').value, 10) || curYear;
       if (yy === 2026) {
         s = new Date(2026, 1, 1, 0, 0, 0); // 2026 строго с 01.02.2026
         if (curYear === 2026) {
@@ -5179,15 +5147,14 @@
           e = new Date(yy, 11, 31, 23, 59, 59);
         }
       }
-    } else if(pt === 'single') {
-      let d = new Date(document.getElementById('pSingle').value);
+    } else if (pt === 'single') {
+      let d = new Date(document.getElementById(prefix + 'Single').value);
       s = new Date(d);
       e = new Date(d);
-    } else if(pt === 'custom') {
-      s = new Date(document.getElementById('pStart').value);
-      e = new Date(document.getElementById('pEnd').value);
-    } else if(pt === 'all') {
-      // Начало времён программы строго 01.02.2026 по сегодняшний день
+    } else if (pt === 'custom') {
+      s = new Date(document.getElementById(prefix + 'Start').value);
+      e = new Date(document.getElementById(prefix + 'End').value);
+    } else if (pt === 'all') {
       s = new Date(2026, 1, 1, 0, 0, 0);
       e = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
     } else {
@@ -5195,11 +5162,21 @@
       e = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
     }
 
-    if(s && e && !isNaN(s)) {
-      s.setHours(0,0,0,0);
-      e.setHours(23,59,59,999);
-      gStart = toISOLocal(s);
-      gEnd = toISOLocal(e);
+    if (s && e && !isNaN(s)) {
+      s.setHours(0, 0, 0, 0);
+      e.setHours(23, 59, 59, 999);
+      return { start: toISOLocal(s), end: toISOLocal(e) };
+    }
+    return { start: '', end: '' };
+  }
+
+  function applyDatesLocally() {
+    chartLevel = 'main';
+    const pt = document.getElementById('periodType').value;
+    const b = parsePeriodBounds(pt, 'p');
+    gStart = b.start;
+    gEnd = b.end;
+    if (gStart && gEnd) {
       processLocalAnalytics();
       renderMonthlyBudgetWidget();
     }
@@ -6148,47 +6125,13 @@ function renderA() {
 
   function applyExportDates() {
     const pt = document.getElementById('expPeriodType')?.value || 'month';
-    const now = new Date();
-    const curYear = now.getFullYear();
-    let s, e;
-
-    if (pt === 'month') {
-      let val = document.getElementById('expMonth')?.value || toISOLocal(now).slice(0, 7);
-      let [yy, mm] = val.split('-').map(Number);
-      s = new Date(yy, mm - 1, 1);
-      e = new Date(yy, mm, 0);
-    } else if (pt === 'salary') {
-      let val = document.getElementById('expMonth')?.value || toISOLocal(now).slice(0, 7);
-      let [yy, mm] = val.split('-').map(Number);
-      s = new Date(yy, mm - 1, 16);
-      e = new Date(yy, mm, 15, 23, 59, 59, 999);
-    } else if (pt === 'year') {
-      let yy = parseInt(document.getElementById('expYear')?.value, 10) || curYear;
-      s = (yy === 2026) ? new Date(2026, 1, 1) : new Date(yy, 0, 1);
-      e = (yy === curYear) ? new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59) : new Date(yy, 11, 31, 23, 59, 59);
-    } else if (pt === 'single') {
-      let d = new Date(document.getElementById('expSingle')?.value || now);
-      s = new Date(d); e = new Date(d);
-    } else if (pt === 'custom') {
-      s = new Date(document.getElementById('expStart')?.value || now);
-      e = new Date(document.getElementById('expEnd')?.value || now);
-    } else if (pt === 'all') {
-      s = new Date(2026, 1, 1);
-      e = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-    } else {
-      s = new Date(2026, 1, 1); e = new Date();
-    }
-
-    if (s && e && !isNaN(s)) {
-      s.setHours(0, 0, 0, 0);
-      e.setHours(23, 59, 59, 999);
-      expPeriodBounds.start = toISOLocal(s);
-      expPeriodBounds.end = toISOLocal(e);
+    const b = parsePeriodBounds(pt, 'exp');
+    expPeriodBounds.start = b.start;
+    expPeriodBounds.end = b.end;
+    if (expPeriodBounds.start) {
       renderExportCategoryChips();
     }
   }
-
-
 
   function initExportDefaults() {
     const now = new Date();
@@ -7100,49 +7043,6 @@ function renderA() {
     renderDebts();
   }
 
-  function forgiveAllDebtors() {
-    if (isGuest()) return alert("🔒 Вы вошли как гость. Прощение долгов заблокировано!");
-    if (!confirm(`🚨 КРИТИЧЕСКИЙ ШАГ!\nВы действительно хотите полностью СПИСАТЬ И ОБНУЛИТЬ активные долги всех показанных должников?`)) return;
-    const todayISO = toISOLocal(new Date());
-
-    let dS = {};
-    appData.transactions.forEach(r => {
-      if (r.type === 'Расход' && r.sumE > 0) {
-        let cE = r.catE.trim(), isDebt = (cE === 'Что-то кому-то купил в долг' || cE === 'Кому-то в долг' || cE === 'Вернул долг');
-        if (isDebt) {
-          let n = r.debtor_name || extN(r.comE);
-          if(!dS[n]) dS[n] = { s: 0, r: 0 };
-          dS[n].s += r.sumE;
-        }
-      }
-      if (r.type === 'Доход' && r.sumI > 0) {
-        let cI = r.catI.trim(), isDebt = (cI === 'Вернули долг' || cI === 'Дали в долг');
-        if (isDebt) {
-          let n = r.debtor_name || extN(r.comI);
-          if(!dS[n]) dS[n] = { s: 0, r: 0 };
-          dS[n].r += r.sumI;
-        }
-      }
-    });
-
-    appData.archiveDebts.forEach(r => {
-      if(!dS[r.n]) dS[r.n] = { s: 0, r: 0 };
-      if(r.amt > 0) { dS[r.n].s += r.amt; } else { dS[r.n].r += Math.abs(r.amt); }
-    });
-
-    const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
-    Object.entries(dS).forEach(([name, v]) => {
-        const net = v.s - v.r;
-        if (Math.abs(net) > 0.1 && !hiddenDebtors.includes(name)) {
-            const comment = net > 0 ? `Прощение долга (Списание всех)` : `Списание моего долга (Прощение всех)`;
-            const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: -net, c: comment };
-            appData.archiveDebts.push(arch);
-            pushToLocalQueue('archive_debt', arch.r, arch);
-        }
-    });
-    renderDebts();
-    alert("Все активные долги обнулены в очереди!");
-  }
 
   // ПЕРЕИМЕНОВАНИЕ ДОЛЖНИКА НАПРЯМУЮ В SUPABASE (БЕЗ GOOGLE СКРИПТА!)
   async function renameP(e, o) {
@@ -7861,8 +7761,6 @@ function renderA() {
       }
     }
   }
-
-
 
   async function deleteCurrentTrip() {
     if (isGuest()) return alert("🔒 Вы вошли как гость. Удаление событий заблокировано!");
@@ -9330,44 +9228,71 @@ function renderA() {
       .slice(0, 6);
   }
 
-  function toggleDeepCommentsAccordion() {
-    const body = document.getElementById('catDeepCommentsBody');
-    const arrow = document.getElementById('catDeepCommentsArrow');
-    if (!body || !arrow) return;
-    const isHidden = (body.style.display === 'none');
-    body.style.display = isHidden ? 'block' : 'none';
-    arrow.innerText = isHidden ? '▲ Свернуть' : '▼ Развернуть';
+  // Инсайт «Куда сходить»: подбирает 3 варианта кафе по ценовому уровню
+  // в зависимости от остатка дня и близости зарплаты.
+  function renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysLeft) {
+    if (!cafeTxs || cafeTxs.length < 3) return '';
+
+    // 1. Определяем контекст: много/мало денег + ЗП скоро/не скоро
+    const moneyRatio = fullDailyLimit > 0 ? dailyRemain / fullDailyLimit : 0;
+    const isRich = moneyRatio > 0.6;
+    const isPoor = moneyRatio < 0.3;
+    const isSoon = daysLeft <= 5;
+
+    // 2. Матрица выбора ценового уровня
+    let level;
+    if (isRich && !isSoon) level = 'high';
+    else if (isPoor && !isSoon) level = 'low';
+    else level = 'mid';
+
+    // 3. Фильтруем чеки по уровню
+    let filtered;
+    if (level === 'low') filtered = cafeTxs.filter(t => t.sumE < 500);
+    else if (level === 'high') filtered = cafeTxs.filter(t => t.sumE > 1000);
+    else filtered = cafeTxs.filter(t => t.sumE >= 500 && t.sumE <= 1000);
+
+    if (filtered.length < 2) return '';
+
+    // 4. Парсим комментарии + добиваем «кафейными» стоп-словами
+    const cafeStopWords = new Set([
+      'кафе','кофейня','кофейни','столовая','забегаловка','обед','ужин','завтрак',
+      'кофе','чай','взял','зашёл','зашел','поел','поход','перекус','был','была',
+      'ели','пили','в','на','с','по','за','для','и','или','но','а','же','бы','не'
+    ]);
+
+    const tags = parseCommentsBreakdown(filtered)
+      .filter(([tag]) => !cafeStopWords.has(tag));
+
+    if (tags.length === 0) return '';
+
+    const top = tags.slice(0, 3);
+    const avgCheck = Math.round(filtered.reduce((s, t) => s + t.sumE, 0) / filtered.length);
+
+    const names = top.map(([tag]) => tag.charAt(0).toUpperCase() + tag.slice(1)).join(', ');
+
+    const levelLabel = level === 'low' ? '💰 Экономный вариант'
+                     : level === 'high' ? '✨ Можно и разгуляться'
+                     : '👍 Средний вариант';
+
+    const reason = isRich && !isSoon ? 'Денег хватает, до ЗП ещё далеко'
+                 : isPoor && !isSoon ? 'Денег мало, ЗП не скоро — поберегись'
+                 : isRich && isSoon ? 'ЗП на носу, можно чуть-чуть'
+                 : isPoor && isSoon ? 'ЗП скоро — держимся'
+                 : 'Сбалансированный выбор';
+
+    return `
+      <div style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1px solid rgba(245,158,11,0.25); border-radius:8px; padding:8px 10px; margin-bottom:8px;">
+        <div style="font-size:9.5px; font-weight:900; color:#f59e0b; text-transform:uppercase; margin-bottom:3px; letter-spacing:0.3px;">☕ Куда сходить сегодня</div>
+        <div style="font-size:11.5px; color:var(--text-main); font-weight:700; line-height:1.35;">
+          ${escapeHtml(names)} <span style="color:#10b981; font-weight:900;">~${avgCheck.toLocaleString()} ₽</span>
+        </div>
+        <div style="font-size:9.5px; color:var(--text-mute); margin-top:3px; font-style:italic;">${levelLabel} • ${reason}</div>
+      </div>
+    `;
   }
 
-  function renderCommentsInsightBlock(txList) {
-    const wrap = document.getElementById('catDeepCommentsWrap');
-    const container = document.getElementById('catDeepCommentsList');
-    const badge = document.getElementById('catDeepCommentsCountBadge');
-    const body = document.getElementById('catDeepCommentsBody');
-    const arrow = document.getElementById('catDeepCommentsArrow');
-    if (!wrap || !container) return;
 
-    const parsed = parseCommentsBreakdown(txList);
-    if (!parsed || parsed.length === 0) {
-      wrap.style.display = 'none';
-      return;
-    }
-
-    wrap.style.display = 'block';
-    if (badge) badge.innerText = parsed.length;
-    // По умолчанию всегда свернуто под плашку, чтобы экран не прыгал
-    if (body) body.style.display = 'none';
-    if (arrow) arrow.innerText = '▼ Развернуть';
-
-    let h = '';
-    parsed.forEach(([tag, data]) => {
-      h += `<div style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
-              <b style="color:var(--text-main);">${escapeHtml(tag)}</b>
-              <span style="color:var(--text-mute);">• ${data.count} шт</span>
-            </div>`;
-    });
-    container.innerHTML = h;
-  }
+    // (Облако тегов покупок удалено — его роль теперь выполняет блок «Куда сходить» в автопилоте.)
 
   // Обновление динамических метрик периода в модалке
   function updatePeriodTopPurchases(txsForPeriod, periodTitle) {
@@ -9533,12 +9458,7 @@ function renderA() {
       if (isAllExp) renderCatDeepFilterChips();
     }
 
-    const commBody = document.getElementById('catDeepCommentsBody');
-    const commArrow = document.getElementById('catDeepCommentsArrow');
-    if (commBody) commBody.style.display = 'none';
-    if (commArrow) commArrow.innerText = '▼ Развернуть';
-
-    // Сброс в "Все годы" происходит только при первичном открытии модалки, но НЕ при клике по чекбоксам фильтров
+        // Сброс в "Все годы" происходит только при первичном открытии модалки, но НЕ при клике по чекбоксам фильтров
     catDrill = { level: 'years', year: null, month: null, monthName: '', day: null, dateStr: '' };
 
     const isIncMode = (mode === 'income');
@@ -10042,16 +9962,6 @@ function renderA() {
     if (btn) btn.innerText = next ? '🙈' : '👁️';
   }
 
-
-
-  function toggleBudgetWidget() {
-    isBudgetWidgetOpen = !isBudgetWidgetOpen;
-    const body = document.getElementById('autopilotWidgetBody');
-    const arrow = document.getElementById('autopilotWidgetArrow');
-    if (body) body.style.display = isBudgetWidgetOpen ? 'flex' : 'none';
-    if (arrow) arrow.innerText = isBudgetWidgetOpen ? '▲' : '▼';
-  }
-
   function openBudgetConfigModal(event) {
     if (event) event.stopPropagation(); // предотвращаем всплытие клика
 
@@ -10089,50 +9999,6 @@ function renderA() {
 
     document.getElementById('budgetConfigModal').style.display = 'none';
     renderMonthlyBudgetWidget();
-  }
-
-  // Расчёт дат активного финансового месяца
-  function getActiveBudgetBounds() {
-    const type = localStorage.getItem('monthly_budget_type') || 'calendar';
-    const startDayConfig = parseInt(localStorage.getItem('monthly_budget_start_day') || '10', 10);
-    const now = new Date();
-    const curYear = now.getFullYear();
-    const curMonth = now.getMonth(); // 0..11
-    const curDay = now.getDate();
-
-    let startDate, endDate;
-
-    if (type === 'calendar') {
-      startDate = new Date(curYear, curMonth, 1);
-      endDate = new Date(curYear, curMonth + 1, 0, 23, 59, 59);
-    } else if (type === 'salary_16') {
-      if (curDay >= 16) {
-        startDate = new Date(curYear, curMonth, 16);
-        endDate = new Date(curYear, curMonth + 1, 15, 23, 59, 59);
-      } else {
-        startDate = new Date(curYear, curMonth - 1, 16);
-        endDate = new Date(curYear, curMonth, 15, 23, 59, 59);
-      }
-    } else if (type === 'custom_day') {
-      const sDay = Math.min(28, Math.max(1, startDayConfig));
-      if (curDay >= sDay) {
-        startDate = new Date(curYear, curMonth, sDay);
-        endDate = new Date(curYear, curMonth + 1, sDay - 1, 23, 59, 59);
-      } else {
-        startDate = new Date(curYear, curMonth - 1, sDay);
-        endDate = new Date(curYear, curMonth, sDay - 1, 23, 59, 59);
-      }
-    }
-
-    const startISO = toISOLocal(startDate);
-    const endISO = toISOLocal(endDate);
-    const msLeft = endDate.getTime() - now.getTime();
-    const daysLeft = Math.max(1, Math.ceil(msLeft / 86400000));
-
-    const fmt = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
-    const rangeText = `${fmt(startDate)} — ${fmt(endDate)}`;
-
-    return { startISO, endISO, daysLeft, rangeText };
   }
 
   // ВСПОМОГАТЕЛЬНЫЙ ФИЛЬТР: ЧИСТЫЕ ЛИЧНЫЕ РАСХОДЫ
@@ -10313,25 +10179,6 @@ function renderA() {
     if (arrow) arrow.innerText = isAutopilotOpen ? '▲' : '▼';
   }
 
-  // РЕЖИМ «ДЕНЬ ЗАКУПКИ У БАБУШКИ»
-  function toggleGrandmaShoppingDay() {
-    const current = localStorage.getItem('is_grandma_shopping_day') === 'true';
-    const next = !current;
-    localStorage.setItem('is_grandma_shopping_day', next);
-    updateGrandmaBtnUI();
-    renderMonthlyBudgetWidget();
-  }
-
-  function updateGrandmaBtnUI() {
-    const btn = document.getElementById('btnGrandmaMode');
-    if (!btn) return;
-    const isAct = localStorage.getItem('is_grandma_shopping_day') === 'true';
-    btn.style.background = isAct ? '#fef3c7' : 'var(--input-bg)';
-    btn.style.borderColor = isAct ? '#f59e0b' : 'var(--border)';
-    btn.style.color = isAct ? '#b45309' : 'var(--text-main)';
-    btn.innerHTML = isAct ? '🛒 Закупка идёт (Пауза лимита)' : '🛒 День у бабушки';
-  }
-
   // --- УПРАВЛЕНИЕ РУЧНЫМИ НАСТРОЙКАМИ АВТОПИЛОТА ---
   // 1. ОТКРЫТИЕ НАСТРОЕК АВТОПИЛОТА И ГЕНЕРАЦИЯ СПИСКА СЧЕТОВ
   function openAutopilotOverrideModal() {
@@ -10398,14 +10245,6 @@ function renderA() {
     document.getElementById('autopilotOverrideModal').style.display = 'none';
     renderMonthlyBudgetWidget();
   }
-
-  // Ручное завершение периода передышки
-  function manuallyEndGracePeriod() {
-    localStorage.setItem('ap_grace_manually_ended', 'true');
-    renderMonthlyBudgetWidget();
-  }
-
-
 
   // Локальные сессионные счета для симулятора планов (живут до перезагрузки страницы)
   window.simCustomAccounts = null;
@@ -10763,36 +10602,6 @@ function renderA() {
     `;
   }
 
-  function setPlanSimPreset(amount) {
-    const input = document.getElementById('simExpenseInput');
-    if (!input) return;
-    input.value = (parseFloat(input.value) || 0) + amount;
-    recalcPlanSimulation();
-  }
-
-  function recalcPlanSimulation() {
-    const box = document.getElementById('simResultBox');
-    const input = document.getElementById('simExpenseInput');
-    if (!box || !input) return;
-
-    const extra = parseFloat(input.value) || 0;
-    if (extra <= 0) { box.style.display = 'none'; return; }
-
-    const m = window.currentPlanMetrics || getAutopilotMetricsForPlan();
-    const newPool = Math.max(0, m.cleanPool - extra);
-    const newDaily = Math.round(newPool / m.daysLeft);
-    const loss = m.baseDailyLimit - newDaily;
-
-    box.style.display = 'block';
-    box.innerHTML = `
-      • Новый лимит: <b style="color:${newDaily >= 600 ? '#10b981' : '#ef4444'};">${newDaily.toLocaleString()} ₽/день</b> (просадка на -${loss.toLocaleString()} ₽/день)<br>
-      • Останется в пуле: <b>${Math.round(newPool).toLocaleString()} ₽</b> на ${m.daysLeft} дн.
-    `;
-  }
-
-
-
-
   // --- УПРАВЛЕНИЕ ОКНАМИ ПУЛА И БРОНИ ---
   function openFreePoolModal() {
     const container = document.getElementById('poolAccountsListContainer');
@@ -10862,38 +10671,6 @@ function renderA() {
     renderMonthlyBudgetWidget();
   }
 
-
-  // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ КОНВЕРТОВ АВТОПИЛОТА ---
-  function toggleEnvelopeDropdown(id) {
-    const el = document.getElementById(id);
-    const arr = document.getElementById('arr_' + id);
-    if (!el) return;
-    const isHidden = el.style.display === 'none';
-    el.style.display = isHidden ? 'block' : 'none';
-    if (arr) arr.innerText = isHidden ? '▲' : '▼';
-  }
-
-  function renderEnvelopeChecksList(txList) {
-    if (!txList || txList.length === 0) {
-      return '<div style="color:var(--text-mute); font-size:11px; text-align:center; padding:8px 0;">Нет трат за текущий ЗП цикл ✨</div>';
-    }
-    let html = '';
-    txList.slice().sort((a, b) => new Date(b.fd) - new Date(a.fd)).forEach(t => {
-      html += `
-        <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; box-sizing:border-box; padding:7px 9px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:4px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '${t.r}')">
-          <div style="min-width:0; flex:1; padding-right:8px; overflow:hidden;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <b style="color:var(--text-main); font-size:11.5px;">${t.d}</b>
-              <span style="color:var(--text-mute); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(t.catE)}</span>
-            </div>
-            ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(t.comE)}</div>` : ''}
-          </div>
-          <b style="color:#ef4444; font-size:11.5px; flex-shrink:0; white-space:nowrap;">-${t.sumE.toLocaleString()} ₽</b>
-        </div>
-      `;
-    });
-    return html;
-  }
 
   // 2. ОСНОВНОЙ РАСЧЕТ И ОТРИСОВКА АВТОПИЛОТА (ПРИВЯЗКА К ID SUPABASE)
   function renderMonthlyBudgetWidget() {
@@ -11208,6 +10985,7 @@ function renderA() {
             </div>
           </div>
           <div class="toggle-content" style="display:none; padding:7px 9px; border-top:1px solid var(--border); max-height:180px; overflow-y:auto; background:var(--bg-card);">
+            ${renderCafeSuggestionBlock(cafeTxs, dailyRemain, fullDailyLimit, daysLeft)}
             <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Все чеки с ${prevStartISO.slice(5)} (${cafeTxs.length}&nbsp;чек.):</div>
             ${makeTxsListHtml(cafeTxs)}
           </div>
@@ -11678,170 +11456,6 @@ function renderA() {
   let currentExpScale = '30';
   let isExpTrendOpen = false;
 
-  function toggleExpenseTrendAccordion() {
-    isExpTrendOpen = !isExpTrendOpen;
-    const body = document.getElementById('expTrendBody');
-    const arr = document.getElementById('expTrendArrow');
-    if (body) body.style.display = isExpTrendOpen ? 'flex' : 'none';
-    if (arr) arr.innerText = isExpTrendOpen ? '▲ Свернуть' : '▼ Развернуть';
-    if (isExpTrendOpen) renderExpenseTrendChart();
-  }
-
-  function setExpenseTrendScale(scale) {
-    currentExpScale = scale;
-    ['14', '30', 'salary', '90'].forEach(s => {
-      const b = document.getElementById('scaleBtn_' + s);
-      if (b) {
-        b.style.background = (s === scale) ? 'var(--bg-card)' : 'transparent';
-      }
-    });
-    renderExpenseTrendChart();
-  }
-
-  function renderExpenseTrendChart() {
-    const canvas = document.getElementById('expenseTrendCanvas');
-    if (!canvas) return;
-
-    const now = new Date();
-    let numDays = 30;
-    let startDate = new Date(now.getTime() - 29 * 86400000);
-
-    if (currentExpScale === '14') {
-      numDays = 14;
-      startDate = new Date(now.getTime() - 13 * 86400000);
-    } else if (currentExpScale === '90') {
-      numDays = 90;
-      startDate = new Date(now.getTime() - 89 * 86400000);
-    } else if (currentExpScale === 'salary') {
-      const curD = now.getDate(), curY = now.getFullYear(), curM = now.getMonth();
-      const s = curD >= 16 ? new Date(curY, curM, 16) : new Date(curY, curM - 1, 16);
-      startDate = s;
-      numDays = Math.max(1, Math.round((now.getTime() - s.getTime()) / 86400000) + 1);
-    }
-
-    const labels = [];
-    const values = [];
-    const txMap = {};
-    const pointColors = [];
-    const pointRadii = [];
-
-    for (let i = 0; i < numDays; i++) {
-      const d = new Date(startDate.getTime() + i * 86400000);
-      const iso = toISOLocal(d);
-      labels.push(`${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`);
-      txMap[iso] = { total: 0, items: [], hasSalary: false };
-    }
-
-    (appData.transactions || []).forEach(t => {
-      if (txMap[t.fd]) {
-        if (t.type === 'Расход' && t.sumE > 0) {
-          txMap[t.fd].total += t.sumE;
-          txMap[t.fd].items.push(t);
-        }
-        if (t.type === 'Доход' && (t.catI || '').toLowerCase().includes('зарплат')) {
-          txMap[t.fd].hasSalary = true;
-        }
-      }
-    });
-
-    const isoKeys = Object.keys(txMap).sort();
-    isoKeys.forEach(iso => {
-      const dayData = txMap[iso];
-      values.push(Math.round(dayData.total));
-
-      // Маркеры: Зарплата (зелёная), Крупный расход > 5000 ₽ (красная), Обычный день (синяя)
-      if (dayData.hasSalary) {
-        pointColors.push('#10b981');
-        pointRadii.push(6);
-      } else if (dayData.total >= 5000) {
-        pointColors.push('#ef4444');
-        pointRadii.push(5);
-      } else {
-        pointColors.push('#3b82f6');
-        pointRadii.push(2.5);
-      }
-    });
-
-    const ctx = canvas.getContext('2d');
-    if (expenseTrendChartInstance) expenseTrendChartInstance.destroy();
-
-    expenseTrendChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: values,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.08)',
-          fill: true,
-          tension: 0.25,
-          pointBackgroundColor: pointColors,
-          pointRadius: pointRadii,
-          pointHoverRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` Траты дня: ${ctx.raw.toLocaleString()} ₽ (нажмите на точку)`
-            }
-          }
-        },
-        scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 9 }, maxTicksLimit: 7 } },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              font: { size: 9 },
-              callback: (v) => v >= 1000 ? `${Math.round(v / 1000)}к` : v
-            }
-          }
-        },
-        // Клик по любой точке кривой ➔ раскрывает чеки этого дня снизу
-        onClick: (evt, els) => {
-          if (!els || els.length === 0) return;
-          const idx = els[0].index;
-          const targetIso = isoKeys[idx];
-          const dayInfo = txMap[targetIso];
-          const detailBox = document.getElementById('expTrendDayDetails');
-          if (!detailBox) return;
-
-          if (!dayInfo || dayInfo.items.length === 0) {
-            detailBox.style.display = 'block';
-            detailBox.innerHTML = `<b>📅 ${labels[idx]}:</b> расходов не было ✨`;
-            return;
-          }
-
-          let checksHtml = '';
-          dayInfo.items.slice().sort((a, b) => b.sumE - a.sumE).forEach(t => {
-            checksHtml += `
-              <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px dashed var(--border); font-size:10.5px;" onclick="clI(event, '${t.r}')">
-                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:8px;">
-                  <b>${t.catE}</b> ${t.comE ? `<i style="color:var(--text-mute);">(${t.comE})</i>` : ''}
-                </span>
-                <b style="color:#ef4444; flex-shrink:0;">-${t.sumE.toLocaleString()} ₽</b>
-              </div>
-            `;
-          });
-
-          detailBox.style.display = 'block';
-          detailBox.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <b>📅 ${labels[idx]} • Итого: <span style="color:#ef4444;">${dayInfo.total.toLocaleString()} ₽</span></b>
-              <span style="color:var(--text-mute); font-size:10px;">${dayInfo.items.length} чек.</span>
-            </div>
-            ${checksHtml}
-          `;
-        }
-      }
-    });
-  }
-
-
   // --- ГРАФИК ДИНАМИКИ КАПИТАЛА С НАДЕЖНЫМ ЗУМОМ И ПАНОРАМИРОВАНИЕМ ---
   let capitalChartInstance = null;
   let isCapitalChartOpen = false;
@@ -12171,94 +11785,8 @@ function renderA() {
     if (arr) arr.innerText = isHidden ? '▲' : '▼';
   }
 
-  // ДВЕ ВЕРСИИ РЕКОМЕНДАЦИЙ: НАКОПЛЕНИЕ + КАФЕ
-  function renderContextRecommendation(dailyRemain) {
-    const box = document.getElementById('autopilotRecommendationBox');
-    if (!box) return;
-
-    if (dailyRemain <= 0) {
-      box.style.display = 'none';
-      return;
-    }
-
-    // Ищем приятный чек из истории кафе/досуга
-    const cafeTxs = appData.transactions.filter(t => {
-      const cat = (t.catE || '').toLowerCase();
-      const com = (t.comE || '').trim();
-      return t.type === 'Расход' && t.sumE >= 500 && t.sumE <= dailyRemain &&
-             (cat.includes('кафе') || cat.includes('еда вне дома') || cat.includes('досуг')) &&
-             com.length > 2;
-    });
-    const randomCafe = cafeTxs.length > 0 ? cafeTxs[Math.floor(Math.random() * cafeTxs.length)] : null;
-
-    let cafeOptionHtml = '';
-    if (randomCafe) {
-      cafeOptionHtml = `
-        <div style="margin-top:6px; padding-top:6px; border-top:1px dashed var(--border); color:var(--text-mute); font-size:11px;">
-          ☕ <b>Или побаловать себя:</b> заглянуть в <b>«${randomCafe.comE}»</b> (~${randomCafe.sumE.toLocaleString()} ₽).
-        </div>
-      `;
-    }
-
-    box.style.display = 'block';
-    box.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-        <div>
-          <span style="color:#10b981; font-weight:900;">🟢 Сэкономлено сегодня: ${dailyRemain.toLocaleString()} ₽</span>
-          <div style="font-size:10.5px; color:var(--text-mute); margin-top:2px;">Свободный остаток от суточного лимита.</div>
-        </div>
-        <button type="button" onclick="quickSaveToAccumulation(${dailyRemain})" style="background:#10b981; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:900; font-size:11px; cursor:pointer; white-space:nowrap;">💰 В копилку</button>
-      </div>
-      ${cafeOptionHtml}
-    `;
-  }
-
   // БЫСТРЫЙ ПЕРЕВОД ЭКОНОМИИ ДНЯ В КОПИЛКУ
   let activeSaveAmount = 0;
-
-  function quickSaveToAccumulation(amount) {
-    if (isGuest()) return alert("🔒 В гостевом режиме действие заблокировано!");
-    activeSaveAmount = amount;
-
-    let fromOptions = '', toOptions = '';
-    appData.accounts.forEach(a => {
-      const nLow = a.name.toLowerCase();
-      if (!nLow.includes('все счета') && !nLow.includes('балл')) {
-        fromOptions += `<option value="${a.name}" ${nLow.includes('янд') ? 'selected' : ''}>${a.name} (${a.balance.toLocaleString()} ₽)</option>`;
-        toOptions += `<option value="${a.name}" ${nLow.includes('накопит') || nLow.includes('копить') ? 'selected' : ''}>${a.name}</option>`;
-      }
-    });
-
-    document.getElementById('qsAmountDisplay').innerText = `${amount.toLocaleString()} ₽`;
-    document.getElementById('qsFromAcc').innerHTML = fromOptions;
-    document.getElementById('qsToAcc').innerHTML = toOptions;
-    document.getElementById('quickSaveModal').style.display = 'flex';
-  }
-
-  function confirmQuickSaveExecution() {
-    const fromAcc = document.getElementById('qsFromAcc').value;
-    const toAcc = document.getElementById('qsToAcc').value;
-
-    if (!fromAcc || !toAcc) return alert("Выберите оба счёта!");
-    if (fromAcc === toAcc) return alert("Счета списания и зачисления не могут совпадать!");
-
-    const today = toISOLocal(new Date());
-    const tr = {
-      r: 'local_' + Date.now(), fd: today,
-      d: today.split('-')[2] + '.' + today.split('-')[1] + '.' + today.split('-')[0],
-      type: 'Перевод',
-      accF: fromAcc, accT: toAcc, sumTr: activeSaveAmount
-    };
-
-    appData.transactions.push(tr);
-    pushToLocalQueue('add', tr.r, tr);
-    updateAccBal(fromAcc, -activeSaveAmount);
-    updateAccBal(toAcc, activeSaveAmount);
-
-    document.getElementById('quickSaveModal').style.display = 'none';
-    renderMonthlyBudgetWidget();
-    renderBankCards();
-  }
 
   // Получение системных ролей с дефолтными значениями
   function getSystemRoles() {
@@ -12330,45 +11858,6 @@ function renderA() {
     const btn = document.getElementById('btnBatchNotesToggle');
     if (btn) btn.innerText = areBatchNotesExpanded ? 'Свернуть всё 🔼' : 'Развернуть всё 🔽';
     toggleAllBatchTripNotes(areBatchNotesExpanded);
-  }
-
-
-
-  // --- ИСПРАВЛЕНИЕ КНОПКИ «ПРИМЕНИТЬ ДАТЫ» В АВТОПИЛОТЕ ---
-  function saveAutopilotDates() {
-    const s = document.getElementById('apInputStart')?.value;
-    const e = document.getElementById('apInputEnd')?.value;
-
-    if (s) localStorage.setItem('ap_override_start_date', s);
-    else localStorage.removeItem('ap_override_start_date');
-
-    if (e) localStorage.setItem('ap_override_end_date', e);
-    else localStorage.removeItem('ap_override_end_date');
-
-    const modal = document.getElementById('autopilotOverrideModal');
-    if (modal) modal.style.display = 'none';
-
-    // Принудительный пересчет виджета и инсайтов
-    renderMonthlyBudgetWidget();
-    if (typeof renderRichInsights === 'function') renderRichInsights();
-  }
-
-  function toggleHomeFoodHistoryAccordion() {
-    const el = document.getElementById('homeFoodHistoryDropdown');
-    const arr = document.getElementById('arrHomeFoodHistory');
-    if (!el) return;
-    const isHidden = el.style.display === 'none';
-    el.style.display = isHidden ? 'block' : 'none';
-    if (arr) arr.innerText = isHidden ? '▲' : '▼';
-  }
-
-function toggleEnvelopeAccordion(prefix) {
-    const body = document.getElementById('body_' + prefix);
-    const arr = document.getElementById('arr_' + prefix);
-    if (!body) return;
-    const isHidden = body.style.display === 'none';
-    body.style.display = isHidden ? 'block' : 'none';
-    if (arr) arr.innerText = isHidden ? '▲' : '▼';
   }
 
   // =========================================================================
@@ -12865,18 +12354,6 @@ function toggleEnvelopeAccordion(prefix) {
       </div>
     </div>
 
-    <!-- Облако тегов заметок -->
-    <div id="catDeepCommentsWrap" style="display:none; background:var(--input-bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:10px;">
-      <div onclick="toggleDeepCommentsAccordion()" style="padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none;">
-        <span style="font-size:10.5px; font-weight:900; color:var(--text-mute); text-transform:uppercase;">💬 Частые покупки (<span id="catDeepCommentsCountBadge">0</span>)</span>
-        <span id="catDeepCommentsArrow" style="font-size:10px; color:var(--text-mute);">▼ Развернуть</span>
-      </div>
-      <div id="catDeepCommentsBody" style="display:none; padding:10px 12px; border-top:1px solid var(--border); background:var(--bg-card);">
-        <div id="catDeepCommentsList" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
-      </div>
-    </div>
-
-
     <!-- Интерактивный график -->
     <div class="glass-card" style="padding:12px; margin-bottom:12px; border:1px solid var(--border);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
@@ -13119,26 +12596,6 @@ function toggleEnvelopeAccordion(prefix) {
     <select id="roleGrandmaCat" class="input-ui"></select>
 
     <button type="button" onclick="saveSystemRoles()" style="width:100%; background:#10b981; color:white; padding:12px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">💾 Сохранить роли</button>
-  </div>
-</div>
-
-<!-- МОДАЛКА ВЫБОРА СЧЕТА ДЛЯ ЭКОНОМИИ ДНЯ -->
-<div id="quickSaveModal" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 360px;">
-    <div class="modal-header-sticky">
-      <h3 style="font-weight:900; margin:0; font-size:15px;">💰 Отправить экономию</h3>
-      <button class="close-btn" type="button" onclick="closeModal('quickSaveModal')">✕</button>
-    </div>
-    <div style="font-size:11px; color:var(--text-mute); margin-bottom:12px;">
-      Сумма к сохранению: <b id="qsAmountDisplay" style="color:#10b981; font-size:14px;">0 ₽</b>
-    </div>
-    <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Откуда списать:</label>
-    <select id="qsFromAcc" class="input-ui"></select>
-
-    <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Куда зачислить:</label>
-    <select id="qsToAcc" class="input-ui"></select>
-
-    <button type="button" onclick="confirmQuickSaveExecution()" style="width:100%; background:#10b981; color:white; padding:12px; border-radius:10px; font-weight:900; border:none; cursor:pointer;">⚡ Перевести</button>
   </div>
 </div>
 
