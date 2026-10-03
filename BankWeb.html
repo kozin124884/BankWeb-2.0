@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -2438,7 +2438,7 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view">
+  <div id="viewAdd" class="app-view active">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
         <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
@@ -3034,11 +3034,11 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -3628,10 +3628,10 @@
   function isSpendingAccount(name) {
     if (!name) return false;
     const n = String(name).toLowerCase().trim();
-    // Полностью игнорируем сводный счет, баллы, плюс и бонусы
+    // Игнорируем сводный счет, баллы и накопительные счета/вклады
     if (n.includes('все счета') || n.includes('балл') || n.includes('плюс') || n.includes('бонус')) return false;
-    const spendingKeywords = ['яндекс', 'янд', 'втб', 'сбер', 'тиньк', 't-', 'озон', 'вб', 'вайлд', 'тратить'];
-    return spendingKeywords.some(k => n.includes(k));
+    if (n.includes('вклад') || n.includes('накопит') || n.includes('копил') || n.includes('сейф') || n.includes('инвест')) return false;
+    return true;
   }
 
   // Динамический пересчёт счёта "Все счета" как суммы только расходных счетов
@@ -3908,13 +3908,14 @@
 
       const editsPayload = allTxQueue.filter(q => q.action === 'edit' && !String(q.r).startsWith('local_')).map(q => {
         const it = q.item;
+        const isTr = (it.type === 'Перевод' || it.type === 'Между своими');
         return {
           id: parseInt(q.r, 10),
           date: it.fd,
           type: it.type,
           amount: it.type === 'Расход' ? it.sumE : (it.type === 'Доход' ? it.sumI : it.sumTr),
           account_from: it.type === 'Расход' ? it.accE : (it.type === 'Доход' ? it.accI : it.accF),
-          account_to: it.type === 'Перевод' ? it.accT : null,
+          account_to: isTr ? it.accT : null,
           category: it.type === 'Расход' ? it.catE : (it.type === 'Доход' ? it.catI : ''),
           comment: it.type === 'Расход' ? it.comE : (it.type === 'Доход' ? it.comI : ''),
           points: it.points || 0,
@@ -3924,19 +3925,22 @@
         };
       });
 
-      const addsPayload = allTxQueue.filter(q => q.action === 'add').map(q => ({
-        date: q.item.fd,
-        type: q.item.type,
-        amount: q.item.type === 'Расход' ? q.item.sumE : (q.item.type === 'Доход' ? q.item.sumI : q.item.sumTr),
-        account_from: q.item.type === 'Расход' ? q.item.accE : (q.item.type === 'Доход' ? q.item.accI : q.item.accF),
-        account_to: q.item.type === 'Перевод' ? q.item.accT : null,
-        category: q.item.type === 'Расход' ? q.item.catE : (q.item.type === 'Доход' ? q.item.catI : ''),
-        comment: q.item.type === 'Расход' ? q.item.comE : (q.item.type === 'Доход' ? q.item.comI : ''),
-        points: q.item.points || 0,
-        no_budget: !!q.item.no_budget,
-        event_id: q.item.event_id || null,
-        debtor_name: q.item.debtor_name || null
-      }));
+      const addsPayload = allTxQueue.filter(q => q.action === 'add').map(q => {
+        const isTr = (q.item.type === 'Перевод' || q.item.type === 'Между своими');
+        return {
+          date: q.item.fd,
+          type: q.item.type,
+          amount: q.item.type === 'Расход' ? q.item.sumE : (q.item.type === 'Доход' ? q.item.sumI : q.item.sumTr),
+          account_from: q.item.type === 'Расход' ? q.item.accE : (q.item.type === 'Доход' ? q.item.accI : q.item.accF),
+          account_to: isTr ? q.item.accT : null,
+          category: q.item.type === 'Расход' ? q.item.catE : (q.item.type === 'Доход' ? q.item.catI : ''),
+          comment: q.item.type === 'Расход' ? q.item.comE : (q.item.type === 'Доход' ? q.item.comI : ''),
+          points: q.item.points || 0,
+          no_budget: !!q.item.no_budget,
+          event_id: q.item.event_id || null,
+          debtor_name: q.item.debtor_name || null
+        };
+      });
 
       const archivePayload = allTxQueue.filter(q => q.action === 'archive_debt').map(q => ({
         date: q.item.fd,
@@ -4762,7 +4766,7 @@ async function recalculateCurrentAccountBalance() {
     if (!select) return;
     let htmlOptions = '<option value="">-- Выберите должника --</option>';
     appData.config.debtors.forEach(name => {
-      htmlOptions += `<option value="${name}">${name}</option>`;
+      htmlOptions += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
     });
     htmlOptions += '<option value="__NEW__">+ Добавить нового...</option>';
     select.innerHTML = htmlOptions;
@@ -4912,11 +4916,10 @@ async function recalculateCurrentAccountBalance() {
 
   function rebuildFormDicts() {
     let aH = '';
-    appData.config.accounts.forEach(a => { aH += `<option value="${a}">${a}</option>`; });
+    appData.config.accounts.forEach(a => { aH += `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`; });
     document.getElementById('fAcc').innerHTML = aH;
     document.getElementById('tFrom').innerHTML = aH;
     document.getElementById('tTo').innerHTML = aH;
-
     const dict = currentFormType === 'Расход' ? appData.config.exp : appData.config.inc;
 
     // Сбор ТОП-5 частых категорий за последние 60 операций
@@ -5702,7 +5705,7 @@ async function recalculateCurrentAccountBalance() {
         leakRows += `
           <div onclick="openCustomLeakList('${encodeURIComponent(catName)}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:4px 8px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px;">
             <div style="min-width:0; flex:1;">
-              <b>${catName}</b> <span style="color:var(--text-mute); font-size:10px;">(${data.count} чек., ср. ${avgCheck} ₽)</span>
+              <b>${escapeHtml(catName)}</b> <span style="color:var(--text-mute); font-size:10px;">(${data.count} чек., ср. ${avgCheck} ₽)</span>
             </div>
             <div style="text-align:right; font-weight:900; font-size:11px;">
               ${data.sum.toLocaleString()} ₽ <span style="color:#3b82f6; font-size:10px;">(${pct}%)</span>
@@ -5745,7 +5748,7 @@ async function recalculateCurrentAccountBalance() {
       ${paceComparisonHtml}
 
       <div style="margin-top:4px;">• <b>Личный темп:</b> <span style="color:#3b82f6; font-weight:bold;">${avgPerDay.toLocaleString()} ₽/день</span> (за ${diffDays} дн. без аренды/поездок/обедов)</div>
-      <div>• <b>Главная статья:</b> «${topCat[0]}» — <b>${topCat[1].toLocaleString()} ₽</b> (${topCatPct}%)</div>
+      <div>• <b>Главная статья:</b> «${escapeHtml(topCat[0])}» — <b>${topCat[1].toLocaleString()} ₽</b> (${topCatPct}%)</div>
       <div>• <b>Выходные (сб/вс):</b> <b>${weekendPct}%</b> бюджета (${weekendTotal.toLocaleString()} ₽)</div>
 
       <!-- БЛОК КАЛИБРА С ПЕРЕКЛЮЧЕНИЕМ РЕЖИМОВ -->
@@ -8122,7 +8125,7 @@ function renderA() {
     return tripsMap;
   }
 
-  function renderTravels() {
+function renderTravels() {
     if (!appData || !appData.transactions) return;
     renderTravelSectionStats();
     const travelsSort = document.getElementById('travelsSortSelect').value;
@@ -8162,7 +8165,7 @@ function renderA() {
       const excludeBadge = isExcluded ? `<span style="background:#ef4444; color:white; font-size:9px; font-weight:900; padding:2px 6px; border-radius:6px; flex-shrink:0;">🚫 ВНЕ СТАТИСТИКИ</span>` : '';
 
       h += `
-        <div class="bank-card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s;" onclick="openTravelDetails('${trip.key}', '${encodeURIComponent(trip.city).replace(/'/g, '%27')}', '${safeDateText}', '${safeDaysText}', ${trip.totalSum}, '${trip.startDate}', '${trip.endDate}')">
+        <div class="bank-card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s;" onclick="openTravelDetails('${trip.key}', '${encodeURIComponent(trip.city).replace(/'/g, '%27')}', '${safeDateText}', '${safeDaysText}', ${trip.totalSum}, '${escapeJsStr(trip.startDate)}', '${escapeJsStr(trip.endDate)}')">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
             <div style="min-width: 0; flex: 1;">
               <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
@@ -8193,7 +8196,7 @@ function renderA() {
     document.getElementById('travelDetailsTitle').innerText = `${icon} Смета: ${city}`;
     document.getElementById('travelDetailsRange').innerText = `Период: ${dateRange}`;
     document.getElementById('travelDetailsBudget').innerText = `Всего потрачено: ${totalSum.toLocaleString()} ₽`;
-    // ВОТ ЭТИ 5 СТРОК:
+
     const isEx = isTripExcludedFromStats(window.currentTravelEventId);
     const excludeBtn = document.getElementById('btnToggleExcludeTrip');
     if (excludeBtn) {
@@ -8214,7 +8217,6 @@ function renderA() {
     const tripsMap = getTripsMap();
     const foundTrip = tripsMap[window.currentTravelEventId];
 
-    // --- БЛОК АНАЛИТИКИ КОНКРЕТНОЙ ПОЕЗДКИ (БЕЗ РАСХОДА В НОЧЬ) ---
     const insightsContainer = document.getElementById('tripDetailedInsightsContainer');
     if (insightsContainer && foundTrip) {
       let daysCount = 1;
@@ -8227,8 +8229,6 @@ function renderA() {
       }
 
       const costPerDay = Math.round(totalSum / Math.max(1, daysCount));
-
-      // Сравнение со средним бюджетом поездок в этом разделе
       const allTrips = Object.values(tripsMap);
       const avgAllTrips = allTrips.length > 0 ? Math.round(allTrips.reduce((s, x) => s + x.totalSum, 0) / allTrips.length) : totalSum;
       let compareTripHtml = '';
@@ -8242,11 +8242,10 @@ function renderA() {
         }
       }
 
-      // Все чеки этой поездки
       let allTripChecks = [];
       let maxCheck = { s: 0, cat: '', com: '' };
-      let logisticsSum = 0; // Дорога, жилье, авто
-      let pocketSum = 0;    // Питание, покупки, досуг
+      let logisticsSum = 0;
+      let pocketSum = 0;
 
       Object.entries(foundTrip.categories).forEach(([cName, cData]) => {
         const cLow = cName.toLowerCase();
@@ -8277,7 +8276,7 @@ function renderA() {
       sortedTripCats.forEach(([cName, cData], idx) => {
         const pct = totalSum > 0 ? (cData.sum / totalSum) * 100 : 0;
         if (pct > 2) {
-          barHtml += `<div title="${cName}: ${cData.sum.toLocaleString()} ₽ (${pct.toFixed(0)}%)" style="width:${pct}%; background:${palette[idx % palette.length]}; height:100%;"></div>`;
+          barHtml += `<div title="${escapeHtml(cName)}: ${cData.sum.toLocaleString()} ₽ (${pct.toFixed(0)}%)" style="width:${pct}%; background:${palette[idx % palette.length]}; height:100%;"></div>`;
         }
       });
 
@@ -8306,10 +8305,10 @@ function renderA() {
 
             <div style="display:flex; flex-direction:column; gap:6px; margin-bottom: 10px;">
               ${compareTripHtml ? `<div>• ${compareTripHtml}</div>` : ''}
-              <div>• <b>Главная статья:</b> «${topCat[0]}» — <b>${topCat[1].sum.toLocaleString()} ₽</b> (${topCatPct}% сметы)</div>
+              <div>• <b>Главная статья:</b> «${escapeHtml(topCat[0])}» — <b>${topCat[1].sum.toLocaleString()} ₽</b> (${topCatPct}% сметы)</div>
               <div>• <b>База vs Карманные:</b> дорога/жилье <b>${logisticsPct}%</b> (${logisticsSum.toLocaleString()} ₽), на месте <b>${pocketPct}%</b> (${pocketSum.toLocaleString()} ₽)</div>
               <div>• <b>Средний чек:</b> <b>${avgCheck.toLocaleString()} ₽</b></div>
-              ${maxCheck.s > 0 ? `<div>• <b>Самый крупный чек:</b> <b style="color:#ef4444;">${maxCheck.s.toLocaleString()} ₽</b> («${maxCheck.cat}» ${maxCheck.com ? `— <i>${maxCheck.com}</i>` : ''})</div>` : ''}
+              ${maxCheck.s > 0 ? `<div>• <b>Самый крупный чек:</b> <b style="color:#ef4444;">${maxCheck.s.toLocaleString()} ₽</b> («${escapeHtml(maxCheck.cat)}» ${maxCheck.com ? `— <i>${escapeHtml(maxCheck.com)}</i>` : ''})</div>` : ''}
             </div>
 
             <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; margin-bottom:4px;">Доли статей сметы:</div>
@@ -8348,7 +8347,7 @@ function renderA() {
         catsHtml += `
           <div style="margin-bottom:8px; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
             <div class="click-header" style="background:var(--input-bg); padding:10px;" onclick="tC(event, this)">
-              <b>${catName}</b>
+              <b>${escapeHtml(catName)}</b>
               <div style="display:flex; align-items:center; gap:8px;">
                 <b style="color:var(--text-main);">${data.sum.toLocaleString()} ₽</b>
                 <span style="font-size:10px; color:var(--text-mute);">▼</span>
@@ -8362,7 +8361,6 @@ function renderA() {
     }
     categoriesHtmlContainer.innerHTML = catsHtml || 'Нет детализации';
 
-    // === ВСТАВЛЯТЬ ВОТ СЮДА ===
     const wrapNotes = document.getElementById('tripNotesWrap');
     const btnNotes = document.getElementById('btnToggleTripNotes');
     if (wrapNotes) wrapNotes.style.display = 'block';
@@ -8730,9 +8728,9 @@ function renderA() {
             <div style="font-size:13.5px; font-weight:900; color:var(--text-main); margin-top:2px;">${avgPerEvent.toLocaleString()} ₽</div>
           </div>
           <div style="background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-            <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Топ-статья трат</div>
-            <div style="font-size:12.5px; font-weight:900; color:var(--text-main); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${topCat[0]} (${topCatPercent}%)</div>
-          </div>
+          <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Топ-статья трат</div>
+          <div style="font-size:12.5px; font-weight:900; color:var(--text-main); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(topCat[0])} (${topCatPercent}%)</div>
+        </div>
         </div>
 
         <div style="font-size:11px; display:flex; flex-direction:column; gap:4px; margin-bottom:12px; background:var(--input-bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
@@ -8978,13 +8976,13 @@ function renderA() {
     const labelColor = defaultCat ? 'var(--text-main)' : 'var(--text-mute)';
 
     row.innerHTML = `
-      <input type="hidden" class="ts-cat-val" value="${defaultCat}">
+      <input type="hidden" class="ts-cat-val" value="${escapeHtml(defaultCat)}">
       <button type="button" class="input-ui ts-cat-btn" onclick="openSplitCategoryPicker('${rowId}')" style="margin:0; flex:1.5; padding:6px 8px; font-size:11px; text-align:left; cursor:pointer; height:34px; display:flex; align-items:center; justify-content:space-between; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; background:var(--input-bg); border:1.5px solid var(--border); border-radius:10px; color:${labelColor};">
-        <span class="ts-cat-label" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${labelText}</span>
+        <span class="ts-cat-label" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(labelText)}</span>
         <span style="font-size:9px; color:var(--text-mute); margin-left:4px; flex-shrink:0;">▼</span>
       </button>
       <input type="number" class="input-ui ts-sum" value="${defaultSum !== '' ? defaultSum : ''}" placeholder="Сумма" style="margin:0; flex:1; padding:6px; font-size:11px; font-weight:bold; height:34px;" ${onInputAttr}>
-      <textarea class="input-ui ts-com" placeholder="Заметка..." rows="1" oninput="adjustTextareaHeight(this)" style="margin:0; flex:1.2; padding:6px; font-size:11px; resize:none; min-height:34px; line-height:1.3; overflow:hidden;">${defaultCom}</textarea>
+      <textarea class="input-ui ts-com" placeholder="Заметка..." rows="1" oninput="adjustTextareaHeight(this)" style="margin:0; flex:1.2; padding:6px; font-size:11px; resize:none; min-height:34px; line-height:1.3; overflow:hidden;">${escapeHtml(defaultCom)}</textarea>
       ${!isBaseRow ? `<button type="button" onclick="document.getElementById('${rowId}').remove(); recalcTripSplitMath();" style="background:#fee2e2; color:#ef4444; border:none; border-radius:6px; height:34px; width:28px; font-weight:bold; cursor:pointer; flex-shrink:0;">✕</button>` : `<div style="width:28px; flex-shrink:0;"></div>`}
     `;
     container.appendChild(row);
@@ -9201,17 +9199,11 @@ function renderA() {
     const items = localQueue.filter(q => q.splitGroupId === splitGroupId || (q.item && q.item.splitGroupId === splitGroupId));
     if (items.length === 0) return;
 
-    // 1. Возвращаем исходный чек
     const delObj = items.find(q => q.action === 'delete' || q.action === 'split_parent');
-    if (delObj && delObj.item) {
-      const orig = delObj.item;
-      appData.transactions.push(orig);
-      updateAccBal(orig.accE, -orig.sumE);
 
-      if (delObj.wasLocalAdd) {
-        localQueue.push({ action: 'add', r: orig.r, item: JSON.parse(JSON.stringify(orig)) });
-      }
-    }
+    // 1. Сначала вычищаем всю группу сплита из очереди ДО добавления восстановленного чека
+    localQueue = localQueue.filter(q => q.splitGroupId !== splitGroupId && !(q.item && q.item.splitGroupId === splitGroupId));
+    appData.archiveDebts = appData.archiveDebts.filter(x => x.splitGroupId !== splitGroupId);
 
     // 2. Удаляем все новые доли сплита и возвращаем их деньги
     const addObjs = items.filter(q => q.action === 'add');
@@ -9221,11 +9213,21 @@ function renderA() {
       updateAccBal(tr.accE, tr.sumE);
     });
 
-    // Удаляем связанные виртуальные архивные долги, если сплит был виртуальным
-    appData.archiveDebts = appData.archiveDebts.filter(x => x.splitGroupId !== splitGroupId);
+    // 3. Восстанавливаем родительский чек как чистую операцию без меток сплита
+    if (delObj && delObj.item) {
+      const orig = JSON.parse(JSON.stringify(delObj.item));
+      delete orig.splitGroupId;
+      delete orig.isSplitPart;
 
-    // 3. Удаляем всю связку из очереди
-    localQueue = localQueue.filter(q => q.splitGroupId !== splitGroupId && !(q.item && q.item.splitGroupId === splitGroupId));    saveQueueToStorage();
+      appData.transactions.push(orig);
+      updateAccBal(orig.accE, -orig.sumE);
+
+      if (delObj.wasLocalAdd) {
+        localQueue.push({ action: 'add', r: orig.r, item: orig });
+      }
+    }
+
+    saveQueueToStorage();
     updateSyncBar();
     applyDatesLocally();
     renderBankCards();
@@ -10691,6 +10693,13 @@ let totalOnCards = 0;
             if (t.type === 'Расход' && t.no_budget && (t.accE || '').trim().toLowerCase() === cleanAcc) {
               accExpNoB += (parseFloat(t.sumE) || 0);
             }
+            if ((t.type === 'Перевод' || t.type === 'Между своими') && (t.accF || '').trim().toLowerCase() === cleanAcc) {
+              const destAcc = (t.accT || '').trim().toLowerCase();
+              const destInPool = simIncludedNames.some(a => a.trim().toLowerCase() === destAcc);
+              if (!destInPool || t.no_budget) {
+                accExpNoB += (parseFloat(t.sumTr) || 0);
+              }
+            }
           }
         });
 
@@ -11203,6 +11212,13 @@ let totalOnCards = 0;
           }
           if (t.type === 'Расход' && t.no_budget && (t.accE || '').trim().toLowerCase() === cleanAcc) {
             accExpNoB += (parseFloat(t.sumE) || 0);
+          }
+          if ((t.type === 'Перевод' || t.type === 'Между своими') && (t.accF || '').trim().toLowerCase() === cleanAcc) {
+            const destAcc = (t.accT || '').trim().toLowerCase();
+            const destInPool = includedAccNames.some(a => a.trim().toLowerCase() === destAcc);
+            if (!destInPool || t.no_budget) {
+              accExpNoB += (parseFloat(t.sumTr) || 0);
+            }
           }
         }
       });
@@ -13195,7 +13211,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin:0; padding:8px 10px; font-size:12px; font-family:inherit; resize:none; line-height:1.4;" value=""></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 70px;" value=""></textarea>
       </div>
     </div>
 
