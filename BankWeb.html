@@ -376,7 +376,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(239, 68, 68);">69 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
         </div>
       </div>
 
@@ -397,7 +397,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -6619,10 +6619,16 @@ function renderA() {
 
       printHtml += `</body></html>`;
       const pWin = window.open('', '_blank');
+      if (!pWin) {
+        alert("Окно печати заблокировано браузером. Пожалуйста, разрешите всплывающие окна для экспорта PDF.");
+        return;
+      }
       pWin.document.write(printHtml);
       pWin.document.close();
       pWin.focus();
-      setTimeout(() => pWin.print(), 350);
+      setTimeout(() => {
+        try { pWin.print(); } catch(e) {}
+      }, 350);
     }
   }
 
@@ -7065,8 +7071,6 @@ function renderA() {
     });
 
     document.getElementById('debtsByName').innerHTML = h || '<div style="text-align:center; color:var(--text-mute); padding:20px; font-weight:bold;">Нет подходящих долгов.</div>';
-    const btnForgiveAll = document.getElementById('btnForgiveAll');
-    if (btnForgiveAll) btnForgiveAll.style.display = hasActiveDebtors ? 'block' : 'none';
 
     const btnHidden = document.getElementById('btnShowHiddenDebtors');
     if (btnHidden) btnHidden.innerHTML = `👁️ Скрытые (${hiddenDebtors.length})`;
@@ -7095,53 +7099,9 @@ function renderA() {
     const comment = netBalance > 0 ? `Прощение долга (Списание)` : `Списание моего долга (Прощение)`;
     const arch = { r: 'local_arch_' + Date.now(), fd: todayISO, d: dFmt, n: name, amt: -netBalance, c: comment };
 
-appData.archiveDebts.push(arch);
+    appData.archiveDebts.push(arch);
     pushToLocalQueue('archive_debt', arch.r, arch);
     renderDebts();
-  }
-
-  function forgiveAllDebtors() {
-    if (isGuest()) return alert("🔒 Вы вошли как гость. Прощение долгов заблокировано!");
-    if (!confirm(`🚨 КРИТИЧЕСКИЙ ШАГ!\nВы действительно хотите полностью СПИСАТЬ И ОБНУЛИТЬ активные долги всех показанных должников?`)) return;
-    const todayISO = toISOLocal(new Date());
-
-    let dS = {};
-    appData.transactions.forEach(r => {
-      if (r.type === 'Расход' && r.sumE > 0) {
-        let cE = r.catE.trim(), isDebt = (cE === 'Что-то кому-то купил в долг' || cE === 'Кому-то в долг' || cE === 'Вернул долг');
-        if (isDebt) {
-          let n = r.debtor_name || extN(r.comE);
-          if(!dS[n]) dS[n] = { s: 0, r: 0 };
-          dS[n].s += r.sumE;
-        }
-      }
-      if (r.type === 'Доход' && r.sumI > 0) {
-        let cI = r.catI.trim(), isDebt = (cI === 'Вернули долг' || cI === 'Дали в долг');
-        if (isDebt) {
-          let n = r.debtor_name || extN(r.comI);
-          if(!dS[n]) dS[n] = { s: 0, r: 0 };
-          dS[n].r += r.sumI;
-        }
-      }
-    });
-
-    appData.archiveDebts.forEach(r => {
-      if(!dS[r.n]) dS[r.n] = { s: 0, r: 0 };
-      if(r.amt > 0) { dS[r.n].s += r.amt; } else { dS[r.n].r += Math.abs(r.amt); }
-    });
-
-    const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
-    Object.entries(dS).forEach(([name, v]) => {
-        const net = v.s - v.r;
-        if (Math.abs(net) > 0.1 && !hiddenDebtors.includes(name)) {
-            const comment = net > 0 ? `Прощение долга (Списание всех)` : `Списание моего долга (Прощение всех)`;
-            const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: -net, c: comment };
-            appData.archiveDebts.push(arch);
-            pushToLocalQueue('archive_debt', arch.r, arch);
-        }
-    });
-    renderDebts();
-    alert("Все активные долги обнулены в очереди!");
   }
 
   // ПЕРЕИМЕНОВАНИЕ ДОЛЖНИКА НАПРЯМУЮ В SUPABASE (БЕЗ GOOGLE СКРИПТА!)
@@ -8180,11 +8140,13 @@ appData.archiveDebts.push(arch);
       }
 
       const dateText = trip.startDate === trip.endDate ? trip.startDate : `${trip.startDate} — ${trip.endDate}`;
+      const safeDateText = escapeJsStr(dateText);
+      const safeDaysText = escapeJsStr(daysDurationText);
       const isExcluded = isTripExcludedFromStats(trip.key);
       const excludeBadge = isExcluded ? `<span style="background:#ef4444; color:white; font-size:9px; font-weight:900; padding:2px 6px; border-radius:6px; flex-shrink:0;">🚫 ВНЕ СТАТИСТИКИ</span>` : '';
 
       h += `
-        <div class="bank-card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s;" onclick="openTravelDetails('${trip.key}', '${encodeURIComponent(trip.city).replace(/'/g, '%27')}', '${dateText}', '${daysDurationText}', ${trip.totalSum}, '${trip.startDate}', '${trip.endDate}')">
+        <div class="bank-card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s;" onclick="openTravelDetails('${trip.key}', '${encodeURIComponent(trip.city).replace(/'/g, '%27')}', '${safeDateText}', '${safeDaysText}', ${trip.totalSum}, '${trip.startDate}', '${trip.endDate}')">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
             <div style="min-width: 0; flex: 1;">
               <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
@@ -8213,7 +8175,7 @@ appData.archiveDebts.push(arch);
     const ev = (appData.events || []).find(e => String(e.id) === String(window.currentTravelEventId));
 
     document.getElementById('travelDetailsTitle').innerText = `${icon} Смета: ${city}`;
-    document.getElementById('travelDetailsRange').innerHTML = `Период: ${dateRange}`;
+    document.getElementById('travelDetailsRange').innerText = `Период: ${dateRange}`;
     document.getElementById('travelDetailsBudget').innerText = `Всего потрачено: ${totalSum.toLocaleString()} ₽`;
     // ВОТ ЭТИ 5 СТРОК:
     const isEx = isTripExcludedFromStats(window.currentTravelEventId);
@@ -9597,20 +9559,6 @@ appData.archiveDebts.push(arch);
     haptic(10);
   }
 
-  function setCafeSuggestionMode(mode, evt) {
-    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
-    localStorage.setItem('cafe_caliber_mode', mode);
-    renderMonthlyBudgetWidget();
-    haptic(10);
-  }
-
-  function setCafeSuggestionTier(tier, evt) {
-    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
-    localStorage.setItem('cafe_manual_tier', tier);
-    renderMonthlyBudgetWidget();
-    haptic(10);
-  }
-
   function openCafeCaliberModal(evt) {
     if (evt) evt.stopPropagation();
 
@@ -9636,32 +9584,7 @@ appData.archiveDebts.push(arch);
     openModal('cafeCaliberModal');
   }
 
-
-  // Расчёт авто-порогов строго от реальной медианы чеков кафе
-  function calcAutoCafeThresholds() {
-    const cafeCatNames = [];
-    const grp = appData.config.exp['Еда вне дома с ручкой'] || [];
-    grp.forEach(n => cafeCatNames.push(n));
-
-    ['Кафе чисто перекусить', 'Кофейни', 'Фастфуд', 'Кафе в честь чего-то', 'Перекус/джанкфуд продукты вне дома с ручкой'].forEach(n => {
-      if (!cafeCatNames.includes(n)) cafeCatNames.push(n);
-    });
-
-    const txs = appData.transactions.filter(t =>
-      t.type === 'Расход' && t.sumE > 0 && cafeCatNames.includes(t.catE)
-    );
-
-    if (txs.length === 0) return { median: 1200, lowMax: 900, midMax: 1700 };
-
-    const sums = txs.map(t => t.sumE);
-    const med = calcMedian(sums) || 1200;
-
-    // Эконом: < 75% от медианы; Средний: 75%–140%; Дорогой: > 140%
-    const lowMax = Math.max(300, Math.round(med * 0.75));
-    const midMax = Math.max(lowMax + 300, Math.round(med * 1.4));
-
-    return { median: med, lowMax, midMax };
-  }
+  // Переключение режима в модалке калибровки
 
   // Переключение режима в модалке калибровки
   function setCafeCaliberMode(mode) {
@@ -11244,33 +11167,24 @@ let totalOnCards = 0;
 
 // Честный вычет доходов с no_budget: деньги лежат на карте, но в пул на жизнь не идут
     let unspentExcludedIncome = 0;
+    includedAccNames.forEach(accName => {
+      const cleanAcc = accName.trim().toLowerCase();
+      let accIncNoB = 0;
+      let accExpNoB = 0;
 
-    // Находим все доходы с галочкой no_budget в текущем цикле ЗП на картах пула
-    const noBudgetIncomes = (appData.transactions || []).filter(t => {
-      if (t.type !== 'Доход' || !t.no_budget || t.fd < startISO || t.fd > todayISO) return false;
-      const accI = (t.accI || '').trim().toLowerCase();
-      return includedAccNames.some(a => a.trim().toLowerCase() === accI);
-    });
-
-    noBudgetIncomes.forEach(inc => {
-      const incAcc = (inc.accI || '').trim().toLowerCase();
-      const incDate = inc.fd;
-      const incSum = parseFloat(inc.sumI) || 0;
-
-      // Считаем только те расходы с no_budget, которые были совершены с этой карты В ДЕНЬ ДОХОДА ИЛИ ПОЗЖЕ
-      let spentAfterInc = 0;
-      (appData.transactions || []).forEach(exp => {
-        if (exp.type === 'Расход' && exp.no_budget && exp.fd >= incDate && exp.fd <= todayISO) {
-          const expAcc = (exp.accE || '').trim().toLowerCase();
-          if (expAcc === incAcc) {
-            spentAfterInc += (parseFloat(exp.sumE) || 0);
+      (appData.transactions || []).forEach(t => {
+        if (t.fd >= startISO && t.fd <= todayISO) {
+          if (t.type === 'Доход' && t.no_budget && (t.accI || '').trim().toLowerCase() === cleanAcc) {
+            accIncNoB += (parseFloat(t.sumI) || 0);
+          }
+          if (t.type === 'Расход' && t.no_budget && (t.accE || '').trim().toLowerCase() === cleanAcc) {
+            accExpNoB += (parseFloat(t.sumE) || 0);
           }
         }
       });
 
-      // Нерастраченная часть дохода, которая прямо сейчас лежит на карте
-      const stillOnCards = Math.max(0, incSum - spentAfterInc);
-      unspentExcludedIncome += stillOnCards;
+      const stillOnCard = Math.max(0, accIncNoB - accExpNoB);
+      unspentExcludedIncome += stillOnCard;
     });
 
     if (manualPool !== null && manualPool !== '') {
@@ -13195,7 +13109,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal" style="z-index: 4010; display: none;">
+<div id="streakHistoryModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -13206,10 +13120,10 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
     <!-- ФИКСИРОВАННЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (СТОИТ НАМЕРТВО, НЕ СКРОЛЛИТСЯ) -->
     <div style="background:var(--input-bg); border:1.5px solid var(--border); border-radius:12px; padding:3px; display:flex; gap:4px; margin-bottom:12px; flex-shrink:0; box-sizing:border-box;">
-      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: var(--btn-active); color: var(--btn-active-text);">
+      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
         ⚡ Текущий цикл
       </button>
-      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: transparent; color: var(--text-mute);">
+      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
         📅 Прошлый цикл
       </button>
     </div>
@@ -13221,7 +13135,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
