@@ -375,8 +375,8 @@
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(239, 68, 68);">69 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
+          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">69 ₽/день</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
 
@@ -392,12 +392,12 @@
           </div>
         </div>
         <div style="height:8px; width:100%; border-radius:5px; background:var(--border); overflow:hidden;">
-          <div id="todayProgressBar" style="height: 100%; width: 95%; background: rgb(239, 68, 68); transition: width 0.3s;"></div>
+          <div id="todayProgressBar" style="height: 100%; width: 95%; background: rgb(249, 115, 22); transition: width 0.3s;"></div>
         </div>
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -11236,7 +11236,7 @@ let totalOnCards = 0;
 
     if (dailyBadge) {
       dailyBadge.innerText = `${dailyRemain.toLocaleString()} ₽/день`;
-      dailyBadge.style.color = dailyRemain >= 500 ? '#10b981' : '#ef4444';
+      dailyBadge.style.color = dailyRemain >= 0 ? '#10b981' : '#ef4444';
     }
 
     // СТАЛО (ВСЕГДА ВИДЕН И КЛИКАБЕЛЕН ДАЖЕ ПРИ 0 ДНЕЙ):
@@ -11271,7 +11271,16 @@ let totalOnCards = 0;
     if (todayBar) {
       const pct = fullDailyLimit > 0 ? Math.min(100, Math.round((spentToday / fullDailyLimit) * 100)) : 100;
       todayBar.style.width = pct + '%';
-      todayBar.style.background = pct > 90 ? '#ef4444' : (pct > 65 ? '#f59e0b' : '#10b981');
+
+      let barColor = '#10b981'; // Зелёный: свободно (< 50%)
+      if (spentToday > fullDailyLimit || fullDailyLimit <= 0) {
+        barColor = '#ef4444';   // Красный: строго при превышении лимита дня
+      } else if (pct >= 75) {
+        barColor = '#f97316';   // Оранжевый: 75–100% (на исходе, но ещё в лимите)
+      } else if (pct >= 50) {
+        barColor = '#eab308';   // Жёлтый: 50–74% (половина потрачена)
+      }
+      todayBar.style.background = barColor;
     }
 
     // Прогноз лимита на завтра с учётом сегодняшних трат
