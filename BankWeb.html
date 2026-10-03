@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -354,7 +354,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view active">
+  <div id="viewAnalytics" class="app-view">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -376,7 +376,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">69 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
 
@@ -397,7 +397,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -636,7 +636,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 662.4px;" width="828" height="312"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -2450,7 +2450,7 @@
       <input type="date" id="fDate" class="input-ui input-date">
 
       <div id="formStandard">
-        <input type="number" id="fSum" class="input-ui" placeholder="Сумма (₽) *обязательно">
+        <input type="number" id="fSum" class="input-ui" placeholder="Сумма (₽) *обязательно" oninput="recalculateRoundingPreview()">
 
         <!-- ОПЛАТА БОНУСАМИ -->
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
@@ -3020,82 +3020,7 @@
       <button type="button" onclick="setOnlyCardPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
       <button type="button" onclick="setAllPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;">
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(842 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;283 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Тинькофф" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(2&nbsp;411 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Озон Банк" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(13&nbsp;776 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;663 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;874 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      </div>
+    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;"></div>
     <div style="border-top:1px solid var(--border); padding-top:10px;">
       <label style="font-size:10.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Или задать сумму вручную (₽):</label>
       <input type="number" id="apManualPoolInput" class="input-ui" placeholder="Оставьте пустым для авто-расчёта" style="margin:0; padding:9px;">
@@ -3109,8 +3034,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -3770,7 +3695,12 @@
             const oldAcc = orig.accE || orig.accI || orig.accF;
             const newAcc = cur.accE || cur.accI || cur.accF;
 
-            if (oldAcc === newAcc) {
+            if (cur.type === 'Перевод' || cur.type === 'Между своими') {
+              if (orig.accF) updateAccBal(orig.accF, oldSum);
+              if (orig.accT) updateAccBal(orig.accT, -oldSum);
+              if (cur.accF) updateAccBal(cur.accF, -newSum);
+              if (cur.accT) updateAccBal(cur.accT, newSum);
+            } else if (oldAcc === newAcc) {
               const diff = newSum - oldSum;
               if (cur.type === 'Расход') updateAccBal(newAcc, -diff);
               else if (cur.type === 'Доход') updateAccBal(newAcc, diff);
@@ -3785,8 +3715,7 @@
               }
             }
           }
-          const updatedTx = JSON.parse(JSON.stringify(it));
-          updatedTx.no_budget = (it.no_budget === true || it.no_budget === 'true');
+          const updatedTx = JSON.parse(JSON.stringify(it));          updatedTx.no_budget = (it.no_budget === true || it.no_budget === 'true');
           appData.transactions[idx] = updatedTx;
         }
       }
@@ -4078,15 +4007,15 @@
 
         (localQueue || []).forEach(q => {
           const item = q.item;
+          const grpId = q.splitGroupId || (item && item.splitGroupId);
 
           // Если это операция сплита — группируем все части в одну связку
-          if (item && item.splitGroupId) {
-            const grpId = item.splitGroupId;
+          if (grpId) {
             if (renderedSplitGroups.has(grpId)) return;
             renderedSplitGroups.add(grpId);
 
-            const allGroupItems = localQueue.filter(x => x.item && x.item.splitGroupId === grpId);
-            const delItem = allGroupItems.find(x => x.action === 'delete')?.item;
+            const allGroupItems = localQueue.filter(x => x.splitGroupId === grpId || (x.item && x.item.splitGroupId === grpId));
+            const delItem = allGroupItems.find(x => x.action === 'delete' || x.action === 'split_parent')?.item;
             const addParts = allGroupItems.filter(x => x.action === 'add').map(x => x.item);
 
             let partsHtml = '';
@@ -4108,7 +4037,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                   <div>
                     <span style="background:rgba(16,185,129,0.15); color:#10b981; padding:2px 6px; border-radius:6px; font-size:10.5px; font-weight:900;">✂️ Сплит чека</span>
-                    <b style="font-size:12.5px; margin-left:6px; color:var(--text-main);">${origCat}</b>
+                    <b style="font-size:12.5px; margin-left:6px; color:var(--text-main);">${escapeHtml(origCat)}</b>
                   </div>
                   <div style="display:flex; gap:6px;">
                     <button onclick="editSplitGroup('${grpId}')" style="background:#f59e0b; color:white; border:none; border-radius:8px; padding:4px 8px; font-weight:bold; cursor:pointer; font-size:10.5px;" title="Вернуться и отредактировать сплит">✏️ Изменить</button>
@@ -5610,21 +5539,13 @@ async function recalculateCurrentAccountBalance() {
       iStart = toISOLocal(new Date(now.getTime() - 90 * 86400000));
       iEnd = toISOLocal(now);
     } else if (pType === 'year_current') {
-      iStart = `${curY}-01-01`;
+      iStart = (curY === 2026) ? '2026-02-01' : `${curY}-01-01`;
       iEnd = toISOLocal(now); // Строго по сегодняшний день
     } else if (pType === 'year_prev') {
       iStart = `${curY - 1}-01-01`;
       iEnd = `${curY - 1}-12-31`;
     } else if (pType === 'all_time') {
-      let minDateStr = '2026-02-01';
-      if (appData.transactions && appData.transactions.length > 0) {
-        const realDates = appData.transactions
-          .filter(t => t.fd && !String(t.r).startsWith('arch_'))
-          .map(t => t.fd)
-          .sort();
-        if (realDates.length > 0) minDateStr = realDates[0];
-      }
-      iStart = minDateStr;
+      iStart = '2026-02-01';
       iEnd = toISOLocal(now);
     }
 
@@ -6651,10 +6572,10 @@ function renderA() {
 
     if (format === 'xlsx' || format === 'csv') {
       // Таблица для Excel с разделителем точка с запятой и UTF-8 BOM для правильного открытия в Excel
+      const escCsv = (s) => String(s || '').replace(/"/g, '""').replace(/[\n\r;]/g, ' ').trim();
       let csvContent = '\uFEFFДата;Категория;Сумма (₽);Счёт;Комментарий\n';
       selectedTxs.forEach(t => {
-        const cleanCom = (t.comE || '').replace(/[\n\r;]/g, ' ').trim();
-        csvContent += `${t.d};"${t.catE}";${t.sumE};"${t.accE}";"${cleanCom}"\n`;
+        csvContent += `${t.d};"${escCsv(t.catE)}";${t.sumE};"${escCsv(t.accE)}";"${escCsv(t.comE)}"\n`;
       });
       csvContent += `;;${grandTotal};;ИТОГО\n`;
       downloadFile(csvContent, `Bank_PRO_${periodStart}_${periodEnd}.csv`, 'text/csv;charset=utf-8;');
@@ -6757,7 +6678,7 @@ function renderA() {
     document.getElementById('editDate').value = dateVal;
 
     document.getElementById('editCat').value = tx.type === 'Расход' ? tx.catE : tx.catI;
-    document.getElementById('editSum').value = tx.type === 'Расход' ? tx.sumE : tx.sumI;
+    document.getElementById('editSum').value = tx.type === 'Расход' ? tx.sumE : (tx.type === 'Доход' ? tx.sumI : tx.sumTr);
     document.getElementById('editComment').value = tx.type === 'Расход' ? tx.comE : tx.comI;
 
     const editAccSelect = document.getElementById('editAcc');
@@ -6821,6 +6742,16 @@ function renderA() {
 
     appData.transactions = appData.transactions.filter(x => String(x.r) !== String(r));
     pushToLocalQueue('delete', r, { ...tx });
+
+    // Каскадное удаление связанного перевода копилки, если он есть
+    const orphanRoundIdx = appData.transactions.findIndex(x => x.parentTxId === r);
+    if (orphanRoundIdx !== -1) {
+      const rTx = appData.transactions[orphanRoundIdx];
+      updateAccBal(rTx.accF, rTx.sumTr);
+      updateAccBal(rTx.accT, -rTx.sumTr);
+      appData.transactions.splice(orphanRoundIdx, 1);
+      pushToLocalQueue('delete', rTx.r, { ...rTx });
+    }
 
     closeModal('editModal');
     updateSyncBar();
@@ -7265,7 +7196,10 @@ function renderA() {
     if (!isVirtual && !acc) return alert("Выберите счет списания или отметьте долг как виртуальный!");
 
     if (isVirtual) {
-        let comment = a.includes('Расход') ? `Дал в долг (Виртуально) | ${c}` : `Вернули долг (Виртуально) | ${c}`;
+        let commentPrefix = 'Вернули долг';
+        if (a.includes('Дали')) commentPrefix = 'Дали в долг';
+        else if (a.includes('Расход')) commentPrefix = 'Дал в долг';
+        let comment = `${commentPrefix} (Виртуально) | ${c}`;
         let amount = a.includes('Расход') ? parseFloat(s) : -parseFloat(s);
         const dFmt = d.split('-')[2] + '.' + d.split('-')[1] + '.' + d.split('-')[0];
         const arch = { r: 'local_arch_' + Date.now(), fd: d, d: dFmt, n: n, amt: amount, c: comment };
@@ -8394,7 +8328,7 @@ function renderA() {
           itemsHtml += `
             <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--border); font-size:12px; opacity:${isMuted ? '0.45' : '1'};">
               <div style="flex:1; cursor:pointer;" onclick="clI(event, '${it.r}')">
-                <span>📅 <b>${it.d}</b> | <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:11px; margin-top:2px; ${isMuted ? 'text-decoration:line-through;' : ''}">${it.com || 'Без заметок'}</div></span>
+                <span>📅 <b>${it.d}</b> | <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:11px; margin-top:2px; ${isMuted ? 'text-decoration:line-through;' : ''}">${escapeHtml(it.com || 'Без заметок')}</div></span>
               </div>
               <div style="display:flex; align-items:center; gap:8px;">
                 <b style="color:${isMuted ? 'var(--text-mute)' : 'var(--text-main)'}; ${isMuted ? 'text-decoration:line-through;' : ''}">${it.s.toLocaleString()} ₽</b>
@@ -8673,8 +8607,9 @@ function renderA() {
       const pct = grandTotal > 0 ? ((cData.sum / grandTotal) * 100) : 0;
       if (pct > 1) {
         const col = palette[idx % palette.length];
+        const safeCName = escapeJsStr(cName);
         progressSegments += `
-          <div onclick="toggleTravelStatCat('${cName}')" title="${cName}: ${cData.sum.toLocaleString()} ₽ (${pct.toFixed(1)}%)"
+          <div onclick="toggleTravelStatCat('${safeCName}')" title="${escapeHtml(cName)}: ${cData.sum.toLocaleString()} ₽ (${pct.toFixed(1)}%)"
                style="width:${pct}%; background:${col}; height:100%; cursor:pointer;"></div>`;
       }
     });
@@ -8731,13 +8666,13 @@ function renderA() {
       cData.items.forEach(it => {
         const isMuted = it.isExcluded;
         checksHtml += `
-          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:${isMuted ? '0.45' : '1'};">
-            <div>
-              <span style="font-weight:bold; color:var(--text-main); ${isMuted ? 'text-decoration:line-through;' : ''}">${it.d}</span>
-              <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[${it.tripCity}]</span>
-              ${it.com ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${it.com}</div>` : ''}
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
+        <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px dashed var(--border); font-size:11px; opacity:${isMuted ? '0.45' : '1'};">
+          <div>
+            <span style="font-weight:bold; color:var(--text-main); ${isMuted ? 'text-decoration:line-through;' : ''}">${it.d}</span>
+            <span style="color:#3b82f6; font-size:10px; margin-left:4px;">[${escapeHtml(it.tripCity)}]</span>
+            ${it.com ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(it.com)}</div>` : ''}
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
               <b style="color:${isMuted ? 'var(--text-mute)' : 'var(--text-main)'}; font-size:11px; ${isMuted ? 'text-decoration:line-through;' : ''}">${it.s.toLocaleString()} ₽</b>
               <button onclick="toggleTravelTxExclusion('${it.r}', event)" style="background:none; border:none; cursor:pointer; font-size:12px; padding:2px;" title="${it.isExcluded ? 'Вернуть чек в расчет' : 'Исключить чек из расчета'}">
                 ${it.isExcluded ? '✅' : '🚫'}
@@ -8746,12 +8681,13 @@ function renderA() {
           </div>`;
       });
 
+      const safeCatName = escapeJsStr(cName);
       categoriesListHtml += `
         <div style="border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; background: var(--bg-card); opacity:${isCatEx ? '0.55' : '1'};">
-          <div class="click-header" onclick="toggleTravelStatCat('${cName}')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
+          <div class="click-header" onclick="toggleTravelStatCat('${safeCatName}')" style="padding: 8px 12px; background: var(--input-bg); display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div style="width:10px; height:10px; border-radius:3px; background:${isCatEx ? '#94a3b8' : col};"></div>
-              <span style="font-size:12px; font-weight:800; color:var(--text-main); ${isCatEx ? 'text-decoration:line-through;' : ''}">${cName}</span>
+              <span style="font-size:12px; font-weight:800; color:var(--text-main); ${isCatEx ? 'text-decoration:line-through;' : ''}">${escapeHtml(cName)}</span>
               <span style="font-size:10px; color:var(--text-mute);">${isCatEx ? '(Исключена)' : pct + '%'}</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
@@ -9164,8 +9100,8 @@ function renderA() {
   }
 
   function saveTripSplitExecution() {
-    if (!currentTxForTripSplit) return;
     if (isGuest()) return alert("🔒 Вы вошли как гость. Разделение заблокировано!");
+    if (!currentTxForTripSplit) return;
 
     const orig = currentTxForTripSplit;
     const rows = document.querySelectorAll('#tripSplitRowsContainer > div');
@@ -9180,13 +9116,8 @@ function renderA() {
       const sum = parseFloat(sumInput) || 0;
       const com = r.querySelector('.ts-com')?.value.trim() || '';
 
-      // Проверяем частые ошибки заполнения:
-      if (sum > 0 && !cat) {
-        hasMissingCat = true; // Сумма есть, а категорию выбрать забыли
-      }
-      if (cat && sum <= 0 && sumInput !== '') {
-        hasZeroSum = true; // Категория выбрана, а сумма 0
-      }
+      if (sum > 0 && !cat) hasMissingCat = true;
+      if (cat && sum <= 0 && sumInput !== '') hasZeroSum = true;
 
       if (sum > 0 && cat) {
         allocated += sum;
@@ -9194,7 +9125,6 @@ function renderA() {
       }
     });
 
-    // Четкие предупреждения пользователю:
     if (hasMissingCat) {
       return alert("⚠️ Вы указали сумму, но забыли выбрать категорию для одной из частей чека!\nПожалуйста, выберите категорию.");
     }
@@ -9209,10 +9139,8 @@ function renderA() {
       if (!confirm(`Сумма долей (${allocated.toLocaleString()} ₽) не совпадает с суммой чека (${origTotal.toLocaleString()} ₽).\nРазница: ${diff.toLocaleString()} ₽.\n\nПродолжить сохранение с корректировкой баланса карты на разницу?`)) return;
     }
 
-    // Создаем уникальный идентификатор связки сплита
     const splitGroupId = 'split_grp_' + Date.now();
 
-    // 1. Помечаем старый чек на удаление с привязкой к сплиту
     updateAccBal(orig.accE, origTotal);
     appData.transactions = appData.transactions.filter(x => String(x.r) !== String(orig.r));
 
@@ -9220,15 +9148,18 @@ function renderA() {
     if (existingAddIdx > -1) {
       localQueue.splice(existingAddIdx, 1);
     }
+    const parentSnapshot = JSON.parse(JSON.stringify(orig));
+    parentSnapshot.splitGroupId = splitGroupId;
     localQueue.push({
       action: 'split_parent',
       r: orig.r,
-      item: JSON.parse(JSON.stringify(orig)),
+      item: parentSnapshot,
       splitGroupId: splitGroupId,
       wasLocalAdd: existingAddIdx > -1
     });
 
     // 2. Добавляем новые части с тем же splitGroupId
+
     newItems.forEach((it, idx) => {
       const newTr = {
         r: 'local_split_' + Date.now() + '_' + idx,
@@ -9259,9 +9190,8 @@ function renderA() {
   }
 
   // Функция чистой отмены сплита целиком (возвращает исходный чек и удаляет сиротские доли)
-  // Функция чистой отмены сплита целиком (возвращает исходный чек и удаляет сиротские доли)
   function cancelSplitGroup(splitGroupId) {
-    const items = localQueue.filter(q => q.item && q.item.splitGroupId === splitGroupId);
+    const items = localQueue.filter(q => q.splitGroupId === splitGroupId || (q.item && q.item.splitGroupId === splitGroupId));
     if (items.length === 0) return;
 
     // 1. Возвращаем исходный чек
@@ -9285,7 +9215,7 @@ function renderA() {
     });
 
     // 3. Удаляем всю связку из очереди
-    localQueue = localQueue.filter(q => !(q.item && q.item.splitGroupId === splitGroupId));
+    localQueue = localQueue.filter(q => q.splitGroupId !== splitGroupId && !(q.item && q.item.splitGroupId === splitGroupId));
     saveQueueToStorage();
     updateSyncBar();
     applyDatesLocally();
@@ -9295,10 +9225,10 @@ function renderA() {
 
   // Функция возврата к редактированию сплита прямо из очереди
   function editSplitGroup(splitGroupId) {
-    const items = localQueue.filter(q => q.item && q.item.splitGroupId === splitGroupId);
+    const items = localQueue.filter(q => q.splitGroupId === splitGroupId || (q.item && q.item.splitGroupId === splitGroupId));
     if (items.length === 0) return;
 
-    const delItem = items.find(q => q.action === 'delete')?.item;
+    const delItem = items.find(q => q.action === 'delete' || q.action === 'split_parent')?.item;
     const addParts = items.filter(q => q.action === 'add').map(q => q.item);
     if (!delItem) return;
 
@@ -10731,25 +10661,30 @@ let totalOnCards = 0;
         }
       });
 
-      // Вычитаем нерастраченные доходы no_budget и в симуляторе
+      // Вычитаем нерастраченные доходы no_budget и в симуляторе строго поаккаутно
       const todayISO = toISOLocal(new Date());
       const startISO = toISOLocal(cycleStart);
-      const roles = typeof getSystemRoles === 'function' ? getSystemRoles() : { rent_cat: 'Аренда', grandma_cat: 'Бабушка' };
-      let simIncNoB = 0, simExpNoB = 0;
+      let unspentSim = 0;
 
-      (appData.transactions || []).forEach(t => {
-        if (t.fd >= startISO && t.fd <= todayISO) {
-          const accE = (t.accE || '').trim().toLowerCase();
-          const accI = (t.accI || '').trim().toLowerCase();
-          const inE = simIncludedNames.some(a => a.trim().toLowerCase() === accE);
-          const inI = simIncludedNames.some(a => a.trim().toLowerCase() === accI);
+      simIncludedNames.forEach(accName => {
+        const cleanAcc = accName.trim().toLowerCase();
+        let accIncNoB = 0;
+        let accExpNoB = 0;
 
-          if (t.type === 'Доход' && inI && t.no_budget) simIncNoB += (parseFloat(t.sumI) || 0);
-          if (t.type === 'Расход' && inE && (t.no_budget || !isCleanPersonalExpense(t, roles))) simExpNoB += (parseFloat(t.sumE) || 0);
-        }
+        (appData.transactions || []).forEach(t => {
+          if (t.fd >= startISO && t.fd <= todayISO) {
+            if (t.type === 'Доход' && t.no_budget && (t.accI || '').trim().toLowerCase() === cleanAcc) {
+              accIncNoB += (parseFloat(t.sumI) || 0);
+            }
+            if (t.type === 'Расход' && t.no_budget && (t.accE || '').trim().toLowerCase() === cleanAcc) {
+              accExpNoB += (parseFloat(t.sumE) || 0);
+            }
+          }
+        });
+
+        unspentSim += Math.max(0, accIncNoB - accExpNoB);
       });
 
-      const unspentSim = Math.max(0, simIncNoB - simExpNoB);
       cleanPool = Math.max(0, totalOnCards - unspentSim);
     }
 
@@ -11201,7 +11136,8 @@ let totalOnCards = 0;
     const startISO = toISOLocal(cycleStart);
     const endISO = toISOLocal(cycleEnd);
     const rawDays = Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000);
-    const daysLeft = rawDays <= 0 ? 1 : rawDays;
+    const isOverdueCycle = rawDays <= 0;
+    const daysLeft = isOverdueCycle ? 1 : rawDays;
     const weeksToSalary = Math.max(0.1, daysLeft / 7);
 
     // Сколько дней прошло с начала ЗП-цикла — для позиции в матрице кафе
@@ -11289,9 +11225,10 @@ let totalOnCards = 0;
     });
 
     // Утренний пул для расчета нормы дня: восстанавливаем только то, что списалось сегодня
-    // Благодаря excludedSpentToday крупные чеки с галочкой не снижают сегодняшний лимит посреди дня!
+    // При задержке зарплаты делим минимум на 2 дня ожидания, чтобы не сжечь весь остаток за один вечер
     const startOfDayPool = Math.max(0, cleanAvailablePool + spentToday + excludedSpentToday);
-    const fullDailyLimit = daysLeft > 0 ? Math.round(startOfDayPool / daysLeft) : Math.round(startOfDayPool);
+    const effectiveDaysDivisor = isOverdueCycle ? 2 : Math.max(1, daysLeft);
+    const fullDailyLimit = Math.round(startOfDayPool / effectiveDaysDivisor);
     window.currentFullDailyLimit = fullDailyLimit;
 
     // Остаток на сегодня: учитывает только обычные бытовые расходы дня
@@ -13193,7 +13130,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal" style="z-index: 4030; display: none;">
+<div id="streakHistoryModal" class="modal" style="display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -13204,10 +13141,10 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
     <!-- ФИКСИРОВАННЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (СТОИТ НАМЕРТВО, НЕ СКРОЛЛИТСЯ) -->
     <div style="background:var(--input-bg); border:1.5px solid var(--border); border-radius:12px; padding:3px; display:flex; gap:4px; margin-bottom:12px; flex-shrink:0; box-sizing:border-box;">
-      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: var(--btn-active); color: var(--btn-active-text);">
+      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
         ⚡ Текущий цикл
       </button>
-      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: transparent; color: var(--text-mute);">
+      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
         📅 Прошлый цикл
       </button>
     </div>
@@ -13219,7 +13156,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4040; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
