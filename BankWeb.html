@@ -354,7 +354,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view">
+  <div id="viewAnalytics" class="app-view active">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -375,7 +375,7 @@
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;991 ₽/день</span>
+          <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(239, 68, 68);">69 ₽/день</span>
           <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
@@ -384,15 +384,15 @@
       <div style="padding: 10px 16px 14px 16px; border-top: 1px solid var(--border); background: var(--bg-card);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:11.5px; gap:8px;">
           <div style="min-width:0; flex:1; line-height:1.3;">
-            <span id="todayStatusText" style="font-weight: 800; font-size: 11.5px; color: rgb(16, 185, 129);">🟢 В норме: <b>+1&nbsp;991 ₽</b> <span style="font-size:10.5px; opacity:0.85;"><span style="color:#10b981; font-weight:bold;">(завтра: ~2&nbsp;048 ₽ ▲)</span></span></span>
+            <span id="todayStatusText" style="font-weight: 800; font-size: 11.5px; color: rgb(16, 185, 129);">🟢 В норме: <b>+69 ₽</b> <span style="font-size:10.5px; opacity:0.85;"><span style="color:#ef4444; font-weight:bold;">(завтра: ~1&nbsp;218 ₽ ▼)</span></span></span>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
             <span id="streakBadge" onclick="openStreakModal()" style="display: inline-flex; align-items: center; cursor: pointer; background: rgba(245, 158, 11, 0.15); color: rgb(245, 158, 11); border: 1px solid rgba(245, 158, 11, 0.3); padding: 2px 7px; border-radius: 6px; font-weight: 900; font-size: 10.5px; margin-right: 8px;" title="История дней в лимите">🔥 5 дн.</span>
-            <b id="todayMathSummary" style="font-size:12px; color:var(--text-main); white-space:nowrap;">0 из 1&nbsp;991 ₽</b>
+            <b id="todayMathSummary" style="font-size:12px; color:var(--text-main); white-space:nowrap;">1&nbsp;252 из 1&nbsp;321 ₽</b>
           </div>
         </div>
         <div style="height:8px; width:100%; border-radius:5px; background:var(--border); overflow:hidden;">
-          <div id="todayProgressBar" style="height: 100%; width: 0%; background: rgb(16, 185, 129); transition: width 0.3s;"></div>
+          <div id="todayProgressBar" style="height: 100%; width: 95%; background: rgb(239, 68, 68); transition: width 0.3s;"></div>
         </div>
       </div>
 
@@ -453,20 +453,20 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); box-sizing: border-box;">
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Капитал:</div>
-                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">183&nbsp;760 ₽</b>
+                <b id="capMetricTotal" style="font-size: 12px; color: #10b981;">182&nbsp;760 ₽</b>
               </div>
               <div>
                 <div id="capMetricDeltaLabel" style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Прирост за всё время:</div>
-                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +62&nbsp;760 ₽ (51.9%)</b>
+                <b id="capMetricDelta" style="font-size: 11.5px; color: rgb(16, 185, 129);">▲ +61&nbsp;760 ₽ (51.0%)</b>
               </div>
               <div>
                 <div style="font-size: 9px; color: var(--text-mute); font-weight: bold; text-transform: uppercase;">Темп:</div>
-                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+255 ₽/дн</b>
+                <b id="capMetricPace" style="font-size: 11.5px; color: #3b82f6;">+251 ₽/дн</b>
               </div>
             </div>
 
             <div style="height: 140px; position: relative; width: 100%;">
-              <canvas id="capitalOnlyChartCanvas" style="box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+              <canvas id="capitalOnlyChartCanvas" height="0" style="display: block; box-sizing: border-box; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0"></canvas>
             </div>
             <!-- Детали операции при клике на вершину капитала (с кликабельными строчками) -->
             <div id="capitalDayDetailsBox" style="display:none; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:11px; margin-top:4px; box-sizing:border-box;"></div>
@@ -484,7 +484,7 @@
           </div>
           <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:4px;">
             <div id="autopilotFreePool" class="sensitive-money" style="font-size:20px; font-weight:900; color:#38bdf8;"></div>
-            <div id="autopilotPoolAccountsList" style="font-size:10px; color:var(--text-mute); max-width:55%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:right;">В пуле: Яндекс, ВТБ, Сбербанк, Тинькофф, Озон Банк, ВБ Банк, Накопительный счет тратить</div>
+            <div id="autopilotPoolAccountsList" style="font-size:10px; color:var(--text-mute); max-width:55%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:right;">В пуле: Яндекс, ВТБ, Сбербанк, ВБ Банк, Накопительный счет тратить</div>
           </div>
         </div>
 
@@ -500,7 +500,7 @@
               <b style="font-size:12.5px; color:var(--text-main);">Финансовые инсайты</b>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <span class="sensitive-money" style="color:#3b82f6; font-weight:900; font-size:12.5px;" id="insightsTotalVal">25&nbsp;246 ₽</span>
+              <span class="sensitive-money" style="color:#3b82f6; font-weight:900; font-size:12.5px;" id="insightsTotalVal">20&nbsp;217 ₽</span>
               <span id="analyticsSmartInsightsArrow" style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:2px 5px; border-radius:4px; border:1px solid var(--border);">▼</span>
             </div>
           </div>
@@ -636,7 +636,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 662.4px;" width="828" height="312"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -772,21 +772,21 @@
         </div>
       
         <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="false">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_1', 'exp_grp_arr_1', 'Бабушка')">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_1', 'exp_grp_arr_1', 'Еда дома')">
             <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
-              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Бабушка', event)" title="Выбрать / снять всю группу">
+              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Еда дома', event)" title="Выбрать / снять всю группу">
                 
               </div>
               <span style="font-size:13px;">📂</span>
               <div style="min-width:0; flex:1;">
-                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Бабушка</b>
+                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Еда дома</b>
                 <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
-                  (<b>4&nbsp;чек.</b> • 0/3)
+                  (<b>2&nbsp;чек.</b> • 0/3)
                 </span>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:12px; color:#10b981;">962&nbsp;₽</b>
+              <b style="font-size:12px; color:#10b981;">1&nbsp;184&nbsp;₽</b>
               <span id="exp_grp_arr_1" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
@@ -794,35 +794,35 @@
             
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Бабушка Магазины</span>
+              <span style="color:var(--text-main); font-weight:600;">Домой перекус/готовая еда/джанкфуд из магазина</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(2&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-main);">638&nbsp;₽</b>
+              <b style="font-size:11px; color:var(--text-main);">1&nbsp;184&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка Магазины', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Домой перекус/готовая еда/джанкфуд из магазина', event)">
             </div>
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Бабушка другое</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(2&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-main);">324&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка другое', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Бабушка Аптека</span>
+              <span style="color:var(--text-main); font-weight:600;">Доставка еды</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка Аптека', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Доставка еды', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Еда для себя и гостей дома</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Еда для себя и гостей дома', event)">
             </div>
           </label>
           </div>
@@ -838,12 +838,12 @@
               <div style="min-width:0; flex:1;">
                 <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Продукты</b>
                 <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
-                  (<b>3&nbsp;чек.</b> • 0/12)
+                  (<b>4&nbsp;чек.</b> • 0/12)
                 </span>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:12px; color:#10b981;">869&nbsp;₽</b>
+              <b style="font-size:12px; color:#10b981;">1&nbsp;117&nbsp;₽</b>
               <span id="exp_grp_arr_2" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
@@ -858,6 +858,17 @@
               <b style="font-size:11px; color:var(--text-main);">669&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
               <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Чижик', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">КБ</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(1&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-main);">248&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('КБ', event)">
             </div>
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
@@ -880,17 +891,6 @@
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
               <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Доставка', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">КБ</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('КБ', event)">
             </div>
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
@@ -984,8 +984,65 @@
           </div>
         </div>
       
+        <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="false">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_3', 'exp_grp_arr_3', 'Бабушка')">
+            <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
+              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Бабушка', event)" title="Выбрать / снять всю группу">
+                
+              </div>
+              <span style="font-size:13px;">📂</span>
+              <div style="min-width:0; flex:1;">
+                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Бабушка</b>
+                <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
+                  (<b>4&nbsp;чек.</b> • 0/3)
+                </span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:12px; color:#10b981;">962&nbsp;₽</b>
+              <span id="exp_grp_arr_3" style="font-size:9px; color:var(--text-mute);">▼</span>
+            </div>
+          </div>
+          <div id="exp_grp_body_3" style="display:none; background:var(--bg-card);">
+            
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Бабушка Магазины</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(2&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-main);">638&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка Магазины', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Бабушка другое</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(2&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-main);">324&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка другое', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Бабушка Аптека</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Бабушка Аптека', event)">
+            </div>
+          </label>
+          </div>
+        </div>
+      
         <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="true">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_3', 'exp_grp_arr_3', 'Транспорт и Авто')">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_4', 'exp_grp_arr_4', 'Транспорт и Авто')">
             <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
               <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Транспорт и Авто', event)" title="Выбрать / снять всю группу">
                 
@@ -1000,10 +1057,10 @@
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:12px; color:#10b981;">748&nbsp;₽</b>
-              <span id="exp_grp_arr_3" style="font-size:9px; color:var(--text-mute);">▼</span>
+              <span id="exp_grp_arr_4" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
-          <div id="exp_grp_body_3" style="display:none; background:var(--bg-card);">
+          <div id="exp_grp_body_4" style="display:none; background:var(--bg-card);">
             
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
@@ -1053,64 +1110,141 @@
         </div>
       
         <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="false">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_4', 'exp_grp_arr_4', 'Еда дома')">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_5', 'exp_grp_arr_5', 'Шопинг и Хозтовары')">
             <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
-              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Еда дома', event)" title="Выбрать / снять всю группу">
+              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Шопинг и Хозтовары', event)" title="Выбрать / снять всю группу">
                 
               </div>
               <span style="font-size:13px;">📂</span>
               <div style="min-width:0; flex:1;">
-                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Еда дома</b>
+                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Шопинг и Хозтовары</b>
                 <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
-                  (<b>1&nbsp;чек.</b> • 0/3)
+                  (<b>2&nbsp;чек.</b> • 0/10)
                 </span>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:12px; color:#10b981;">480&nbsp;₽</b>
-              <span id="exp_grp_arr_4" style="font-size:9px; color:var(--text-mute);">▼</span>
+              <b style="font-size:12px; color:#10b981;">462&nbsp;₽</b>
+              <span id="exp_grp_arr_5" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
-          <div id="exp_grp_body_4" style="display:none; background:var(--bg-card);">
+          <div id="exp_grp_body_5" style="display:none; background:var(--bg-card);">
             
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Домой перекус/готовая еда/джанкфуд из магазина</span>
+              <span style="color:var(--text-main); font-weight:600;">Хозтовары из других магазинов</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(1&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-main);">480&nbsp;₽</b>
+              <b style="font-size:11px; color:var(--text-main);">300&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Домой перекус/готовая еда/джанкфуд из магазина', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Хозтовары из других магазинов', event)">
             </div>
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Доставка еды</span>
+              <span style="color:var(--text-main); font-weight:600;">еще</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(1&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-main);">162&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('еще', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">-</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Доставка еды', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('-', event)">
             </div>
           </label>
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Еда для себя и гостей дома</span>
+              <span style="color:var(--text-main); font-weight:600;">Фикс прайс</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Еда для себя и гостей дома', event)">
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Фикс прайс', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Маркеты</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Маркеты', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Одежда</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Одежда', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Техника</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Техника', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Мебель</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Мебель', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Товары для дома онлайн</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Товары для дома онлайн', event)">
+            </div>
+          </label>
+          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="color:var(--text-main); font-weight:600;">Товары для себя/аксессуары</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
+              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
+              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Товары для себя/аксессуары', event)">
             </div>
           </label>
           </div>
         </div>
       
         <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="false">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_5', 'exp_grp_arr_5', 'Прочее и Финансы')">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_6', 'exp_grp_arr_6', 'Прочее и Финансы')">
             <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
               <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Прочее и Финансы', event)" title="Выбрать / снять всю группу">
                 
@@ -1125,10 +1259,10 @@
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
               <b style="font-size:12px; color:#10b981;">266&nbsp;₽</b>
-              <span id="exp_grp_arr_5" style="font-size:9px; color:var(--text-mute);">▼</span>
+              <span id="exp_grp_arr_6" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
-          <div id="exp_grp_body_5" style="display:none; background:var(--bg-card);">
+          <div id="exp_grp_body_6" style="display:none; background:var(--bg-card);">
             
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
@@ -1205,140 +1339,6 @@
               <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
               <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Вернул долг', event)">
-            </div>
-          </label>
-          </div>
-        </div>
-      
-        <div style="border-bottom:1px solid var(--border); background:var(--bg-card); box-sizing:border-box;" data-is-project="false">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 11px; cursor:pointer; background:var(--input-bg);" onclick="toggleExportGroupFolder('exp_grp_body_6', 'exp_grp_arr_6', 'Шопинг и Хозтовары')">
-            <div style="display:flex; align-items:center; gap:9px; min-width:0; flex:1;">
-              <div class="tristate-btn" data-state="none" onclick="toggleExportGroupTriState('Шопинг и Хозтовары', event)" title="Выбрать / снять всю группу">
-                
-              </div>
-              <span style="font-size:13px;">📂</span>
-              <div style="min-width:0; flex:1;">
-                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Шопинг и Хозтовары</b>
-                <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
-                  (<b>1&nbsp;чек.</b> • 0/10)
-                </span>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:12px; color:#10b981;">162&nbsp;₽</b>
-              <span id="exp_grp_arr_6" style="font-size:9px; color:var(--text-mute);">▼</span>
-            </div>
-          </div>
-          <div id="exp_grp_body_6" style="display:none; background:var(--bg-card);">
-            
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">еще</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(1&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-main);">162&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('еще', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">-</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('-', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Фикс прайс</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Фикс прайс', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Другие непродуктовые магазины</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Другие непродуктовые магазины', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Маркеты</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Маркеты', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Одежда</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Одежда', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Техника</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Техника', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Мебель</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Мебель', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Товары для дома онлайн</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Товары для дома онлайн', event)">
-            </div>
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
-            <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">Товары для себя/аксессуары</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(0&nbsp;чек.)</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-mute);">0&nbsp;₽</b>
-              <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
-              <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Товары для себя/аксессуары', event)">
             </div>
           </label>
           </div>
@@ -2438,22 +2438,22 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view active">
+  <div id="viewAdd" class="app-view">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
-        <div id="btnFormExp" class="btn-toggle" onclick="switchFormType('Расход')">Расход</div>
+        <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
         <div id="btnFormInc" class="btn-toggle" onclick="switchFormType('Доход')">Доход</div>
-        <div id="btnFormTr" class="btn-toggle active" onclick="switchFormType('Перевод')">Перевод</div>
+        <div id="btnFormTr" class="btn-toggle" onclick="switchFormType('Перевод')">Перевод</div>
       </div>
 
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px;">ДАТА ТРАНЗАКЦИИ:</label>
       <input type="date" id="fDate" class="input-ui input-date">
 
-      <div id="formStandard" style="display: none;">
+      <div id="formStandard">
         <input type="number" id="fSum" class="input-ui" placeholder="Сумма (₽) *обязательно">
 
         <!-- ОПЛАТА БОНУСАМИ -->
-        <div style="display: none; align-items: center; gap: 8px; margin-bottom: 10px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
           <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:flex; align-items:center; gap:6px; cursor:pointer;">
             <input type="checkbox" id="fUsePointsToggle" onchange="togglePointsInput('f')" style="width:16px; height:16px;">
             Часть оплачена баллами (скидка магазина)
@@ -2464,7 +2464,7 @@
         </div>
 
         <!-- ОКРУГЛЕНИЕ / КОПИЛКА -->
-        <div id="roundingQuickBox" style="background: var(--input-bg); border: 1px solid var(--border); padding: 10px 12px; border-radius: 12px; margin-bottom: 10px; display: none;">
+        <div id="roundingQuickBox" style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:12px; margin-bottom:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-size:11.5px; font-weight:bold; color:var(--text-main); display:flex; align-items:center; gap:6px; cursor:pointer;">
               <input type="checkbox" id="fRoundingToggle" onchange="recalculateRoundingPreview()" style="width:16px; height:16px;">
@@ -2488,7 +2488,7 @@
       </div>
 
         <div style="display:flex; gap:8px;">
-          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Кэшбек/проценты">Кэшбек/проценты</option><option value="От папы">От папы</option></optgroup><optgroup label="Зарплата"><option value="Зарплата">Зарплата</option><option value="ЗП ручки">ЗП ручки</option></optgroup><optgroup label="Переводы"><option value="От бабушки">От бабушки</option><option value="От папы">От папы</option><option value="Подарили">Подарили</option><option value="за что-то">за что-то</option></optgroup><optgroup label="Прочее"><option value="пенсия ручки">пенсия ручки</option><option value="Кэшбек/проценты">Кэшбек/проценты</option><option value="Не сошелся дебет кредит">Не сошелся дебет кредит</option></optgroup></select>
+          <select id="fCat" class="input-ui" style="flex:1; cursor:pointer;" onchange="checkAddFormDebtFields()"><option value="">-- Выберите категорию --</option><optgroup label="⭐ Часто используемые"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="В магазине еда/джанкфуд вне дома без ручки">В магазине еда/джанкфуд вне дома без ручки</option><option value="Хозтовары из других магазинов">Хозтовары из других магазинов</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Бабушка"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе">Обед/столовая на работе</option><option value="Сборы денег на работе">Сборы денег на работе</option><option value="Еда/что-то на работу для себя">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить">Кафе чисто перекусить</option><option value="Кофейни">Кофейни</option><option value="Фастфуд">Фастфуд</option><option value="Кафе в честь чего-то">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома с ручкой">Перекус/джанкфуд продукты вне дома с ручкой</option></optgroup><optgroup label="Продукты"><option value="Доставка">Доставка</option><option value="КБ">КБ</option><option value="Пятерочка">Пятерочка</option><option value="Чижик">Чижик</option><option value="Магнит">Магнит</option><option value="Дикси">Дикси</option><option value="Перекресток">Перекресток</option><option value="Спар">Спар</option><option value="Вкусвилл">Вкусвилл</option><option value="Ароматный мир/винлаб">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины">Другие продуктовые магазины</option><option value="Вода в еще">Вода в еще</option></optgroup><optgroup label="Шопинг и Хозтовары"><option value="-">-</option><option value="еще">еще</option><option value="Фикс прайс">Фикс прайс</option><option value="Маркеты">Маркеты</option><option value="Одежда">Одежда</option><option value="Техника">Техника</option><option value="Мебель">Мебель</option><option value="Товары для дома онлайн">Товары для дома онлайн</option><option value="Хозтовары из других магазинов">Хозтовары из других магазинов</option><option value="Товары для себя/аксессуары">Товары для себя/аксессуары</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы">Алкоголь бары пабы</option><option value="Курение">Курение</option><option value="Алкоголь из магазина домой">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь">Сотовая связь</option><option value="Интернет домашний">Интернет домашний</option><option value="Аренда квартиры">Аренда квартиры</option><option value="Онлайн - Подписки">Онлайн - Подписки</option><option value="Консьержка">Консьержка</option><option value="ЖКХ - вода">ЖКХ - вода</option><option value="ЖКХ - свет">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка">Парковка</option><option value="Запчасти на машину">Запчасти на машину</option><option value="Ремонт машины">Ремонт машины</option><option value="Мойка машины">Мойка машины</option><option value="Штрафы">Штрафы</option><option value="ОСАГО">ОСАГО</option><option value="Бензин">Бензин</option><option value="Не запчасти">Не запчасти</option><option value="Вода в машину">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси">Такси</option><option value="Каршеринг">Каршеринг</option><option value="Самокаты">Самокаты</option><option value="Транспорт городской общественный">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты">Ручка продукты</option><option value="Ручка красота">Ручка красота</option><option value="Подарки ручке">Подарки ручке</option><option value="Цветы ручке">Цветы ручке</option><option value="Ручке деньги">Ручке деньги</option><option value="Пленка проявка">Пленка проявка</option><option value="Ручка одежда">Ручка одежда</option><option value="Ручка другое">Ручка другое</option></optgroup><optgroup label="Здоровье"><option value="Аптека">Аптека</option><option value="Здоровье (обследования итд)">Здоровье (обследования итд)</option><option value="Стрижка">Стрижка</option><option value="Интим">Интим</option><option value="Лекарства">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино">Кино</option><option value="Театр">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд">Открытки/сувениры и тд</option><option value="Иной досуг">Иной досуг</option><option value="Музеи">Музеи</option><option value="Иные развлечения">Иные развлечения</option><option value="Фотобудка и тд">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки">Подарки</option><option value="Не сошёлся дебет кредит">Не сошёлся дебет кредит</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Фастфуд/кафешки/рестораны/шаурма без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option><option value="В магазине еда/джанкфуд вне дома без ручки">В магазине еда/джанкфуд вне дома без ручки</option></optgroup></select>
           <button type="button" onclick="openFCatCategoryPicker()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 12px; margin-bottom:12px; border:none; cursor:pointer;" title="Найти категорию">🔍</button>
           <button type="button" onclick="openCatManager()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 15px; margin-bottom:12px; border:none; cursor:pointer;">⚙️</button>
         </div>
@@ -2508,7 +2508,7 @@
         <textarea id="fCom" class="input-ui" placeholder="Комментарий (необязательно)" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
       </div>
 
-      <div id="formTransfer" style="display: block;">
+      <div id="formTransfer" style="display:none;">
         <input type="number" id="tSum" class="input-ui" placeholder="Сумма (₽) *обязательно">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">ОТКУДА</label>
         <select id="tFrom" class="input-ui" style="cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
@@ -2518,7 +2518,7 @@
 
       <button type="button" onclick="queueTransaction()" style="width:100%; background:#10b981; color:white; padding:16px; border-radius:12px; font-weight:900; border:none; margin-top:10px; cursor:pointer;">В очередь ⚡</button>
 
-      <div id="addQueueListContainer" style="margin-top: 20px; display: none;">
+      <div id="addQueueListContainer" style="margin-top:20px; display:none;">
         <h4 style="font-size:12px; color:var(--text-mute); margin-bottom:8px;">ОБЫЧНЫЕ ОПЕРАЦИИ В ОЧЕРЕДИ:</h4>
         <div id="addQueueListRender"></div>
       </div>
@@ -2528,7 +2528,7 @@
 </div><!-- Конец max-width контейнера -->
 
 <div id="syncBar" class="sync-bar" onclick="openGlobalQueue()" style="display: none;">
-    <span id="syncText">В очереди: 1 шт.</span>
+    <span id="syncText">В очереди: 0 шт.</span>
     <span id="syncBtnText" style="background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px;">👀 Открыть</span>
 </div>
 
@@ -2624,8 +2624,8 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">Яндекс</h2>
-              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display: block; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
+              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
         </div>
@@ -3035,10 +3035,10 @@
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
   <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -3202,12 +3202,12 @@
     const lockUntil = parseInt(localStorage.getItem('__bank_pin_lock_until') || '0', 10);
     const now = Date.now();
 
-    // 1. Блокируем сетевой запрос, если таймер активен (защита от брутфорса)
-    if (lockUntil > now && val.toLowerCase() !== 'сброс') {
+    // 1. Если заблокирован и поле пустое — сообщаем оставшееся время
+    if (lockUntil > now && !val) {
       const remainingSec = Math.ceil((lockUntil - now) / 1000);
       const min = Math.floor(remainingSec / 60);
       const sec = remainingSec % 60;
-      return alert(`🚨 Вход заблокирован! Осталось ${min}м ${sec}с.`);
+      return alert(`🚨 Вход заблокирован! Введите слово сброса. Осталось ${min}м ${sec}с.`);
     }
 
     try {
@@ -3215,7 +3215,7 @@
       const { data, error } = await db.rpc('verify_pin_v2', { p_pin: val });
       if (error) throw error;
 
-      // 2. Обработка снятия блокировки секретным словом
+      // 3. Обработка снятия блокировки секретным словом
       if (data && data.reset === true) {
         localStorage.removeItem('__bank_pin_fails');
         localStorage.removeItem('__bank_pin_lock_until');
@@ -3223,12 +3223,13 @@
         return alert("✅ Блокировка успешно снята!\nТеперь введите ваш правильный PIN-код для входа.");
       }
 
-      // 3. Проверка таймера блокировки
+      // 4. Проверка таймера блокировки (если во время локаута ввели неверное слово)
       if (lockUntil > now) {
         const remainingSec = Math.ceil((lockUntil - now) / 1000);
         const min = Math.floor(remainingSec / 60);
         const sec = remainingSec % 60;
-        return alert(`🚨 Вход заблокирован! Осталось ${min}м ${sec}с. (Или введите секретное слово сброса)`);
+        input.value = '';
+        return alert(`🚨 Вход заблокирован! Неверное слово сброса (осталось ${min}м ${sec}с).`);
       }
 
       if (data && data.success === true) {
@@ -4162,7 +4163,9 @@
         let hAdd = '';
         simpleAdds.forEach(q => {
           const item = q.item;
-          hAdd += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; margin-bottom:8px;"><div style="font-size:12px; width:70%; line-height:1.4;"><b>${item.type}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${item.catE || item.catI || (item.accF + ' ➔ ' + item.accT)}</b><br><i>${item.comE || item.comI || ''}</i></div></div><div style="display:flex; gap:6px;"><button onclick="editQueueItem('${q.r}')" style="background:#f59e0b; color:white; border:none; border-radius:8px; padding:6px 10px; font-weight:bold; cursor:pointer; font-size:11px;" title="Изменить">✏️</button><button onclick="removeFromQueue('${q.r}')" style="background:#ef4444; color:white; border:none; border-radius:8px; padding:6px 12px; font-weight:bold; cursor:pointer; font-size:11px;">✕</button></div></div>`;
+          const catTitle = item.catE || item.catI || (item.accF ? `${item.accF} ➔ ${item.accT}` : 'Операция');
+          const comText = item.comE || item.comI || '';
+          hAdd += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; margin-bottom:8px;"><div style="font-size:12px; width:70%; line-height:1.4;"><b>${escapeHtml(item.type)}</b>: <span style="color:#3b82f6; font-weight:bold;">${item.sumE || item.sumI || item.sumTr} ₽</span><br><div class="pre-wrap" style="color:var(--text-mute); font-size:11px; margin-top:2px;"><b>${escapeHtml(catTitle)}</b><br><i>${escapeHtml(comText)}</i></div></div><div style="display:flex; gap:6px;"><button onclick="editQueueItem('${q.r}')" style="background:#f59e0b; color:white; border:none; border-radius:8px; padding:6px 10px; font-weight:bold; cursor:pointer; font-size:11px;" title="Изменить">✏️</button><button onclick="removeFromQueue('${q.r}')" style="background:#ef4444; color:white; border:none; border-radius:8px; padding:6px 12px; font-weight:bold; cursor:pointer; font-size:11px;">✕</button></div></div>`;
         });
         hAdd += `<button id="btnUploadAddQueueBtn" onclick="uploadAddQueue()" style="width:100%; background:#3b82f6; color:white; padding:16px; border-radius:12px; font-weight:900; border:none; margin-top:10px; cursor:pointer; transition:0.3s;">🚀 Отправить операции на сервер</button>`;
         cAddRender.innerHTML = hAdd;
@@ -6864,8 +6867,8 @@ function renderA() {
     let h = '';
     hiddenDebtors.forEach(name => {
       h += `<div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:10px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border);">
-              <b>${name}</b>
-              <button onclick="toggleHideDebtor('${name}')" style="background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">Вернуть</button>
+              <b>${escapeHtml(name)}</b>
+              <button onclick="toggleHideDebtor('${escapeJsStr(name)}')" style="background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11px;">Вернуть</button>
             </div>`;
     });
     container.innerHTML = h;
@@ -6956,6 +6959,9 @@ function renderA() {
          dS[r.n].i.push({ r: r.r, d: r.d, cat: 'Архив', s: r.amt, c: r.c, t: 'exp' });
        } else {
          dS[r.n].r += Math.abs(r.amt);
+         if ((r.c || '').toLowerCase().includes('дали в долг') || (r.c || '').toLowerCase().includes('мой долг')) {
+           dS[r.n].b = true;
+         }
          dS[r.n].i.push({ r: r.r, d: r.d, cat: 'Архив возврат', s: Math.abs(r.amt), c: r.c, t: 'inc' });
        }
     });
@@ -7035,7 +7041,7 @@ function renderA() {
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
               <div style="min-width: 0; flex: 1;">
                 <div style="font-size: 15px; font-weight: 900; color: #ffffff; word-break: break-word; margin-bottom: 4px;">
-                  🤝 ${n}
+                  🤝 ${escapeHtml(n)}
                 </div>
                 <div style="font-size: 11.5px; color: #cbd5e1; font-weight: bold;">📅 Посл. чек: ${lastDate}</div>
                 <div style="font-size: 10.5px; color: #94a3b8; margin-top: 2px;">Всего операций: <b>${v.i.length} шт.</b></div>
@@ -7506,7 +7512,11 @@ appData.archiveDebts.push(arch);
     const category = document.getElementById('splitAction').value;
     const comment = document.getElementById('splitComment').value.trim();
     const realSpend = document.getElementById('splitRealSpend').checked;
-    const date = toISOLocal(new Date());
+    let date = toISOLocal(new Date());
+    if (window.originalTxRowIdToReplace) {
+      const orig = appData.transactions.find(x => String(x.r) === String(window.originalTxRowIdToReplace));
+      if (orig && orig.fd) date = orig.fd;
+    }
     const rows = document.querySelectorAll('#splitRowsContainer > div');
 
     if (rows.length === 0) return alert("⚠️ Добавьте хотя бы одного участника!");
@@ -8066,6 +8076,7 @@ appData.archiveDebts.push(arch);
       }]).select();
 
       if (evError) throw evError;
+      if (!createdEvent || !createdEvent.length) throw new Error("Событие не создано (пустой ответ от базы данных).");
       const eventId = createdEvent[0].id;
 
       const txRows = itemsToSave.map(it => ({
@@ -9187,6 +9198,7 @@ appData.archiveDebts.push(arch);
         fd: orig.fd,
         d: orig.d,
         type: 'Расход',
+        no_budget: !!orig.no_budget,
         catE: it.cat,
         sumE: it.sum,
         accE: orig.accE,
@@ -10181,15 +10193,23 @@ appData.archiveDebts.push(arch);
         dayHtml += `<div style="color:var(--text-mute); font-size:11px; padding:8px 0; text-align:center;">В этот день трат не было</div>`;
       } else {
         dayTxs.forEach(t => {
-          dayHtml += `
-            <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:9px 12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:6px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '${t.r}')">
-              <div style="min-width:0; flex:1; padding-right:8px;">
-                <b style="color:var(--text-main); font-size:12px;">${t.catE}</b> <span style="color:var(--text-mute); font-size:10.5px;">(${t.accE})</span>
-                ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${t.comE}</div>` : ''}
-              </div>
-              <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-${t.sumE.toLocaleString()} ₽</b>
-            </div>`;
-        });
+        const isInc = t.type === 'Доход';
+        const catName = isInc ? t.catI : t.catE;
+        const accName = isInc ? t.accI : t.accE;
+        const comText = isInc ? t.comI : t.comE;
+        const sumVal = isInc ? t.sumI : t.sumE;
+        const sign = isInc ? '+' : '-';
+        const color = isInc ? '#10b981' : '#ef4444';
+
+        dayHtml += `
+          <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:9px 12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:6px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '${t.r}')">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <b style="color:var(--text-main); font-size:12px;">${escapeHtml(catName)}</b> <span style="color:var(--text-mute); font-size:10.5px;">(${escapeHtml(accName)})</span>
+              ${comText ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(comText)}</div>` : ''}
+            </div>
+            <b style="color:${color}; font-size:12px; white-space:nowrap;">${sign}${sumVal.toLocaleString()} ₽</b>
+          </div>`;
+      });
       }
       if (dayTxsWrap) dayTxsWrap.innerHTML = dayHtml;
       updatePeriodTopPurchases(dayTxs, `${catDrill.day} ${catDrill.monthName}`);
@@ -11249,8 +11269,8 @@ let totalOnCards = 0;
       });
 
       // Нерастраченная часть дохода, которая прямо сейчас лежит на карте
-      const stillOnCardы = Math.max(0, incSum - spentAfterInc);
-      unspentExcludedIncome += stillOnCard;
+      const stillOnCards = Math.max(0, incSum - spentAfterInc);
+      unspentExcludedIncome += stillOnCards;
     });
 
     if (manualPool !== null && manualPool !== '') {
@@ -12505,9 +12525,8 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
     const webhookUrl = localStorage.getItem('deploy_webhook_url') || document.getElementById('cfgDeployWebhook')?.value.trim();
 
     if (!repo || !token) {
-      alert("⚠️ Пожалуйста, откройте «Настройки репозитория и токена» ниже и укажите ваш GitHub репозиторий и токен (PAT)!");
-      const body = document.getElementById('deploySettingsBody');
-      if (body && body.style.display === 'none') toggleDeploySettingsAccordion();
+      alert("⚠️ Пожалуйста, укажите ваш GitHub репозиторий и токен (PAT) в окне настроек деплоя!");
+      openDeploySettingsModal();
       return;
     }
 
@@ -13176,7 +13195,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal" style="display: none;">
+<div id="streakHistoryModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -13187,10 +13206,10 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
     <!-- ФИКСИРОВАННЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (СТОИТ НАМЕРТВО, НЕ СКРОЛЛИТСЯ) -->
     <div style="background:var(--input-bg); border:1.5px solid var(--border); border-radius:12px; padding:3px; display:flex; gap:4px; margin-bottom:12px; flex-shrink:0; box-sizing:border-box;">
-      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: var(--btn-active); color: var(--btn-active-text);">
         ⚡ Текущий цикл
       </button>
-      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: transparent; color: var(--text-mute);">
         📅 Прошлый цикл
       </button>
     </div>
@@ -13202,7 +13221,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
