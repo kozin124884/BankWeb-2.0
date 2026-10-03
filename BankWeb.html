@@ -376,7 +376,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">69 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
         </div>
       </div>
 
@@ -397,7 +397,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -3020,7 +3020,82 @@
       <button type="button" onclick="setOnlyCardPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
       <button type="button" onclick="setAllPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;"></div>
+    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;">
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(842 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;283 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Тинькофф" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(2&nbsp;411 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Озон Банк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(13&nbsp;776 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;663 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;874 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      </div>
     <div style="border-top:1px solid var(--border); padding-top:10px;">
       <label style="font-size:10.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Или задать сумму вручную (₽):</label>
       <input type="number" id="apManualPoolInput" class="input-ui" placeholder="Оставьте пустым для авто-расчёта" style="margin:0; padding:9px;">
@@ -13118,7 +13193,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА ИСТОРИИ ДНЕЙ СТРИКА (КНОПКИ ВЫНЕСЕНЫ ИЗ СКРОЛЛА) -->
-<div id="streakHistoryModal" class="modal" style="display: none;">
+<div id="streakHistoryModal" class="modal" style="z-index: 4030; display: none;">
   <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
 
     <!-- Фиксированная шапка -->
@@ -13129,10 +13204,10 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
     <!-- ФИКСИРОВАННЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (СТОИТ НАМЕРТВО, НЕ СКРОЛЛИТСЯ) -->
     <div style="background:var(--input-bg); border:1.5px solid var(--border); border-radius:12px; padding:3px; display:flex; gap:4px; margin-bottom:12px; flex-shrink:0; box-sizing:border-box;">
-      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakCur" onclick="setStreakCycleView('cur')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: var(--btn-active); color: var(--btn-active-text);">
         ⚡ Текущий цикл
       </button>
-      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex:1; border:none; outline:none; padding:8px 6px; border-radius:9px; font-size:11.5px; font-weight:800; cursor:pointer; transition:none !important; transform:none !important; -webkit-tap-highlight-color:transparent;">
+      <button type="button" id="btnStreakPrev" onclick="setStreakCycleView('prev')" style="flex: 1 1 0%; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; outline: none; padding: 8px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: none !important; transform: none !important; background: transparent; color: var(--text-mute);">
         📅 Прошлый цикл
       </button>
     </div>
@@ -13144,7 +13219,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4040; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
