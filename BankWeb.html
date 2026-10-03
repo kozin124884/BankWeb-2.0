@@ -5729,7 +5729,7 @@ async function recalculateCurrentAccountBalance() {
     periodTxs.sort((a, b) => b.fullVal - a.fullVal);
     const top3 = periodTxs.slice(0, 3);
     let top3Html = top3.map(x =>
-      `«${x.catE}» — <b>${x.sumE.toLocaleString()} ₽</b>${x.points > 0 ? ` (+${x.points} бал.)` : ''} <span style="color:var(--text-mute); font-size:10px;">(${x.d}${x.comE ? `, ${x.comE}` : ''})</span>`
+      `«${escapeHtml(x.catE)}» — <b>${x.sumE.toLocaleString()} ₽</b>${x.points > 0 ? ` (+${x.points} бал.)` : ''} <span style="color:var(--text-mute); font-size:10px;">(${x.d}${x.comE ? `, ${escapeHtml(x.comE)}` : ''})</span>`
     ).join('<br>• ');
 
     const sortedCats = Object.entries(catSums).sort((a, b) => b[1] - a[1]);
@@ -6793,8 +6793,9 @@ function renderA() {
     // 2. Аккуратная корректировка баланса БЕЗ задвоений
     const oldAcc = (tx.type === 'Расход' ? tx.accE : (tx.type === 'Доход' ? tx.accI : tx.accF)) || '';
     const oldSum = parseFloat(tx.type === 'Расход' ? tx.sumE : (tx.type === 'Доход' ? tx.sumI : tx.sumTr)) || 0;
+    const isTransferType = (type === 'Перевод' || type === 'Между своими');
 
-    if (type === 'Перевод') {
+    if (isTransferType) {
       // Для перевода откатываем старые балансы и накатываем новые (accT не меняется в UI)
       updateAccBal(tx.accF, oldSum);
       updateAccBal(tx.accT, -oldSum);
@@ -6829,7 +6830,7 @@ function renderA() {
       tx.catE = cat; tx.sumE = sum; tx.comE = c; tx.accE = newAcc;
     } else if (type === 'Доход') {
       tx.catI = cat; tx.sumI = sum; tx.comI = c; tx.accI = newAcc;
-    } else if (type === 'Перевод') {
+    } else if (isTransferType) {
       tx.accF = newAcc; tx.sumTr = sum;
     }
     haptic(15);
@@ -7531,25 +7532,40 @@ function renderA() {
         const dFmt = date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0];
         participants.forEach(p => {
            const finalComment = comment ? `${category} — ${comment}` : category;
-           const arch = { r: genLocalId('local_arch'), fd: date, d: dFmt, n: p.name, amt: p.amt, c: finalComment };
+           const arch = { 
+             r: genLocalId('local_arch'), 
+             fd: date, 
+             d: dFmt, 
+             n: p.name, 
+             amt: p.amt, 
+             c: finalComment,
+             splitGroupId: splitGroupId 
+           };
            appData.archiveDebts.push(arch);
            pushToLocalQueue('archive_debt', arch.r, arch);
         });
     }
 
     if (window.originalTxRowIdToReplace) {
-        const txToDel = appData.transactions.find(x => String(x.r) === String(window.originalTxRowIdToReplace));
+        const origId = window.originalTxRowIdToReplace;
+        const txToDel = appData.transactions.find(x => String(x.r) === String(origId));
         if (txToDel) { updateAccBal(txToDel.accE, txToDel.sumE); }
-        appData.transactions = appData.transactions.filter(x => String(x.r) !== String(window.originalTxRowIdToReplace));
+        appData.transactions = appData.transactions.filter(x => String(x.r) !== String(origId));
+
+        let existingAddIdx = localQueue.findIndex(q => String(q.r) === String(origId) && q.action === 'add');
+        const wasLocal = existingAddIdx > -1;
+        if (wasLocal) {
+          localQueue.splice(existingAddIdx, 1);
+        }
 
         const parentSnapshot = txToDel ? JSON.parse(JSON.stringify(txToDel)) : {};
         parentSnapshot.splitGroupId = splitGroupId;
         localQueue.push({
           action: 'split_parent',
-          r: window.originalTxRowIdToReplace,
+          r: origId,
           item: parentSnapshot,
           splitGroupId: splitGroupId,
-          wasLocalAdd: false
+          wasLocalAdd: wasLocal
         });
         saveQueueToStorage();
     }
@@ -7595,9 +7611,10 @@ function renderA() {
       const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
       bulkParsed.forEach((_, i) => {
           const name = document.getElementById(`bN_${i}`).value;
-          const amount = document.getElementById(`bA_${i}`).value;
+          const numAmt = parseFloat(document.getElementById(`bA_${i}`).value) || 0;
           const comment = document.getElementById(`bC_${i}`).value;
-          const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: parseFloat(amount)||0, c: comment };
+          const finalComment = numAmt < 0 ? `Мой долг | ${comment}` : comment;
+          const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: numAmt, c: finalComment };
           appData.archiveDebts.push(arch);
           pushToLocalQueue('archive_debt', arch.r, arch);
       });
@@ -8847,7 +8864,7 @@ function renderA() {
             itemsHtml += `
               <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--border); font-size:12px; opacity:${isMuted ? '0.45' : '1'};">
                 <div style="flex:1; cursor:pointer;" onclick="clI(event, '${it.r}')">
-                  <span>📅 <b>${it.d}</b> | <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:11px; margin-top:2px; ${isMuted ? 'text-decoration:line-through;' : ''}">${it.com || 'Без заметок'}</div></span>
+                  <span>📅 <b>${it.d}</b> | <div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:11px; margin-top:2px; ${isMuted ? 'text-decoration:line-through;' : ''}">${escapeHtml(it.com || 'Без заметок')}</div></span>
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <b style="color:${isMuted ? 'var(--text-mute)' : 'var(--text-main)'}; ${isMuted ? 'text-decoration:line-through;' : ''}">${it.s.toLocaleString()} ₽</b>
@@ -9204,9 +9221,11 @@ function renderA() {
       updateAccBal(tr.accE, tr.sumE);
     });
 
+    // Удаляем связанные виртуальные архивные долги, если сплит был виртуальным
+    appData.archiveDebts = appData.archiveDebts.filter(x => x.splitGroupId !== splitGroupId);
+
     // 3. Удаляем всю связку из очереди
-    localQueue = localQueue.filter(q => q.splitGroupId !== splitGroupId && !(q.item && q.item.splitGroupId === splitGroupId));
-    saveQueueToStorage();
+    localQueue = localQueue.filter(q => q.splitGroupId !== splitGroupId && !(q.item && q.item.splitGroupId === splitGroupId));    saveQueueToStorage();
     updateSyncBar();
     applyDatesLocally();
     renderBankCards();
@@ -10688,7 +10707,7 @@ let totalOnCards = 0;
 
     const baseDailyLimit = Math.round(cleanPool / effectiveDaysDivisor);
 
-    return { cleanPool, daysLeft, baseDailyLimit, lunchBal, cafeBal };
+    return { cleanPool, daysLeft, effectiveDaysDivisor, baseDailyLimit, lunchBal, cafeBal };
   }
 
   function openSimAccountsModal() {
@@ -10929,7 +10948,8 @@ let totalOnCards = 0;
     const remPool = m.cleanPool - totalPlannedSum;
     const isDeficit = remPool < 0;
     const deficitAmt = Math.abs(remPool);
-    const newDaily = isDeficit ? 0 : Math.round(remPool / m.daysLeft);
+    const divisor = m.effectiveDaysDivisor || (m.daysLeft <= 1 ? 2 : m.daysLeft);
+    const newDaily = isDeficit ? 0 : Math.round(remPool / divisor);
 
     const v1TitleColor = isDeficit ? '#ef4444' : '#10b981';
     const v1BadgeText = isDeficit ? `Не хватает ${deficitAmt.toLocaleString()}&nbsp;₽` : `Хватает с головой`;
@@ -11359,8 +11379,8 @@ let totalOnCards = 0;
         h += `
           <div class="tx-row" onclick="clI(event, '${t.r}')" style="padding:5px 8px; margin-bottom:3px; background:var(--input-bg); border-radius:6px; border:1px solid var(--border); font-size:10.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:6px;">
-              <b>${t.d}</b> — <span>${t.catE}</span>
-              ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">${t.comE}</div>` : ''}
+              <b>${t.d}</b> — <span>${escapeHtml(t.catE)}</span>
+              ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-size:9.5px; font-style:italic;">${escapeHtml(t.comE)}</div>` : ''}
             </div>
             <b style="color:#ef4444; flex-shrink:0;">${t.sumE.toLocaleString()}&nbsp;₽</b>
           </div>`;
@@ -12169,7 +12189,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
         catsHtml += `<div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">📊 Категории дня:</div><div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">`;
         catEntries.forEach(([cat, sum]) => {
           const pct = d.spent > 0 ? Math.round((sum / d.spent) * 100) : 0;
-          catsHtml += `<span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>${cat}</b>: <span>${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(${pct}%)</span></span>`;
+          catsHtml += `<span style="background:var(--input-bg); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-size:10.5px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><b>${escapeHtml(cat)}</b>: <span>${sum.toLocaleString()} ₽</span> <span style="color:var(--text-mute); font-size:9.5px;">(${pct}%)</span></span>`;
         });
         catsHtml += `</div>`;
       }
@@ -12181,8 +12201,8 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
           txsHtml += `
             <div class="tx-row" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;" onclick="clI(event, '${t.r}')">
               <div style="min-width:0; flex:1; padding-right:8px;">
-                <b style="color:var(--text-main); font-size:12px;">${t.catE}</b>
-                ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${t.comE}</div>` : ''}
+                <b style="color:var(--text-main); font-size:12px;">${escapeHtml(t.catE)}</b>
+                ${t.comE ? `<div class="pre-wrap" style="color:var(--text-mute); font-style:italic; font-size:10px; margin-top:2px;">${escapeHtml(t.comE)}</div>` : ''}
               </div>
               <b style="color:#ef4444; font-size:12px; white-space:nowrap;">-${t.sumE.toLocaleString()} ₽</b>
             </div>`;
