@@ -3539,9 +3539,9 @@
           sumI: t.type === 'Доход' ? parseFloat(t.amount) : 0,
           accI: t.type === 'Доход' ? (t.account_from || '') : '',
           comI: t.type === 'Доход' ? (t.comment || '') : '',
-          accF: t.type === 'Перевод' ? (t.account_from || '') : '',
-          accT: t.type === 'Перевод' ? (t.account_to || '') : '',
-          sumTr: t.type === 'Перевод' ? parseFloat(t.amount) : 0,
+          accF: (t.type === 'Перевод' || t.type === 'Между своими') ? (t.account_from || '') : '',
+          accT: (t.type === 'Перевод' || t.type === 'Между своими') ? (t.account_to || '') : '',
+          sumTr: (t.type === 'Перевод' || t.type === 'Между своими') ? parseFloat(t.amount) : 0,
           event_id: t.event_id || null,
           debtor_name: t.debtor_name || null,
           no_budget: !!t.no_budget
@@ -4983,7 +4983,7 @@ async function recalculateCurrentAccountBalance() {
     let d = q.newVal || q.oldVal;
     if(q.action === 'move_sub') d = `${q.oldVal} ➔ ${q.group}`;
     if(q.action.includes('rename')) d = `${q.oldVal} ➔ ${q.newVal}`;
-    return `${map[q.action]}: ${d} (${q.type})`;
+    return `${map[q.action]}: ${escapeHtml(d)} (${escapeHtml(q.type)})`;
   }
 
   function applyCatLocal(action, type, oldVal, newVal, group) {
@@ -5206,12 +5206,21 @@ async function recalculateCurrentAccountBalance() {
         }
       }
     } else if (pt === 'single') {
-      let d = new Date(document.getElementById(prefix + 'Single').value);
-      s = new Date(d);
-      e = new Date(d);
+      const val = document.getElementById(prefix + 'Single').value;
+      if (val) {
+        const [y, m, d] = val.split('-').map(Number);
+        s = new Date(y, m - 1, d, 0, 0, 0);
+        e = new Date(y, m - 1, d, 23, 59, 59, 999);
+      }
     } else if (pt === 'custom') {
-      s = new Date(document.getElementById(prefix + 'Start').value);
-      e = new Date(document.getElementById(prefix + 'End').value);
+      const vStart = document.getElementById(prefix + 'Start').value;
+      const vEnd = document.getElementById(prefix + 'End').value;
+      if (vStart && vEnd) {
+        const [y1, m1, d1] = vStart.split('-').map(Number);
+        const [y2, m2, d2] = vEnd.split('-').map(Number);
+        s = new Date(y1, m1 - 1, d1, 0, 0, 0);
+        e = new Date(y2, m2 - 1, d2, 23, 59, 59, 999);
+      }
     } else if (pt === 'all') {
       s = new Date(2026, 1, 1, 0, 0, 0);
       e = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
@@ -6336,7 +6345,7 @@ function renderA() {
         subsHtml += `
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
-              <span style="color:var(--text-main); font-weight:600;">${sName}</span>
+              <span style="color:var(--text-main); font-weight:600;">${escapeHtml(sName)}</span>
               <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(${sStat.count}&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
@@ -6360,7 +6369,7 @@ function renderA() {
               </div>
               <span style="font-size:13px;">${isProject ? '🎯' : '📂'}</span>
               <div style="min-width:0; flex:1;">
-                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">${grpName}</b>
+                <b style="font-size:12px; color:var(--text-main); word-break:break-word;">${escapeHtml(grpName)}</b>
                 <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
                   (<b>${gStat.count}&nbsp;чек.</b> • ${selectedCount}/${subs.length})
                 </span>
@@ -6887,40 +6896,6 @@ function renderA() {
   }
 
   // ==== ДОЛГИ УПРАВЛЕНИЕ ====
-  function getBoundsFromPrefix(prefix) {
-      const pt = document.getElementById(prefix + 'PeriodType').value;
-      let s, e;
-      if(pt === 'month') {
-        let [yy, mm] = document.getElementById(prefix + 'Month').value.split('-');
-        s = new Date(yy, mm - 1, 1);
-        e = new Date(yy, mm, 0);
-      } else if(pt === 'salary') {
-        let [yy, mm] = document.getElementById(prefix + 'Month').value.split('-');
-        s = new Date(yy, mm - 1, 16);
-        e = new Date(yy, mm, 15);
-      } else if(pt === 'year') {
-        let yy = document.getElementById(prefix + 'Year').value || new Date().getFullYear();
-        s = new Date(yy, 0, 1);
-        e = new Date(yy, 11, 31);
-      } else if(pt === 'single') {
-        let d = new Date(document.getElementById(prefix + 'Single').value);
-        s = new Date(d);
-        e = new Date(d);
-      } else if(pt === 'custom') {
-        s = new Date(document.getElementById(prefix + 'Start').value);
-        e = new Date(document.getElementById(prefix + 'End').value);
-      } else {
-        return null;
-      }
-
-      if (s && e && !isNaN(s)) {
-        s.setHours(0,0,0,0);
-        e.setHours(23,59,59,999);
-        return { s: toISOLocal(s), e: toISOLocal(e) };
-      }
-      return null;
-  }
-
   function updateDebtsPeriodUI() {
     const pt = document.getElementById('dPeriodType').value;
     document.getElementById('dMonthWrap').style.display = (pt === 'month' || pt === 'salary') ? 'block' : 'none';
@@ -6932,9 +6907,10 @@ function renderA() {
 
   function renderDebts() {
     if(!currentStats) return;
-    let bounds = getBoundsFromPrefix('d');
-    let dStart = bounds ? bounds.s : null;
-    let dEnd = bounds ? bounds.e : null;
+    const pt = document.getElementById('dPeriodType')?.value || 'all';
+    const bounds = parsePeriodBounds(pt, 'd');
+    const dStart = bounds.start || null;
+    const dEnd = bounds.end || null;
 
     let dS = {};
     appData.transactions.forEach(r => {
@@ -6961,9 +6937,7 @@ function renderA() {
     });
 
     appData.archiveDebts.forEach(r => {
-       let fdRaw = r.d;
-       if (fdRaw && fdRaw.includes('.')) fdRaw = `${fdRaw.split('.')[2]}-${fdRaw.split('.')[1]}-${fdRaw.split('.')[0]}`;
-       if (dStart && dEnd && (fdRaw < dStart || fdRaw > dEnd)) return;
+       if (dStart && dEnd && (r.fd < dStart || r.fd > dEnd)) return;
 
        if(!dS[r.n]) dS[r.n] = { s: 0, r: 0, b: false, i: [] };
        if(r.amt > 0) {
@@ -7509,8 +7483,10 @@ function renderA() {
     if (hasError) return alert("⚠️ Заполните имена всех участников и их суммы (>0)!");
     const diff = Math.abs(Math.round(shareSum) - Math.round(total));
     if (diff > 0) {
-      if (!confirm(`Сумма долей участников (${Math.round(shareSum).toLocaleString()} ₽) не совпадает с общей суммой (${Math.round(total).toLocaleString()} ₽).\nРазница: ${diff.toLocaleString()} ₽. Всё равно продолжить?`)) return;
+      if (!confirm(`Сумма долей участников (${Math.round(shareSum).toLocaleString()} ₽) не совпадает с общей суммой (${Math.round(total).toLocaleString()} ₽).\nРазница: ${diff.toLocaleString()} ₽.\n\nПродолжить сохранение с корректировкой баланса карты на разницу?`)) return;
     }
+
+    const splitGroupId = window.originalTxRowIdToReplace ? ('split_grp_' + Date.now()) : null;
 
     if (realSpend) {
         participants.forEach(p => {
@@ -7518,7 +7494,9 @@ function renderA() {
              r: genLocalId('local_split'), fd: date, d: date.split('-')[2] + '.' + date.split('-')[1] + '.' + date.split('-')[0],
              type: 'Расход', catE: category, sumE: p.amt, accE: account, comE: comment,
              catI: '', sumI: 0, accI: '', comI: '', accF: '', accT: '', sumTr: 0,
-             debtor_name: p.name
+             debtor_name: p.name,
+             splitGroupId: splitGroupId,
+             isSplitPart: !!splitGroupId
            };
            appData.transactions.push(tr);
            pushToLocalQueue('add', tr.r, tr);
@@ -7541,7 +7519,9 @@ function renderA() {
             accE: account,
             comE: (comment ? comment + ' ' : '') + '(моя доля)',
             catI: '', sumI: 0, accI: '', comI: '', accF: '', accT: '', sumTr: 0,
-            debtor_name: null
+            debtor_name: null,
+            splitGroupId: splitGroupId,
+            isSplitPart: !!splitGroupId
           };
           appData.transactions.push(myTr);
           pushToLocalQueue('add', myTr.r, myTr);
@@ -7561,7 +7541,17 @@ function renderA() {
         const txToDel = appData.transactions.find(x => String(x.r) === String(window.originalTxRowIdToReplace));
         if (txToDel) { updateAccBal(txToDel.accE, txToDel.sumE); }
         appData.transactions = appData.transactions.filter(x => String(x.r) !== String(window.originalTxRowIdToReplace));
-        pushToLocalQueue('delete', window.originalTxRowIdToReplace, txToDel ? { ...txToDel } : null);
+
+        const parentSnapshot = txToDel ? JSON.parse(JSON.stringify(txToDel)) : {};
+        parentSnapshot.splitGroupId = splitGroupId;
+        localQueue.push({
+          action: 'split_parent',
+          r: window.originalTxRowIdToReplace,
+          item: parentSnapshot,
+          splitGroupId: splitGroupId,
+          wasLocalAdd: false
+        });
+        saveQueueToStorage();
     }
 
     closeModal('debtCenterModal');
@@ -8643,7 +8633,7 @@ function renderA() {
 
         chips += `
           <span onclick="toggleTravelTxExclusion('${txId}', event)" style="cursor:pointer; background:#fef3c7; color:#b45309; border:1px solid #fcd34d; padding:3px 8px; border-radius:6px; font-size:10.5px; font-weight:bold; display:inline-flex; align-items:center; gap:4px;" title="Вернуть чек в расчет">
-            ${fullLabel} ✕
+            ${escapeHtml(fullLabel)} ✕
           </span>`;
       });
 
@@ -8870,7 +8860,7 @@ function renderA() {
           catsHtml += `
             <div style="margin-bottom:8px; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
               <div class="click-header" style="background:var(--input-bg); padding:10px;" onclick="tC(event, this)">
-                <b>${catName}</b>
+                <b>${escapeHtml(catName)}</b>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <b style="color:var(--text-main);">${data.sum.toLocaleString()} ₽</b>
                   <span style="font-size:10px; color:var(--text-mute);">▼</span>
@@ -10632,7 +10622,10 @@ function renderA() {
       cycleEnd = new Date(y, m - 1, d, 23, 59, 59, 999);
     }
 
-    const daysLeft = Math.max(1, Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000));
+    const rawDays = Math.ceil((cycleEnd.getTime() - now.getTime()) / 86400000);
+    const isOverdueCycle = rawDays <= 0;
+    const daysLeft = isOverdueCycle ? 1 : rawDays;
+    const effectiveDaysDivisor = isOverdueCycle ? 2 : Math.max(1, daysLeft);
 
     // Свободный пул для симулятора (по выбранным картам)
     let cleanPool = 0;
@@ -10693,7 +10686,7 @@ let totalOnCards = 0;
     const cafeAcc = (appData.accounts || []).find(a => (a.name || '').toLowerCase().includes('кафе'));
     const cafeBal = cafeAcc ? Math.max(0, parseFloat(cafeAcc.balance) || 0) : 0;
 
-    const baseDailyLimit = daysLeft > 0 ? Math.round(cleanPool / daysLeft) : 0;
+    const baseDailyLimit = Math.round(cleanPool / effectiveDaysDivisor);
 
     return { cleanPool, daysLeft, baseDailyLimit, lunchBal, cafeBal };
   }
@@ -11745,7 +11738,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
     const delta = Math.round(periodInflows - periodOutflows);
     const endBal = balances[balances.length - 1] !== undefined ? balances[balances.length - 1] : currentCapTotal;
     const startBal = endBal - delta;
-    const pct = startBal > 0 ? ((delta / startBal) * 100).toFixed(1) : 0;
+    const pct = startBal > 0 ? ((delta / startBal) * 100).toFixed(1) : (delta > 0 ? '>100' : '0');
     const paceDay = Math.round(delta / numDays);
 
     const elTotal = document.getElementById('capMetricTotal');
@@ -13182,7 +13175,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 70px;" value=""></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin:0; padding:8px 10px; font-size:12px; font-family:inherit; resize:none; line-height:1.4;" value=""></textarea>
       </div>
     </div>
 
