@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -466,7 +466,7 @@
             </div>
 
             <div style="height: 140px; position: relative; width: 100%;">
-              <canvas id="capitalOnlyChartCanvas" style="box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+              <canvas id="capitalOnlyChartCanvas" height="0" style="display: block; box-sizing: border-box; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0"></canvas>
             </div>
             <!-- Детали операции при клике на вершину капитала (с кликабельными строчками) -->
             <div id="capitalDayDetailsBox" style="display:none; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:11px; margin-top:4px; box-sizing:border-box;"></div>
@@ -2320,7 +2320,7 @@
   </div>
 
   <!-- ЭКРАН 3: ДОЛГИ -->
-  <div id="viewDebts" class="app-view active">
+  <div id="viewDebts" class="app-view">
     <div style="display: flex; justify-content: space-between; align-items:center; margin-bottom: 12px;">
       <h3 style="font-weight:900; margin:0; font-size:16px;">🤝 Долги и расчёты</h3>
       <button onclick="document.getElementById('debtCenterModal').style.display='flex'; switchTabDebt('new');" style="background:#10b981; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 900; cursor:pointer; font-size:11px;">⚙️ Управление</button>
@@ -2501,7 +2501,7 @@
         </div>
 
         <div style="display:flex; gap:6px;">
-          <select id="fAcc" class="input-ui" style="flex:1; cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="На квартиру">На квартиру</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+          <select id="fAcc" class="input-ui" style="flex:1; cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
           <button type="button" onclick="openAccountsOrderModal()" style="background:var(--border); color:var(--text-main); border-radius:12px; font-weight:900; padding:0 12px; margin-bottom:12px; border:none; cursor:pointer;" title="Настроить порядок счетов в списках">↕️</button>
           <button type="button" onclick="manageAccounts('add_acc')" style="background:#0f172a; color:white; border-radius:12px; font-weight:900; padding:0 14px; margin-bottom:12px; border:none; cursor:pointer;" title="Создать новый счёт">➕</button>
         </div>
@@ -2512,9 +2512,9 @@
       <div id="formTransfer" style="display:none;">
         <input type="number" id="tSum" class="input-ui" placeholder="Сумма (₽) *обязательно">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">ОТКУДА</label>
-        <select id="tFrom" class="input-ui" style="cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="На квартиру">На квартиру</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+        <select id="tFrom" class="input-ui" style="cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КУДА</label>
-        <select id="tTo" class="input-ui" style="cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="На квартиру">На квартиру</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+        <select id="tTo" class="input-ui" style="cursor:pointer;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
       </div>
 
       <button type="button" onclick="queueTransaction()" style="width:100%; background:#10b981; color:white; padding:16px; border-radius:12px; font-weight:900; border:none; margin-top:10px; cursor:pointer;">В очередь ⚡</button>
@@ -2529,7 +2529,7 @@
 </div><!-- Конец max-width контейнера -->
 
 <div id="syncBar" class="sync-bar" onclick="openGlobalQueue()" style="display: none;">
-    <span id="syncText">В очереди: 1 шт.</span>
+    <span id="syncText">В очереди: 0 шт.</span>
     <span id="syncBtnText" style="background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px;">👀 Открыть</span>
 </div>
 
@@ -2543,7 +2543,7 @@
     <div id="queueListRender" style="margin-bottom: 16px;"></div>
     <div style="display:flex; gap:8px;">
       <button type="button" onclick="clearEntireQueue()" style="flex:1; background:var(--input-bg); border:1.5px solid #ef4444; color:#ef4444; padding:14px; border-radius:12px; font-weight:900; cursor:pointer; font-size:11.5px; transition:0.2s;">🗑️ Очистить всё</button>
-      <button type="button" id="btnUploadQueue" onclick="uploadQueue()" style="flex:2; background:#10b981; color:white; padding:14px; border-radius:12px; font-weight:900; border:none; cursor:pointer; font-size:12.5px; transition:0.3s;">🚀 Отправить на сервер</button>
+      <button type="button" id="btnUploadQueue" onclick="uploadQueue()" style="flex:2; background:#10b981; color:white; padding:14px; border-radius:12px; font-weight:900; border:none; cursor:pointer; font-size:12.5px; transition:0.3s;">🚀 Отправить в базу</button>
     </div>
   </div>
 </div>
@@ -2628,7 +2628,7 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">Сводка</h2>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
               <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
@@ -2671,7 +2671,7 @@
     </div>
 
     <!-- ЗАПИСЬ -->
-    <div id="contentNew" style="display: block;">
+    <div id="contentNew">
       <select id="newAction" class="input-ui" style="cursor:pointer;">
         <option value="Кому-то в долг (Расход)">Я дал в долг</option>
         <option value="Что-то кому-то купил в долг (Расход)">Я купил в долг</option>
@@ -2681,19 +2681,19 @@
       <input type="date" id="newDate" class="input-ui input-date">
 
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ДОЛЖНИК:</label>
-      <select id="newNameSelect" class="input-ui" onchange="toggleDebtManagerNewDebtor(this.value)"><option value="">-- Выберите должника --</option><option value="Ника">Ника</option><option value="Тина">Тина</option><option value="Геля">Геля</option><option value="Ручка">Ручка</option><option value="Алина">Алина</option><option value="Саня Лерин">Саня Лерин</option><option value="Лера">Лера</option><option value="Егор">Егор</option><option value="Артем">Артем</option><option value="Олеся">Олеся</option><option value="Женя">Женя</option><option value="Папа">Папа</option><option value="Лиза">Лиза</option><option value="Дима">Дима</option><option value="Дана">Дана</option><option value="Алина-староста">Алина-староста</option><option value="Догонова">Догонова</option><option value="Маша рязанская Лизина">Маша рязанская Лизина</option><option value="__NEW__">+ Добавить нового...</option></select>
-      <input type="text" id="newDebtorNameInput" class="input-ui" placeholder="Имя нового должника..." style="display: block; margin-top: 8px;">
+      <select id="newNameSelect" class="input-ui" onchange="toggleDebtManagerNewDebtor(this.value)"></select>
+      <input type="text" id="newDebtorNameInput" class="input-ui" placeholder="Имя нового должника..." style="display:none; margin-top:8px;">
 
-      <textarea id="newDebtComment" class="input-ui" placeholder="За что долг? (комментарий)..." style="margin-top: 8px; height: 47px;" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
+      <textarea id="newDebtComment" class="input-ui" placeholder="За что долг? (комментарий)..." style="margin-top:8px;" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
 
       <div style="display:flex; gap:8px; margin-top:8px;">
         <div style="flex:1;">
           <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">СУММА (₽):</label>
           <input type="number" id="newSum" class="input-ui" placeholder="Сумма" style="margin:0;">
         </div>
-        <div style="flex: 1 1 0%; display: none;" id="newAccFieldContainer">
+        <div style="flex:1;" id="newAccFieldContainer">
           <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">СЧЕТ СПИСАНИЯ:</label>
-          <select id="newAcc" class="input-ui" style="margin:0;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+          <select id="newAcc" class="input-ui" style="margin:0;"></select>
         </div>
       </div>
 
@@ -2782,46 +2782,46 @@
       <div id="tableRowsList" style="max-height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:12px; padding:8px; margin-top:8px;"></div>
     </div>
 
-    <div id="contentOld" style="display: none;">
-      <textarea id="bulkText" class="input-ui" rows="5" placeholder="Ника 1500" oninput="adjustTextareaHeight(this)" style="height: 121px;"></textarea>
+    <div id="contentOld" style="display:none;">
+      <textarea id="bulkText" class="input-ui" rows="5" placeholder="Ника 1500" oninput="adjustTextareaHeight(this)"></textarea>
       <button onclick="parseBulkData()" style="width:100%; background:#3b82f6; color:white; padding:10px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;">Распознать</button>
-      <div id="bulkResults" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"><div style="display:flex; gap:4px; margin-bottom:4px;"><input class="input-ui" style="padding:4px; margin:0; width:35%;" value="Саня Лерин" id="bN_0"><input class="input-ui" style="padding:4px; margin:0; width:25%; font-weight:bold;" value="500" id="bA_0"><input class="input-ui" style="padding:4px; margin:0; flex:1;" value="" id="bC_0"></div><div style="display:flex; gap:4px; margin-bottom:4px;"><input class="input-ui" style="padding:4px; margin:0; width:35%;" value="Саня Лерин" id="bN_1"><input class="input-ui" style="padding:4px; margin:0; width:25%; font-weight:bold;" value="1500" id="bA_1"><input class="input-ui" style="padding:4px; margin:0; flex:1;" value="" id="bC_1"></div><div style="display:flex; gap:4px; margin-bottom:4px;"><input class="input-ui" style="padding:4px; margin:0; width:35%;" value="Саня Лерин" id="bN_2"><input class="input-ui" style="padding:4px; margin:0; width:25%; font-weight:bold;" value="200" id="bA_2"><input class="input-ui" style="padding:4px; margin:0; flex:1;" value="" id="bC_2"></div><div style="display:flex; gap:4px; margin-bottom:4px;"><input class="input-ui" style="padding:4px; margin:0; width:35%;" value="Саня Лерин" id="bN_3"><input class="input-ui" style="padding:4px; margin:0; width:25%; font-weight:bold;" value="100" id="bA_3"><input class="input-ui" style="padding:4px; margin:0; flex:1;" value="" id="bC_3"></div><div style="display:flex; gap:4px; margin-bottom:4px;"><input class="input-ui" style="padding:4px; margin:0; width:35%;" value="Андрей" id="bN_4"><input class="input-ui" style="padding:4px; margin:0; width:25%; font-weight:bold;" value="200" id="bA_4"><input class="input-ui" style="padding:4px; margin:0; flex:1;" value="" id="bC_4"></div><button onclick="saveBulk()" style="width:100%; background:#10b981; color:white; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:8px;">В очередь ⚡</button></div>
+      <div id="bulkResults" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
     </div>
   </div>
 </div>
 
 <!-- ОКНО ИЗМЕНЕНИЯ ТРАНЗАКЦИИ (ПОВЕРХ ВСЕГО) -->
-<div id="editModal" class="modal" style="z-index: 4090; display: none;">
+<div id="editModal" class="modal" style="z-index: 3100; display: none;">
   <div class="modal-content">
     <div class="modal-header-sticky">
         <h3 style="font-weight:900; margin:0;">Изменить</h3>
         <button class="close-btn" onclick="closeModal('editModal')">✕</button>
     </div>
-    <input type="hidden" id="editRow" value="1927">
-    <input type="hidden" id="editType" value="Расход">
+    <input type="hidden" id="editRow">
+    <input type="hidden" id="editType">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">ДАТА</label>
     <input type="date" id="editDate" class="input-ui input-date">
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КАТЕГОРИЯ</label>
     <input type="text" id="editCat" class="input-ui" list="editCatDataList" placeholder="Начните вводить...">
-    <datalist id="editCatDataList"><option value="Бабушка Аптека"></option><option value="Бабушка Магазины"></option><option value="Бабушка другое"></option><option value="Обед/столовая на работе"></option><option value="Сборы денег на работе"></option><option value="Еда/что-то на работу для себя"></option><option value="Кафе чисто перекусить"></option><option value="Кофейни"></option><option value="Фастфуд"></option><option value="Кафе в честь чего-то"></option><option value="Перекус/джанкфуд продукты вне дома с ручкой"></option><option value="Доставка"></option><option value="КБ"></option><option value="Пятерочка"></option><option value="Чижик"></option><option value="Магнит"></option><option value="Дикси"></option><option value="Перекресток"></option><option value="Спар"></option><option value="Вкусвилл"></option><option value="Ароматный мир/винлаб"></option><option value="Другие продуктовые магазины"></option><option value="Вода в еще"></option><option value="-"></option><option value="еще"></option><option value="Фикс прайс"></option><option value="Маркеты"></option><option value="Одежда"></option><option value="Техника"></option><option value="Мебель"></option><option value="Товары для дома онлайн"></option><option value="Хозтовары из других магазинов"></option><option value="Товары для себя/аксессуары"></option><option value="Алкоголь бары пабы"></option><option value="Курение"></option><option value="Алкоголь из магазина домой"></option><option value="Алкоголь из магазина вне дома"></option><option value="Сотовая связь"></option><option value="Интернет домашний"></option><option value="Аренда квартиры"></option><option value="Онлайн - Подписки"></option><option value="Консьержка"></option><option value="ЖКХ - вода"></option><option value="ЖКХ - свет"></option><option value="Парковка"></option><option value="Запчасти на машину"></option><option value="Ремонт машины"></option><option value="Мойка машины"></option><option value="Штрафы"></option><option value="ОСАГО"></option><option value="Бензин"></option><option value="Не запчасти"></option><option value="Вода в машину"></option><option value="Такси"></option><option value="Каршеринг"></option><option value="Самокаты"></option><option value="Транспорт городской общественный"></option><option value="Ручка продукты"></option><option value="Ручка красота"></option><option value="Подарки ручке"></option><option value="Цветы ручке"></option><option value="Ручке деньги"></option><option value="Пленка проявка"></option><option value="Ручка одежда"></option><option value="Ручка другое"></option><option value="Аптека"></option><option value="Здоровье (обследования итд)"></option><option value="Стрижка"></option><option value="Интим"></option><option value="Лекарства"></option><option value="Кино"></option><option value="Театр"></option><option value="Окультуривание (выставки и тд) БИЛЕТЫ"></option><option value="Открытки/сувениры и тд"></option><option value="Иной досуг"></option><option value="Музеи"></option><option value="Иные развлечения"></option><option value="Фотобудка и тд"></option><option value="Подарки"></option><option value="Не сошёлся дебет кредит"></option><option value="Что-то кому-то купил не в долг"></option><option value="Что-то кому-то купил в долг"></option><option value="Кому-то в долг"></option><option value="Кому-то не в долг"></option><option value="Вернул долг"></option><option value="Еда в путешествиях"></option><option value="Досуг и развлечения в путешествиях"></option><option value="Продукты в путешествиях"></option><option value="Иные траты в путешествиях"></option><option value="Сувениры и тд в путешествиях"></option><option value="Бензин в путешествиях"></option><option value="Жилье в путешествиях"></option><option value="Транспорт туда/обратно"></option><option value="Перемещение по локации (такси/автобусы/тд)"></option><option value="Туры"></option><option value="Доставка еды"></option><option value="Домой перекус/готовая еда/джанкфуд из магазина"></option><option value="Еда для себя и гостей дома"></option><option value="Продукты дача"></option><option value="Алкоголь дача"></option><option value="Хозтовары дача"></option><option value="Мясо дача"></option><option value="Фастфуд/кафешки/рестораны/шаурма без ручки"></option><option value="В магазине еда/джанкфуд вне дома без ручки"></option></datalist>
+    <datalist id="editCatDataList"></datalist>
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">СУММА</label>
     <input type="number" id="editSum" class="input-ui">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">СЧЁТ ОПЕРАЦИИ</label>
-    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+    <select id="editAcc" class="input-ui" style="cursor:pointer; margin-bottom:8px;"></select>
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute); margin-top:8px; display:block;">ОПЛАЧЕНО БАЛЛАМИ / СКИДКА (₽)</label>
     <input type="number" id="editPointsSum" class="input-ui" placeholder="0 ₽ (не списывается с карты)">
 
     <label style="font-size:11px; font-weight:bold; color:var(--text-mute);">КОММЕНТАРИЙ</label>
-    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1" style="height: 47px;"></textarea>
+    <textarea id="editComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
 
     <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:bold; color:var(--text-mute); margin-top:8px; margin-bottom:8px; cursor:pointer;">
       <input type="checkbox" id="editNoBudget" style="width:16px; height:16px; cursor:pointer;">
       🛡️ Не учитывать в дневном лимите Автопилота
     </label>
 
-    <button id="splitExistingTxBtn" onclick="splitExistingTx()" style="display: block; width: 100%; background: rgb(245, 158, 11); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 8px; padding: 10px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 11px;">✂️ Разделить этот чек (Сплит долга)</button>
+    <button id="splitExistingTxBtn" onclick="splitExistingTx()" style="display:none; width:100%; background:#f59e0b; color:white; border:none; border-radius:8px; padding:10px; font-weight:bold; cursor:pointer; margin-top:8px; font-size:11px;">✂️ Разделить этот чек (Сплит)</button>
 
     <div style="display:flex; gap:8px; margin-top:10px;">
       <button onclick="document.getElementById('editModal').style.display='none'" style="flex:1; padding:10px; border-radius:8px; background:var(--border); color:var(--text-main); font-weight:bold; border:none; cursor:pointer; font-size:11px;">Отмена</button>
@@ -3038,9 +3038,9 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
-  <div class="nav-item active" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
+  <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
@@ -3560,6 +3560,10 @@
           color: a.color || null
         };
       });
+
+      // Принудительно синхронизируем локальный порядок счетов с базой данных
+      const dbOrder = accRes.data.filter(a => !a.name.toLowerCase().includes('все счета')).map(a => a.name);
+      localStorage.setItem('acc_custom_order', JSON.stringify(dbOrder));
 
       const parsedArchiveDebts = (archRes.data || []).map(a => {
         const p = a.date.split('-');
@@ -4475,6 +4479,13 @@
           order[idx] = order[newIdx];
           order[newIdx] = temp;
           localStorage.setItem('acc_custom_order', JSON.stringify(order));
+
+          if (!isGuest()) {
+            order.forEach((accName, index) => {
+              db.from('accounts').update({ sort_order: index }).eq('name', accName).then();
+            });
+          }
+
           document.getElementById('accountsSortSelect').value = 'custom';
           renderBankCards();
       }
@@ -4979,11 +4990,17 @@ async function recalculateCurrentAccountBalance() {
     list[idx] = list[targetIdx];
     list[targetIdx] = temp;
     localStorage.setItem('acc_custom_order', JSON.stringify(list));
+
+    if (!isGuest()) {
+      list.forEach((accName, index) => {
+        db.from('accounts').update({ sort_order: index }).eq('name', accName).then();
+      });
+    }
+
     renderAccountsOrderList();
     rebuildFormDicts();
     renderBankCards();
   }
-
   function rebuildFormDicts() {
     let aH = '';
     const orderedAccounts = getOrderedAccountsList();
@@ -7682,18 +7699,29 @@ function renderA() {
     document.getElementById('bulkResults').innerHTML = h;
   }
 
-  function saveBulk() {
+  async function saveBulk() {
+      if (isGuest()) return alert("🔒 Вы вошли как гость. Добавление заблокировано!");
+      document.getElementById('loader').style.display = 'block';
+
       const todayISO = toISOLocal(new Date());
       const dFmt = todayISO.split('-')[2] + '.' + todayISO.split('-')[1] + '.' + todayISO.split('-')[0];
-      bulkParsed.forEach((_, i) => {
-          const name = document.getElementById(`bN_${i}`).value;
+      
+      for (let i = 0; i < bulkParsed.length; i++) {
+          const name = document.getElementById(`bN_${i}`).value.trim();
           const numAmt = parseFloat(document.getElementById(`bA_${i}`).value) || 0;
           const comment = document.getElementById(`bC_${i}`).value;
+          
+          if (name && !appData.config.debtors.includes(name)) {
+              await addDebtorToDb(name);
+          }
+          
           const finalComment = numAmt < 0 ? `Мой долг | ${comment}` : comment;
           const arch = { r: 'local_arch_' + Math.random(), fd: todayISO, d: dFmt, n: name, amt: numAmt, c: finalComment };
           appData.archiveDebts.push(arch);
           pushToLocalQueue('archive_debt', arch.r, arch);
-      });
+      }
+
+      document.getElementById('loader').style.display = 'none';
       closeModal('debtCenterModal');
       document.getElementById('bulkText').value = '';
       renderDebts();
@@ -13536,7 +13564,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4110; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -13655,30 +13683,21 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- СПЕЦИАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ И ПЕРЕНОСА ДОЛГА -->
-<div id="debtEditModal" class="modal" style="z-index: 4100; display: none;">
+<div id="debtEditModal" class="modal" style="z-index: 3200; display: none;">
   <div class="modal-content" style="max-width: 440px;">
     <div class="modal-header-sticky">
-      <h3 style="font-weight:900; margin:0; font-size:15px;" id="debtEditModalTitle">🤝 Изменить архивный долг</h3>
+      <h3 style="font-weight:900; margin:0; font-size:15px;" id="debtEditModalTitle">🤝 Изменить долг</h3>
       <button class="close-btn" onclick="closeModal('debtEditModal')">✕</button>
     </div>
-    <input type="hidden" id="debtEditRow" value="arch_97">
-    <input type="hidden" id="debtEditIsArchive" value="1">
+    <input type="hidden" id="debtEditRow">
+    <input type="hidden" id="debtEditIsArchive">
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ДОЛЖНИК (перенос на другого человека):</label>
-    <select id="debtEditDebtorSelect" class="input-ui" onchange="toggleDebtEditNewDebtor(this.value)"><option value="">-- Выберите должника --</option><option value="Ника">Ника</option><option value="Тина">Тина</option><option value="Геля">Геля</option><option value="Ручка">Ручка</option><option value="Алина">Алина</option><option value="Саня Лерин">Саня Лерин</option><option value="Лера">Лера</option><option value="Егор">Егор</option><option value="Артем">Артем</option><option value="Олеся">Олеся</option><option value="Женя">Женя</option><option value="Папа">Папа</option><option value="Лиза">Лиза</option><option value="Дима">Дима</option><option value="Дана">Дана</option><option value="Алина-староста">Алина-староста</option><option value="Догонова">Догонова</option><option value="Маша рязанская Лизина">Маша рязанская Лизина</option><option value="__NEW__">+ Добавить нового человека...</option></select>
+    <select id="debtEditDebtorSelect" class="input-ui" onchange="toggleDebtEditNewDebtor(this.value)"></select>
     <input type="text" id="debtEditNewDebtorInput" class="input-ui" placeholder="Имя нового человека..." style="display:none; margin-top:6px; margin-bottom:10px;">
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ВИД ОПЕРАЦИИ:</label>
-    <select id="debtEditAction" class="input-ui">
-      <option value="Кому-то в долг">Я дал в долг (Расход)</option>
-      <option value="Что-то кому-то купил в долг">Я купил в долг (Расход)</option>
-      <option value="Вернули долг">Мне вернули долг (Доход)</option>
-      <option value="Дали в долг">Мне дали в долг (Доход)</option>
-    
-        <option value="Архив_дал">Архив: Дал в долг</option>
-        <option value="Архив_вернули">Архив: Вернули долг</option>
-        <option value="Архив_дали">Архив: Мне дали в долг</option>
-      </select>
+    <select id="debtEditAction" class="input-ui"></select>
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">ДАТА:</label>
     <input type="date" id="debtEditDate" class="input-ui input-date">
@@ -13688,14 +13707,14 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
         <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">СУММА (₽):</label>
         <input type="number" id="debtEditSum" class="input-ui">
       </div>
-      <div style="flex: 1 1 0%; display: none;" id="debtEditAccWrap">
+      <div style="flex:1;" id="debtEditAccWrap">
         <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">СЧЁТ КАРТЫ:</label>
-        <select id="debtEditAcc" class="input-ui"><option value="Яндекс">Яндекс</option><option value="На квартиру">На квартиру</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+        <select id="debtEditAcc" class="input-ui"></select>
       </div>
     </div>
 
     <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">КОММЕНТАРИЙ:</label>
-    <textarea id="debtEditComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1" style="height: 47px;"></textarea>
+    <textarea id="debtEditComment" class="input-ui" oninput="adjustTextareaHeight(this)" rows="1"></textarea>
 
     <div style="display:flex; gap:8px; margin-top:12px;">
       <button onclick="closeModal('debtEditModal')" style="flex:1; padding:10px; border-radius:8px; background:var(--border); color:var(--text-main); font-weight:bold; border:none; cursor:pointer; font-size:11.5px;">Отмена</button>
