@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
+  <div id="viewAccounts" class="app-view active">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -2503,7 +2503,7 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view active">
+  <div id="viewAdd" class="app-view">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
         <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
@@ -2632,17 +2632,17 @@
       <button class="close-btn" onclick="closeModal('catManagerModal')">✕</button>
     </div>
     <div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:16px; overflow-x:auto;">
-      <div id="btnCatManAdd" class="tab-btn" onclick="switchCatManTab('add')">➕ Создать</div>
+      <div id="btnCatManAdd" class="tab-btn active" onclick="switchCatManTab('add')">➕ Создать</div>
       <div id="btnCatManEditSub" class="tab-btn" onclick="switchCatManTab('editsub')">✏️ Подкатегории</div>
       <div id="btnCatManEditGroup" class="tab-btn" onclick="switchCatManTab('editgroup')">📂 Группы</div>
-      <div id="btnCatManOrder" class="tab-btn active" onclick="switchCatManTab('order')">↕️ Порядок</div>
+      <div id="btnCatManOrder" class="tab-btn" onclick="switchCatManTab('order')">↕️ Порядок</div>
     </div>
 
-    <div id="catManAdd" style="display: none;">
+    <div id="catManAdd">
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; margin-bottom:12px; border:1px solid var(--border);">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px;">1. ДОБАВИТЬ В СУЩЕСТВУЮЩУЮ ГРУППУ</label>
         <input type="text" id="manAddName" class="input-ui" placeholder="Имя подкатегории...">
-        <select id="manAddGroupSel" class="input-ui"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
+        <select id="manAddGroupSel" class="input-ui"></select>
         <button onclick="manAddSubNew()" style="width:100%; padding:10px; border-radius:8px; background:#3b82f6; color:white; font-weight:bold; border:none; cursor:pointer;">Создать подкатегорию</button>
       </div>
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; border:1px solid var(--border);">
@@ -2654,7 +2654,7 @@
     </div>
 
     <div id="catManEditSub" style="display:none;">
-      <select id="manSub" class="input-ui" onchange="updateManagerUISub()" style="cursor:pointer;"><optgroup label="Бабушка"><option value="Бабушка Аптека" data-group="Бабушка">Бабушка Аптека</option><option value="Бабушка Магазины" data-group="Бабушка">Бабушка Магазины</option><option value="Бабушка другое" data-group="Бабушка">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе" data-group="Работа">Обед/столовая на работе</option><option value="Сборы денег на работе" data-group="Работа">Сборы денег на работе</option><option value="Еда/что-то на работу для себя" data-group="Работа">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить" data-group="Еда вне дома с ручкой">Кафе чисто перекусить</option><option value="Кофейни" data-group="Еда вне дома с ручкой">Кофейни</option><option value="Фастфуд" data-group="Еда вне дома с ручкой">Фастфуд</option><option value="Кафе в честь чего-то" data-group="Еда вне дома с ручкой">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома с ручкой" data-group="Еда вне дома с ручкой">Перекус/джанкфуд продукты вне дома с ручкой</option></optgroup><optgroup label="Продукты"><option value="Доставка" data-group="Продукты">Доставка</option><option value="КБ" data-group="Продукты">КБ</option><option value="Пятерочка" data-group="Продукты">Пятерочка</option><option value="Чижик" data-group="Продукты">Чижик</option><option value="Магнит" data-group="Продукты">Магнит</option><option value="Дикси" data-group="Продукты">Дикси</option><option value="Перекресток" data-group="Продукты">Перекресток</option><option value="Спар" data-group="Продукты">Спар</option><option value="Вкусвилл" data-group="Продукты">Вкусвилл</option><option value="Ароматный мир/винлаб" data-group="Продукты">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины" data-group="Продукты">Другие продуктовые магазины</option><option value="Вода в еще" data-group="Продукты">Вода в еще</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы" data-group="Алкоголь и Привычки">Алкоголь бары пабы</option><option value="Курение" data-group="Алкоголь и Привычки">Курение</option><option value="Алкоголь из магазина домой" data-group="Алкоголь и Привычки">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома" data-group="Алкоголь и Привычки">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь" data-group="Связь и Жилье">Сотовая связь</option><option value="Интернет домашний" data-group="Связь и Жилье">Интернет домашний</option><option value="Аренда квартиры" data-group="Связь и Жилье">Аренда квартиры</option><option value="Онлайн - Подписки" data-group="Связь и Жилье">Онлайн - Подписки</option><option value="Консьержка" data-group="Связь и Жилье">Консьержка</option><option value="ЖКХ - вода" data-group="Связь и Жилье">ЖКХ - вода</option><option value="ЖКХ - свет" data-group="Связь и Жилье">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка" data-group="Машина">Парковка</option><option value="Запчасти на машину" data-group="Машина">Запчасти на машину</option><option value="Ремонт машины" data-group="Машина">Ремонт машины</option><option value="Мойка машины" data-group="Машина">Мойка машины</option><option value="Штрафы" data-group="Машина">Штрафы</option><option value="ОСАГО" data-group="Машина">ОСАГО</option><option value="Бензин" data-group="Машина">Бензин</option><option value="Не запчасти" data-group="Машина">Не запчасти</option><option value="Вода в машину" data-group="Машина">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси" data-group="Транспорт и Авто">Такси</option><option value="Каршеринг" data-group="Транспорт и Авто">Каршеринг</option><option value="Самокаты" data-group="Транспорт и Авто">Самокаты</option><option value="Транспорт городской общественный" data-group="Транспорт и Авто">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты" data-group="Ручка">Ручка продукты</option><option value="Ручка красота" data-group="Ручка">Ручка красота</option><option value="Подарки ручке" data-group="Ручка">Подарки ручке</option><option value="Цветы ручке" data-group="Ручка">Цветы ручке</option><option value="Ручке деньги" data-group="Ручка">Ручке деньги</option><option value="Проявка пленки ручки" data-group="Ручка">Проявка пленки ручки</option><option value="Ручка одежда" data-group="Ручка">Ручка одежда</option><option value="Ручка другое" data-group="Ручка">Ручка другое</option><option value="Пленка ручке" data-group="Ручка">Пленка ручке</option></optgroup><optgroup label="Здоровье"><option value="Аптека" data-group="Здоровье">Аптека</option><option value="Здоровье (обследования итд)" data-group="Здоровье">Здоровье (обследования итд)</option><option value="Стрижка" data-group="Здоровье">Стрижка</option><option value="Интим" data-group="Здоровье">Интим</option><option value="Лекарства" data-group="Здоровье">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино" data-group="Досуг и Развлечения">Кино</option><option value="Театр" data-group="Досуг и Развлечения">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ" data-group="Досуг и Развлечения">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд" data-group="Досуг и Развлечения">Открытки/сувениры и тд</option><option value="Иной досуг" data-group="Досуг и Развлечения">Иной досуг</option><option value="Музеи" data-group="Досуг и Развлечения">Музеи</option><option value="Иные развлечения" data-group="Досуг и Развлечения">Иные развлечения</option><option value="Фотобудка и тд" data-group="Досуг и Развлечения">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки" data-group="Прочее и Финансы">Подарки</option><option value="Не сошёлся дебет кредит" data-group="Прочее и Финансы">Не сошёлся дебет кредит</option><option value="Что-то кому-то купил не в долг" data-group="Прочее и Финансы">Что-то кому-то купил не в долг</option><option value="Что-то кому-то купил в долг" data-group="Прочее и Финансы">Что-то кому-то купил в долг</option><option value="Кому-то в долг" data-group="Прочее и Финансы">Кому-то в долг</option><option value="Кому-то не в долг" data-group="Прочее и Финансы">Кому-то не в долг</option><option value="Вернул долг" data-group="Прочее и Финансы">Вернул долг</option></optgroup><optgroup label="Путешествия"><option value="Еда в путешествиях" data-group="Путешествия">Еда в путешествиях</option><option value="Досуг и развлечения в путешествиях" data-group="Путешествия">Досуг и развлечения в путешествиях</option><option value="Продукты в путешествиях" data-group="Путешествия">Продукты в путешествиях</option><option value="Иные траты в путешествиях" data-group="Путешествия">Иные траты в путешествиях</option><option value="Сувениры и тд в путешествиях" data-group="Путешествия">Сувениры и тд в путешествиях</option><option value="Бензин в путешествиях" data-group="Путешествия">Бензин в путешествиях</option><option value="Жилье в путешествиях" data-group="Путешествия">Жилье в путешествиях</option><option value="Транспорт туда/обратно" data-group="Путешествия">Транспорт туда/обратно</option><option value="Перемещение по локации (такси/автобусы/тд)" data-group="Путешествия">Перемещение по локации (такси/автобусы/тд)</option><option value="Туры" data-group="Путешествия">Туры</option></optgroup><optgroup label="Хозтовары"><option value="еще" data-group="Хозтовары">еще</option><option value="Фикс прайс" data-group="Хозтовары">Фикс прайс</option><option value="Хозтовары из других магазинов" data-group="Хозтовары">Хозтовары из других магазинов</option><option value="Хозтовары онлайн" data-group="Хозтовары">Хозтовары онлайн</option><option value="Галамарт" data-group="Хозтовары">Галамарт</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды" data-group="Еда дома">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" data-group="Еда дома">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома" data-group="Еда дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Дача"><option value="Продукты дача" data-group="Дача">Продукты дача</option><option value="Алкоголь дача" data-group="Дача">Алкоголь дача</option><option value="Хозтовары дача" data-group="Дача">Хозтовары дача</option><option value="Мясо дача" data-group="Дача">Мясо дача</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Фастфуд/кафешки/рестораны/шаурма без ручки" data-group="Еда вне дома без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option><option value="В магазине еда/джанкфуд вне дома без ручки" data-group="Еда вне дома без ручки">В магазине еда/джанкфуд вне дома без ручки</option></optgroup><optgroup label="Шопинг"><option value="Маркеты" data-group="Шопинг">Маркеты</option><option value="Мебель" data-group="Шопинг">Мебель</option><option value="Одежда" data-group="Шопинг">Одежда</option><option value="Техника" data-group="Шопинг">Техника</option><option value="Товары для дома онлайн" data-group="Шопинг">Товары для дома онлайн</option><option value="Товары для себя/аксессуары" data-group="Шопинг">Товары для себя/аксессуары</option></optgroup></select>
+      <select id="manSub" class="input-ui" onchange="updateManagerUISub()" style="cursor:pointer;"></select>
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; border:1px solid var(--border);">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px;">ПЕРЕИМЕНОВАТЬ</label>
         <div style="display:flex; gap:8px;">
@@ -2663,7 +2663,7 @@
         </div>
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-top:12px; margin-bottom:4px;">ПЕРЕНЕСТИ В ДРУГУЮ ГРУППУ</label>
         <div style="display:flex; gap:8px;">
-          <select id="manSubMove" class="input-ui" style="margin:0; flex:1;" onchange="if(this.value==='__NEW__') document.getElementById('manSubMoveNew').style.display='block'; else document.getElementById('manSubMoveNew').style.display='none';"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option><option value="__NEW__">+ Создать новую...</option></select>
+          <select id="manSubMove" class="input-ui" style="margin:0; flex:1;" onchange="if(this.value==='__NEW__') document.getElementById('manSubMoveNew').style.display='block'; else document.getElementById('manSubMoveNew').style.display='none';"></select>
           <button onclick="manMoveSub()" style="background:#f59e0b; color:white; border-radius:8px; font-weight:bold; padding:0 15px; border:none; cursor:pointer;">ОК</button>
         </div>
         <input type="text" id="manSubMoveNew" class="input-ui" placeholder="Имя абсолютно новой группы..." style="display:none; margin-top:8px; margin-bottom:0;">
@@ -2671,8 +2671,8 @@
       </div>
     </div>
 
-    <div id="catManEditGroup" style="display: none;">
-      <select id="manGroupSelEdit" class="input-ui" onchange="updateManagerUIGroup()" style="cursor:pointer;"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
+    <div id="catManEditGroup" style="display:none;">
+      <select id="manGroupSelEdit" class="input-ui" onchange="updateManagerUIGroup()" style="cursor:pointer;"></select>
       <div style="background:#fee2e2; padding:16px; border-radius:12px; border:1px solid #fca5a5;">
         <label style="font-size:11px; font-weight:bold; color:#991b1b; display:block; margin-bottom:4px;">ПЕРЕИМЕНОВАТЬ ГРУППУ</label>
         <div style="display:flex; gap:8px;">
@@ -2683,113 +2683,23 @@
       </div>
     </div>
 
-    <div id="catManOrder" style="display: block;">
+    <div id="catManOrder" style="display:none;">
       <div style="display:flex; gap:8px; margin-bottom:12px;">
         <select id="orderManType" class="input-ui" style="margin:0; flex:1;" onchange="renderCatOrderUI()">
           <option value="groups">Порядок групп (папок)</option>
           <option value="subs">Порядок подкатегорий...</option>
         </select>
-        <select id="orderManGroup" class="input-ui" style="display:none; margin:0; flex:1;" onchange="renderCatOrderUI()"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
+        <select id="orderManGroup" class="input-ui" style="display:none; margin:0; flex:1;" onchange="renderCatOrderUI()"></select>
       </div>
       <div style="font-size:10px; color:var(--text-mute); margin-bottom:8px;">Выберите элемент из списка и переместите его кнопками ▲ / ▼. Порядок сохранится в Supabase.</div>
 
       <div style="background:var(--input-bg); border:1.5px solid var(--border); padding:10px; border-radius:12px; margin-bottom:10px; display:flex; gap:8px; align-items:center;">
-        <select id="orderManItemSel" class="input-ui" style="margin:0; flex:1; font-weight:bold; padding:8px;" onchange="renderCatOrderUI()"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
+        <select id="orderManItemSel" class="input-ui" style="margin:0; flex:1; font-weight:bold; padding:8px;" onchange="renderCatOrderUI()"></select>
         <button type="button" onclick="moveCatOrderSelected(-1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вверх">▲</button>
         <button type="button" onclick="moveCatOrderSelected(1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вниз">▼</button>
       </div>
 
-      <div id="catOrderList" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto; padding-right:4px;">
-        <div data-name="Бабушка" onclick="document.getElementById('orderManItemSel').value='Бабушка'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:rgba(59,130,246,0.12); border:1.5px solid #3b82f6; padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">1. Бабушка</span>
-          <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.15); padding:2px 6px; border-radius:5px;">ВЫБРАНО</span>
-        </div>
-      
-        <div data-name="Работа" onclick="document.getElementById('orderManItemSel').value='Работа'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">2. Работа</span>
-          
-        </div>
-      
-        <div data-name="Еда вне дома с ручкой" onclick="document.getElementById('orderManItemSel').value='Еда вне дома с ручкой'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">3. Еда вне дома с ручкой</span>
-          
-        </div>
-      
-        <div data-name="Продукты" onclick="document.getElementById('orderManItemSel').value='Продукты'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">4. Продукты</span>
-          
-        </div>
-      
-        <div data-name="Алкоголь и Привычки" onclick="document.getElementById('orderManItemSel').value='Алкоголь и Привычки'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">5. Алкоголь и Привычки</span>
-          
-        </div>
-      
-        <div data-name="Связь и Жилье" onclick="document.getElementById('orderManItemSel').value='Связь и Жилье'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">6. Связь и Жилье</span>
-          
-        </div>
-      
-        <div data-name="Машина" onclick="document.getElementById('orderManItemSel').value='Машина'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">7. Машина</span>
-          
-        </div>
-      
-        <div data-name="Транспорт и Авто" onclick="document.getElementById('orderManItemSel').value='Транспорт и Авто'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">8. Транспорт и Авто</span>
-          
-        </div>
-      
-        <div data-name="Ручка" onclick="document.getElementById('orderManItemSel').value='Ручка'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">9. Ручка</span>
-          
-        </div>
-      
-        <div data-name="Здоровье" onclick="document.getElementById('orderManItemSel').value='Здоровье'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">10. Здоровье</span>
-          
-        </div>
-      
-        <div data-name="Досуг и Развлечения" onclick="document.getElementById('orderManItemSel').value='Досуг и Развлечения'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">11. Досуг и Развлечения</span>
-          
-        </div>
-      
-        <div data-name="Прочее и Финансы" onclick="document.getElementById('orderManItemSel').value='Прочее и Финансы'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">12. Прочее и Финансы</span>
-          
-        </div>
-      
-        <div data-name="Путешествия" onclick="document.getElementById('orderManItemSel').value='Путешествия'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">13. Путешествия</span>
-          
-        </div>
-      
-        <div data-name="Хозтовары" onclick="document.getElementById('orderManItemSel').value='Хозтовары'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">14. Хозтовары</span>
-          
-        </div>
-      
-        <div data-name="Еда дома" onclick="document.getElementById('orderManItemSel').value='Еда дома'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">15. Еда дома</span>
-          
-        </div>
-      
-        <div data-name="Дача" onclick="document.getElementById('orderManItemSel').value='Дача'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">16. Дача</span>
-          
-        </div>
-      
-        <div data-name="Еда вне дома без ручки" onclick="document.getElementById('orderManItemSel').value='Еда вне дома без ручки'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">17. Еда вне дома без ручки</span>
-          
-        </div>
-      
-        <div data-name="Шопинг" onclick="document.getElementById('orderManItemSel').value='Шопинг'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">18. Шопинг</span>
-          
-        </div>
-      </div>
+      <div id="catOrderList" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto; padding-right:4px;"></div>
       <button onclick="saveCatOrderToDb()" style="width:100%; margin-top:12px; background:#10b981; color:white; padding:10px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;">💾 Сохранить порядок</button>
     </div>
 
@@ -2805,8 +2715,8 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">ВТБ</h2>
-              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display: block; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
+              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
         </div>
@@ -3214,7 +3124,7 @@
 
 
 <!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ "ВСЕ СЧЕТА" -->
-<div id="allAccountsSelectModal" class="modal" style="z-index: 4020; display: none;">
+<div id="allAccountsSelectModal" class="modal" style="z-index: 1200; display: none;">
   <div class="modal-content" style="max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; padding: 22px; gap: 12px;">
     <div class="modal-header-sticky">
       <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">🌍 Счета в «Все счета»</h3>
@@ -3227,98 +3137,18 @@
       <button type="button" onclick="setAllAccSelectState(true)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Выбрать все</button>
       <button type="button" onclick="setAllAccSelectState(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="allAccSelectList" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto; max-height:320px;">
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(875 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Тинькофф" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Озон Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(11&nbsp;776 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(3&nbsp;048 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(6&nbsp;414 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На квартиру <b style="color:var(--text-mute); font-size:10.5px;">(40&nbsp;000 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="На квартиру" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="Другой кешбек" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      </div>
+    <div id="allAccSelectList" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto; max-height:320px;"></div>
     <button type="button" onclick="saveAllAccSelectSettings()" style="background:#10b981; color:white; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">💾 Сохранить список счетов</button>
   </div>
 </div>
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
   <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -4840,6 +4670,28 @@
   }
 
   // ==== СЧЕТА И ИХ СОРТИРОВКА ====
+  // Дебаунс-таймер для пакетной отправки порядка счетов в БД.
+  // Серия быстрых тапов по стрелкам склеится в один запрос вместо десяти.
+  let _accOrderSaveTimer = null;
+
+  function scheduleAccOrderSaveToDb() {
+    if (isGuest()) return;
+    clearTimeout(_accOrderSaveTimer);
+    _accOrderSaveTimer = setTimeout(async () => {
+      const list = getOrderedAccountsList();
+      try {
+        // Параллельная отправка всех обновлений одним пакетом
+        const results = await Promise.all(
+          list.map((name, i) => db.from('accounts').update({ sort_order: i }).eq('name', name))
+        );
+        const bad = results.find(r => r && r.error);
+        if (bad && bad.error) console.warn('Ошибка сохранения порядка счетов:', bad.error);
+      } catch (err) {
+        console.warn('Сеть не ответила при сохранении порядка счетов:', err);
+      }
+    }, 700);
+  }
+
   function moveAcc(e, name, dir) {
       e.stopPropagation();
       let order = JSON.parse(localStorage.getItem('acc_custom_order') || '[]');
@@ -4859,15 +4711,14 @@
           order[newIdx] = temp;
           localStorage.setItem('acc_custom_order', JSON.stringify(order));
 
-          if (!isGuest()) {
-            order.forEach((accName, index) => {
-              db.from('accounts').update({ sort_order: index }).eq('name', accName).then();
-            });
-            showToast('✓ Порядок счетов сохранён в БД');
-          }
+          // Отправляем в БД через дебаунс — не спамим сервер и не ждём ответа пользователю
+          scheduleAccOrderSaveToDb();
+
+          if (!isGuest()) showToast('✓ Порядок счетов сохранён в БД');
 
           document.getElementById('accountsSortSelect').value = 'custom';
           renderBankCards();
+          rebuildFormDicts(); // СИНХРОНИЗАЦИЯ: подтягиваем новый порядок во вкладку «Добавить»
       }
   }
 
@@ -5421,23 +5272,42 @@ async function recalculateCurrentAccountBalance() {
     const temp = list[idx];
     list[idx] = list[targetIdx];
     list[targetIdx] = temp;
+    // Пишем в localStorage для мгновенного превью списка.
+    // В облако уйдёт только по кнопке «Готово ✓».
     localStorage.setItem('acc_custom_order', JSON.stringify(list));
-
-    if (!isGuest()) {
-      list.forEach((accName, index) => {
-        db.from('accounts').update({ sort_order: index }).eq('name', accName).then();
-      });
-    }
 
     renderAccountsOrderList();
     itemSel.value = selectedName;
     scrollSelectedIntoView('accountsOrderList', selectedName);
+    // Никаких алертов здесь: пользователь ещё тасует черновик.
+    // Итоговое сохранение в БД — только по кнопке «Готово ✓».
     rebuildFormDicts();
     renderBankCards();
+  }
+
+  // Коммит черновика порядка счетов в Supabase. Вызывается кнопкой «Готово ✓».
+  async function finishAccountsOrderEdit() {
+    const list = getOrderedAccountsList();
+    localStorage.setItem('acc_custom_order', JSON.stringify(list));
 
     if (!isGuest()) {
-      showToast('✓ Порядок счетов сохранён в БД');
+      try {
+        // Параллельный пакет вместо последовательного цикла с await.
+        // 17 счетов обновляются одновременно — вместо 3-4 секунд получаем ~0,3 сек.
+        const results = await Promise.all(
+          list.map((name, i) => db.from('accounts').update({ sort_order: i }).eq('name', name))
+        );
+        const bad = results.find(r => r && r.error);
+        if (bad && bad.error) throw bad.error;
+        alert('✅ Порядок сохранен в базе!');
+      } catch (e) {
+        alert('❌ Ошибка сохранения порядка в БД: ' + e.message);
+      }
     }
+
+    closeModal('accountsOrderModal');
+    rebuildFormDicts();
+    renderBankCards();
   }
 
   function moveAccountInOrder(idx, dir) {
@@ -5447,18 +5317,14 @@ async function recalculateCurrentAccountBalance() {
     const temp = list[idx];
     list[idx] = list[targetIdx];
     list[targetIdx] = temp;
+    // Только локальный черновик. В облако — по кнопке «Готово ✓».
     localStorage.setItem('acc_custom_order', JSON.stringify(list));
-
-    if (!isGuest()) {
-      list.forEach((accName, index) => {
-        db.from('accounts').update({ sort_order: index }).eq('name', accName).then();
-      });
-    }
 
     renderAccountsOrderList();
     rebuildFormDicts();
     renderBankCards();
   }
+
   function rebuildFormDicts() {
     let aH = '';
     const orderedAccounts = getOrderedAccountsList();
@@ -14266,7 +14132,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4040; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14370,7 +14236,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА НАСТРОЙКИ ПОРЯДКА СЧЕТОВ -->
-<div id="accountsOrderModal" class="modal" style="z-index: 4030; display: none;">
+<div id="accountsOrderModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 380px;">
     <div class="modal-header-sticky">
       <h3 style="font-weight:900; margin:0; font-size:15px;">↕️ Порядок счетов в списках</h3>
@@ -14381,98 +14247,149 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
     </div>
 
     <div style="background:var(--input-bg); border:1.5px solid var(--border); padding:10px; border-radius:12px; margin-bottom:10px; display:flex; gap:8px; align-items:center;">
-      <select id="orderAccItemSel" class="input-ui" style="margin:0; flex:1; font-weight:bold; padding:8px;" onchange="renderAccountsOrderList()"><option value="Яндекс">Яндекс</option><option value="ВТБ">ВТБ</option><option value="Сбербанк">Сбербанк</option><option value="Тинькофф">Тинькофф</option><option value="Озон Банк">Озон Банк</option><option value="ВБ Банк">ВБ Банк</option><option value="Наличные">Наличные</option><option value="Накопительный счет ручки на путешествия">Накопительный счет ручки на путешествия</option><option value="Накопительный счет копить">Накопительный счет копить</option><option value="Накопительный счет тратить">Накопительный счет тратить</option><option value="На кафешки">На кафешки</option><option value="Обед на работе">Обед на работе</option><option value="Инвестиции">Инвестиции</option><option value="На развлечения">На развлечения</option><option value="На квартиру">На квартиру</option><option value="Баллы яндекс плюса">Баллы яндекс плюса</option><option value="Другой кешбек">Другой кешбек</option></select>
+      <select id="orderAccItemSel" class="input-ui" style="margin:0; flex:1; font-weight:bold; padding:8px;" onchange="renderAccountsOrderList()"></select>
       <button type="button" onclick="moveAccountOrderSelected(-1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вверх">▲</button>
       <button type="button" onclick="moveAccountOrderSelected(1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вниз">▼</button>
     </div>
 
     <div id="accountsOrderList" style="display:flex; flex-direction:column; gap:6px; max-height:300px; overflow-y:auto; padding-right:2px;">
-        <div data-name="Яндекс" onclick="document.getElementById('orderAccItemSel').value='Яндекс'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:rgba(59,130,246,0.12); border:1.5px solid #3b82f6; padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">1. Яндекс</span>
-          <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.15); padding:2px 6px; border-radius:5px;">ВЫБРАНО</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Яндекс</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(0, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;" disabled="">▲</button>
+            <button type="button" onclick="moveAccountInOrder(0, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="ВТБ" onclick="document.getElementById('orderAccItemSel').value='ВТБ'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">2. ВТБ</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">ВТБ</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(1, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(1, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Сбербанк" onclick="document.getElementById('orderAccItemSel').value='Сбербанк'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">3. Сбербанк</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Сбербанк</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(2, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(2, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Тинькофф" onclick="document.getElementById('orderAccItemSel').value='Тинькофф'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">4. Тинькофф</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Тинькофф</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(3, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(3, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Озон Банк" onclick="document.getElementById('orderAccItemSel').value='Озон Банк'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">5. Озон Банк</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Озон Банк</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(4, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(4, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="ВБ Банк" onclick="document.getElementById('orderAccItemSel').value='ВБ Банк'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">6. ВБ Банк</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">ВБ Банк</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(5, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(5, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Наличные" onclick="document.getElementById('orderAccItemSel').value='Наличные'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">7. Наличные</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Наличные</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(6, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(6, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Накопительный счет ручки на путешествия" onclick="document.getElementById('orderAccItemSel').value='Накопительный счет ручки на путешествия'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">8. Накопительный счет ручки на путешествия</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Накопительный счет ручки на путешествия</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(7, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(7, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Накопительный счет копить" onclick="document.getElementById('orderAccItemSel').value='Накопительный счет копить'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">9. Накопительный счет копить</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Накопительный счет копить</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(8, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(8, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Накопительный счет тратить" onclick="document.getElementById('orderAccItemSel').value='Накопительный счет тратить'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">10. Накопительный счет тратить</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Накопительный счет тратить</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(9, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(9, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="На кафешки" onclick="document.getElementById('orderAccItemSel').value='На кафешки'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">11. На кафешки</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">На кафешки</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(10, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(10, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Обед на работе" onclick="document.getElementById('orderAccItemSel').value='Обед на работе'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">12. Обед на работе</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Обед на работе</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(11, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(11, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Инвестиции" onclick="document.getElementById('orderAccItemSel').value='Инвестиции'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">13. Инвестиции</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Инвестиции</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(12, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(12, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="На развлечения" onclick="document.getElementById('orderAccItemSel').value='На развлечения'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">14. На развлечения</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">На развлечения</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(13, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(13, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="На квартиру" onclick="document.getElementById('orderAccItemSel').value='На квартиру'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">15. На квартиру</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">На квартиру</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(14, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(14, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Баллы яндекс плюса" onclick="document.getElementById('orderAccItemSel').value='Баллы яндекс плюса'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">16. Баллы яндекс плюса</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Баллы яндекс плюса</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(15, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(15, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▼</button>
+          </div>
         </div>
       
-        <div data-name="Другой кешбек" onclick="document.getElementById('orderAccItemSel').value='Другой кешбек'; renderAccountsOrderList();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
-          <span style="font-weight:bold; color:var(--text-main);">17. Другой кешбек</span>
-          
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
+          <span style="font-weight:bold; color:var(--text-main);">Другой кешбек</span>
+          <div style="display:flex; gap:4px;">
+            <button type="button" onclick="moveAccountInOrder(16, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">▲</button>
+            <button type="button" onclick="moveAccountInOrder(16, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;" disabled="">▼</button>
+          </div>
         </div>
       </div>
-    <button onclick="closeModal('accountsOrderModal')" style="width:100%; margin-top:12px; background:#10b981; color:white; padding:10px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">Готово ✓</button>
+    <button onclick="finishAccountsOrderEdit()" style="width:100%; margin-top:12px; background:#10b981; color:white; padding:10px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">Готово ✓</button>
   </div>
 </div>
 
