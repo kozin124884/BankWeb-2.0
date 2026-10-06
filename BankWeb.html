@@ -354,7 +354,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view active">
+  <div id="viewAnalytics" class="app-view">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -376,7 +376,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;265 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
 
@@ -397,7 +397,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -637,7 +637,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -2491,7 +2491,7 @@
   </div>
 
   <!-- ЭКРАН 4: ДОБАВИТЬ -->
-  <div id="viewAdd" class="app-view">
+  <div id="viewAdd" class="app-view active">
     <div class="glass-card">
       <div style="display:flex; gap:4px; margin-bottom: 16px; background:var(--border); padding:4px; border-radius:12px;">
         <div id="btnFormExp" class="btn-toggle active" onclick="switchFormType('Расход')">Расход</div>
@@ -2620,17 +2620,17 @@
       <button class="close-btn" onclick="closeModal('catManagerModal')">✕</button>
     </div>
     <div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:16px; overflow-x:auto;">
-      <div id="btnCatManAdd" class="tab-btn active" onclick="switchCatManTab('add')">➕ Создать</div>
+      <div id="btnCatManAdd" class="tab-btn" onclick="switchCatManTab('add')">➕ Создать</div>
       <div id="btnCatManEditSub" class="tab-btn" onclick="switchCatManTab('editsub')">✏️ Подкатегории</div>
       <div id="btnCatManEditGroup" class="tab-btn" onclick="switchCatManTab('editgroup')">📂 Группы</div>
-      <div id="btnCatManOrder" class="tab-btn" onclick="switchCatManTab('order')">↕️ Порядок</div>
+      <div id="btnCatManOrder" class="tab-btn active" onclick="switchCatManTab('order')">↕️ Порядок</div>
     </div>
 
-    <div id="catManAdd">
+    <div id="catManAdd" style="display: none;">
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; margin-bottom:12px; border:1px solid var(--border);">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px;">1. ДОБАВИТЬ В СУЩЕСТВУЮЩУЮ ГРУППУ</label>
         <input type="text" id="manAddName" class="input-ui" placeholder="Имя подкатегории...">
-        <select id="manAddGroupSel" class="input-ui"></select>
+        <select id="manAddGroupSel" class="input-ui"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
         <button onclick="manAddSubNew()" style="width:100%; padding:10px; border-radius:8px; background:#3b82f6; color:white; font-weight:bold; border:none; cursor:pointer;">Создать подкатегорию</button>
       </div>
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; border:1px solid var(--border);">
@@ -2642,7 +2642,7 @@
     </div>
 
     <div id="catManEditSub" style="display:none;">
-      <select id="manSub" class="input-ui" onchange="updateManagerUISub()" style="cursor:pointer;"></select>
+      <select id="manSub" class="input-ui" onchange="updateManagerUISub()" style="cursor:pointer;"><optgroup label="Бабушка"><option value="Бабушка Аптека" data-group="Бабушка">Бабушка Аптека</option><option value="Бабушка Магазины" data-group="Бабушка">Бабушка Магазины</option><option value="Бабушка другое" data-group="Бабушка">Бабушка другое</option></optgroup><optgroup label="Работа"><option value="Обед/столовая на работе" data-group="Работа">Обед/столовая на работе</option><option value="Сборы денег на работе" data-group="Работа">Сборы денег на работе</option><option value="Еда/что-то на работу для себя" data-group="Работа">Еда/что-то на работу для себя</option></optgroup><optgroup label="Еда вне дома с ручкой"><option value="Кафе чисто перекусить" data-group="Еда вне дома с ручкой">Кафе чисто перекусить</option><option value="Кофейни" data-group="Еда вне дома с ручкой">Кофейни</option><option value="Фастфуд" data-group="Еда вне дома с ручкой">Фастфуд</option><option value="Кафе в честь чего-то" data-group="Еда вне дома с ручкой">Кафе в честь чего-то</option><option value="Перекус/джанкфуд продукты вне дома с ручкой" data-group="Еда вне дома с ручкой">Перекус/джанкфуд продукты вне дома с ручкой</option></optgroup><optgroup label="Продукты"><option value="Доставка" data-group="Продукты">Доставка</option><option value="КБ" data-group="Продукты">КБ</option><option value="Пятерочка" data-group="Продукты">Пятерочка</option><option value="Чижик" data-group="Продукты">Чижик</option><option value="Магнит" data-group="Продукты">Магнит</option><option value="Дикси" data-group="Продукты">Дикси</option><option value="Перекресток" data-group="Продукты">Перекресток</option><option value="Спар" data-group="Продукты">Спар</option><option value="Вкусвилл" data-group="Продукты">Вкусвилл</option><option value="Ароматный мир/винлаб" data-group="Продукты">Ароматный мир/винлаб</option><option value="Другие продуктовые магазины" data-group="Продукты">Другие продуктовые магазины</option><option value="Вода в еще" data-group="Продукты">Вода в еще</option></optgroup><optgroup label="Алкоголь и Привычки"><option value="Алкоголь бары пабы" data-group="Алкоголь и Привычки">Алкоголь бары пабы</option><option value="Курение" data-group="Алкоголь и Привычки">Курение</option><option value="Алкоголь из магазина домой" data-group="Алкоголь и Привычки">Алкоголь из магазина домой</option><option value="Алкоголь из магазина вне дома" data-group="Алкоголь и Привычки">Алкоголь из магазина вне дома</option></optgroup><optgroup label="Связь и Жилье"><option value="Сотовая связь" data-group="Связь и Жилье">Сотовая связь</option><option value="Интернет домашний" data-group="Связь и Жилье">Интернет домашний</option><option value="Аренда квартиры" data-group="Связь и Жилье">Аренда квартиры</option><option value="Онлайн - Подписки" data-group="Связь и Жилье">Онлайн - Подписки</option><option value="Консьержка" data-group="Связь и Жилье">Консьержка</option><option value="ЖКХ - вода" data-group="Связь и Жилье">ЖКХ - вода</option><option value="ЖКХ - свет" data-group="Связь и Жилье">ЖКХ - свет</option></optgroup><optgroup label="Машина"><option value="Парковка" data-group="Машина">Парковка</option><option value="Запчасти на машину" data-group="Машина">Запчасти на машину</option><option value="Ремонт машины" data-group="Машина">Ремонт машины</option><option value="Мойка машины" data-group="Машина">Мойка машины</option><option value="Штрафы" data-group="Машина">Штрафы</option><option value="ОСАГО" data-group="Машина">ОСАГО</option><option value="Бензин" data-group="Машина">Бензин</option><option value="Не запчасти" data-group="Машина">Не запчасти</option><option value="Вода в машину" data-group="Машина">Вода в машину</option></optgroup><optgroup label="Транспорт и Авто"><option value="Такси" data-group="Транспорт и Авто">Такси</option><option value="Каршеринг" data-group="Транспорт и Авто">Каршеринг</option><option value="Самокаты" data-group="Транспорт и Авто">Самокаты</option><option value="Транспорт городской общественный" data-group="Транспорт и Авто">Транспорт городской общественный</option></optgroup><optgroup label="Ручка"><option value="Ручка продукты" data-group="Ручка">Ручка продукты</option><option value="Ручка красота" data-group="Ручка">Ручка красота</option><option value="Подарки ручке" data-group="Ручка">Подарки ручке</option><option value="Цветы ручке" data-group="Ручка">Цветы ручке</option><option value="Ручке деньги" data-group="Ручка">Ручке деньги</option><option value="Проявка пленки ручки" data-group="Ручка">Проявка пленки ручки</option><option value="Ручка одежда" data-group="Ручка">Ручка одежда</option><option value="Ручка другое" data-group="Ручка">Ручка другое</option><option value="Пленка ручке" data-group="Ручка">Пленка ручке</option></optgroup><optgroup label="Здоровье"><option value="Аптека" data-group="Здоровье">Аптека</option><option value="Здоровье (обследования итд)" data-group="Здоровье">Здоровье (обследования итд)</option><option value="Стрижка" data-group="Здоровье">Стрижка</option><option value="Интим" data-group="Здоровье">Интим</option><option value="Лекарства" data-group="Здоровье">Лекарства</option></optgroup><optgroup label="Досуг и Развлечения"><option value="Кино" data-group="Досуг и Развлечения">Кино</option><option value="Театр" data-group="Досуг и Развлечения">Театр</option><option value="Окультуривание (выставки и тд) БИЛЕТЫ" data-group="Досуг и Развлечения">Окультуривание (выставки и тд) БИЛЕТЫ</option><option value="Открытки/сувениры и тд" data-group="Досуг и Развлечения">Открытки/сувениры и тд</option><option value="Иной досуг" data-group="Досуг и Развлечения">Иной досуг</option><option value="Музеи" data-group="Досуг и Развлечения">Музеи</option><option value="Иные развлечения" data-group="Досуг и Развлечения">Иные развлечения</option><option value="Фотобудка и тд" data-group="Досуг и Развлечения">Фотобудка и тд</option></optgroup><optgroup label="Прочее и Финансы"><option value="Подарки" data-group="Прочее и Финансы">Подарки</option><option value="Не сошёлся дебет кредит" data-group="Прочее и Финансы">Не сошёлся дебет кредит</option><option value="Что-то кому-то купил не в долг" data-group="Прочее и Финансы">Что-то кому-то купил не в долг</option><option value="Что-то кому-то купил в долг" data-group="Прочее и Финансы">Что-то кому-то купил в долг</option><option value="Кому-то в долг" data-group="Прочее и Финансы">Кому-то в долг</option><option value="Кому-то не в долг" data-group="Прочее и Финансы">Кому-то не в долг</option><option value="Вернул долг" data-group="Прочее и Финансы">Вернул долг</option></optgroup><optgroup label="Путешествия"><option value="Еда в путешествиях" data-group="Путешествия">Еда в путешествиях</option><option value="Досуг и развлечения в путешествиях" data-group="Путешествия">Досуг и развлечения в путешествиях</option><option value="Продукты в путешествиях" data-group="Путешествия">Продукты в путешествиях</option><option value="Иные траты в путешествиях" data-group="Путешествия">Иные траты в путешествиях</option><option value="Сувениры и тд в путешествиях" data-group="Путешествия">Сувениры и тд в путешествиях</option><option value="Бензин в путешествиях" data-group="Путешествия">Бензин в путешествиях</option><option value="Жилье в путешествиях" data-group="Путешествия">Жилье в путешествиях</option><option value="Транспорт туда/обратно" data-group="Путешествия">Транспорт туда/обратно</option><option value="Перемещение по локации (такси/автобусы/тд)" data-group="Путешествия">Перемещение по локации (такси/автобусы/тд)</option><option value="Туры" data-group="Путешествия">Туры</option></optgroup><optgroup label="Хозтовары"><option value="еще" data-group="Хозтовары">еще</option><option value="Фикс прайс" data-group="Хозтовары">Фикс прайс</option><option value="Хозтовары из других магазинов" data-group="Хозтовары">Хозтовары из других магазинов</option><option value="Хозтовары онлайн" data-group="Хозтовары">Хозтовары онлайн</option><option value="Галамарт" data-group="Хозтовары">Галамарт</option></optgroup><optgroup label="Еда дома"><option value="Доставка еды" data-group="Еда дома">Доставка еды</option><option value="Домой перекус/готовая еда/джанкфуд из магазина" data-group="Еда дома">Домой перекус/готовая еда/джанкфуд из магазина</option><option value="Еда для себя и гостей дома" data-group="Еда дома">Еда для себя и гостей дома</option></optgroup><optgroup label="Дача"><option value="Продукты дача" data-group="Дача">Продукты дача</option><option value="Алкоголь дача" data-group="Дача">Алкоголь дача</option><option value="Хозтовары дача" data-group="Дача">Хозтовары дача</option><option value="Мясо дача" data-group="Дача">Мясо дача</option></optgroup><optgroup label="Еда вне дома без ручки"><option value="Фастфуд/кафешки/рестораны/шаурма без ручки" data-group="Еда вне дома без ручки">Фастфуд/кафешки/рестораны/шаурма без ручки</option><option value="В магазине еда/джанкфуд вне дома без ручки" data-group="Еда вне дома без ручки">В магазине еда/джанкфуд вне дома без ручки</option></optgroup><optgroup label="Шопинг"><option value="Маркеты" data-group="Шопинг">Маркеты</option><option value="Мебель" data-group="Шопинг">Мебель</option><option value="Одежда" data-group="Шопинг">Одежда</option><option value="Техника" data-group="Шопинг">Техника</option><option value="Товары для дома онлайн" data-group="Шопинг">Товары для дома онлайн</option><option value="Товары для себя/аксессуары" data-group="Шопинг">Товары для себя/аксессуары</option></optgroup></select>
       <div style="background:var(--input-bg); padding:16px; border-radius:12px; border:1px solid var(--border);">
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px;">ПЕРЕИМЕНОВАТЬ</label>
         <div style="display:flex; gap:8px;">
@@ -2651,7 +2651,7 @@
         </div>
         <label style="font-size:11px; font-weight:bold; color:var(--text-mute); display:block; margin-top:12px; margin-bottom:4px;">ПЕРЕНЕСТИ В ДРУГУЮ ГРУППУ</label>
         <div style="display:flex; gap:8px;">
-          <select id="manSubMove" class="input-ui" style="margin:0; flex:1;" onchange="if(this.value==='__NEW__') document.getElementById('manSubMoveNew').style.display='block'; else document.getElementById('manSubMoveNew').style.display='none';"></select>
+          <select id="manSubMove" class="input-ui" style="margin:0; flex:1;" onchange="if(this.value==='__NEW__') document.getElementById('manSubMoveNew').style.display='block'; else document.getElementById('manSubMoveNew').style.display='none';"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option><option value="__NEW__">+ Создать новую...</option></select>
           <button onclick="manMoveSub()" style="background:#f59e0b; color:white; border-radius:8px; font-weight:bold; padding:0 15px; border:none; cursor:pointer;">ОК</button>
         </div>
         <input type="text" id="manSubMoveNew" class="input-ui" placeholder="Имя абсолютно новой группы..." style="display:none; margin-top:8px; margin-bottom:0;">
@@ -2660,7 +2660,7 @@
     </div>
 
     <div id="catManEditGroup" style="display:none;">
-      <select id="manGroupSelEdit" class="input-ui" onchange="updateManagerUIGroup()" style="cursor:pointer;"></select>
+      <select id="manGroupSelEdit" class="input-ui" onchange="updateManagerUIGroup()" style="cursor:pointer;"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
       <div style="background:#fee2e2; padding:16px; border-radius:12px; border:1px solid #fca5a5;">
         <label style="font-size:11px; font-weight:bold; color:#991b1b; display:block; margin-bottom:4px;">ПЕРЕИМЕНОВАТЬ ГРУППУ</label>
         <div style="display:flex; gap:8px;">
@@ -2671,16 +2671,38 @@
       </div>
     </div>
 
-    <div id="catManOrder" style="display:none;">
+    <div id="catManOrder" style="display: block;">
       <div style="display:flex; gap:8px; margin-bottom:12px;">
         <select id="orderManType" class="input-ui" style="margin:0; flex:1;" onchange="renderCatOrderUI()">
           <option value="groups">Порядок групп (папок)</option>
           <option value="subs">Порядок подкатегорий...</option>
         </select>
-        <select id="orderManGroup" class="input-ui" style="display:none; margin:0; flex:1;" onchange="renderCatOrderUI()"></select>
+        <select id="orderManGroup" class="input-ui" style="display: block; margin: 0px; flex: 1 1 0%;" onchange="renderCatOrderUI()"><option value="Бабушка">Бабушка</option><option value="Работа">Работа</option><option value="Еда вне дома с ручкой">Еда вне дома с ручкой</option><option value="Продукты">Продукты</option><option value="Алкоголь и Привычки">Алкоголь и Привычки</option><option value="Связь и Жилье">Связь и Жилье</option><option value="Машина">Машина</option><option value="Транспорт и Авто">Транспорт и Авто</option><option value="Ручка">Ручка</option><option value="Здоровье">Здоровье</option><option value="Досуг и Развлечения">Досуг и Развлечения</option><option value="Прочее и Финансы">Прочее и Финансы</option><option value="Путешествия">Путешествия</option><option value="Хозтовары">Хозтовары</option><option value="Еда дома">Еда дома</option><option value="Дача">Дача</option><option value="Еда вне дома без ручки">Еда вне дома без ручки</option><option value="Шопинг">Шопинг</option></select>
       </div>
-      <div style="font-size:10px; color:var(--text-mute); margin-bottom:8px;">Порядок сохранится в БД и применится к выпадающим спискам при выборе "Порядок (Свой)".</div>
-      <div id="catOrderList" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto; padding-right:4px;"></div>
+      <div style="font-size:10px; color:var(--text-mute); margin-bottom:8px;">Выберите элемент из списка и переместите его кнопками ▲ / ▼. Порядок сохранится в Supabase.</div>
+
+      <div style="background:var(--input-bg); border:1.5px solid var(--border); padding:10px; border-radius:12px; margin-bottom:10px; display:flex; gap:8px; align-items:center;">
+        <select id="orderManItemSel" class="input-ui" style="margin:0; flex:1; font-weight:bold; padding:8px;" onchange="renderCatOrderUI()"><option value="Бабушка Аптека">Бабушка Аптека</option><option value="Бабушка Магазины">Бабушка Магазины</option><option value="Бабушка другое">Бабушка другое</option></select>
+        <button type="button" onclick="moveCatOrderSelected(-1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вверх">▲</button>
+        <button type="button" onclick="moveCatOrderSelected(1)" style="background:#3b82f6; color:white; border:none; width:42px; height:38px; border-radius:8px; font-size:16px; font-weight:900; cursor:pointer; flex-shrink:0;" title="Переместить вниз">▼</button>
+      </div>
+
+      <div id="catOrderList" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto; padding-right:4px;">
+        <div onclick="document.getElementById('orderManItemSel').value='Бабушка Аптека'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:rgba(59,130,246,0.12); border:1.5px solid #3b82f6; padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
+          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">1. Бабушка Аптека</span>
+          <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.15); padding:2px 6px; border-radius:5px;">ВЫБРАНО</span>
+        </div>
+      
+        <div onclick="document.getElementById('orderManItemSel').value='Бабушка Магазины'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
+          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">2. Бабушка Магазины</span>
+          
+        </div>
+      
+        <div onclick="document.getElementById('orderManItemSel').value='Бабушка другое'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1.5px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
+          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">3. Бабушка другое</span>
+          
+        </div>
+      </div>
       <button onclick="saveCatOrderToDb()" style="width:100%; margin-top:12px; background:#10b981; color:white; padding:10px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;">💾 Сохранить порядок</button>
     </div>
 
@@ -3107,10 +3129,10 @@
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
   <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
-  <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
+  <div class="nav-item active" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
 </nav>
 
 <script>
@@ -5231,19 +5253,64 @@ async function recalculateCurrentAccountBalance() {
       list = dict[gSel.value] || [];
     }
 
+    const itemSel = document.getElementById('orderManItemSel');
+    if (itemSel) {
+      const prevVal = itemSel.value;
+      let opts = '';
+      list.forEach(name => {
+        opts += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+      });
+      itemSel.innerHTML = opts || '<option value="">— Нет элементов —</option>';
+      if (prevVal && list.indexOf(prevVal) > -1) itemSel.value = prevVal;
+    }
+
+    const selectedName = itemSel ? itemSel.value : '';
     let h = '';
     list.forEach((name, idx) => {
+      const isSelected = (name === selectedName);
       h += `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-size:12px;">
-          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(name)}</span>
-          <div style="display:flex; gap:4px; flex-shrink:0;">
-            <button type="button" onclick="moveCatOrder(${idx}, -1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
-            <button type="button" onclick="moveCatOrder(${idx}, 1)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;" ${idx === list.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
-          </div>
+        <div onclick="document.getElementById('orderManItemSel').value='${escapeJsStr(name)}'; renderCatOrderUI();" style="display:flex; justify-content:space-between; align-items:center; background:${isSelected ? 'rgba(59,130,246,0.12)' : 'var(--input-bg)'}; border:1.5px solid ${isSelected ? '#3b82f6' : 'var(--border)'}; padding:8px 10px; border-radius:10px; font-size:12px; cursor:pointer;">
+          <span style="font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${idx + 1}. ${escapeHtml(name)}</span>
+          ${isSelected ? '<span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.15); padding:2px 6px; border-radius:5px;">ВЫБРАНО</span>' : ''}
         </div>
       `;
     });
     document.getElementById('catOrderList').innerHTML = h || '<div style="color:var(--text-mute); font-size:11px;">Нет данных</div>';
+  }
+
+  function moveCatOrderSelected(dir) {
+    const t = document.getElementById('orderManType').value;
+    const gSel = document.getElementById('orderManGroup').value;
+    const itemSel = document.getElementById('orderManItemSel');
+    if (!itemSel) return;
+    const selectedName = itemSel.value;
+    if (!selectedName) return;
+
+    const dict = currentFormType === 'Расход' ? appData.config.exp : appData.config.inc;
+    let list = t === 'groups' ? Object.keys(dict) : (dict[gSel] || []);
+
+    const idx = list.indexOf(selectedName);
+    if (idx === -1) return;
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= list.length) return;
+
+    if (t === 'groups') {
+      const newDict = {};
+      const keys = Object.keys(dict);
+      const temp = keys[idx];
+      keys[idx] = keys[targetIdx];
+      keys[targetIdx] = temp;
+      keys.forEach(k => { newDict[k] = dict[k]; });
+      if (currentFormType === 'Расход') appData.config.exp = newDict;
+      else appData.config.inc = newDict;
+    } else {
+      const temp = list[idx];
+      list[idx] = list[targetIdx];
+      list[targetIdx] = temp;
+    }
+
+    renderCatOrderUI();
+    itemSel.value = selectedName;
   }
 
   function moveCatOrder(idx, dir) {
@@ -6838,19 +6905,31 @@ function renderA() {
 
     const dateRangeLabel = `${periodStart}..${periodEnd}`;
 
-    // РЕЖИМ ДЛЯ НЕЙРОСЕТЕЙ (AI TOKENS)
     if (isAiMode && (format === 'txt' || format === 'md')) {
-      let aiText = `LEDGER:${dateRangeLabel}|TOTAL:${grandTotal}|CUR:RUB|TXS:${selectedTxs.length}\n`;
+      // Раздельные итоги: расходы, доходы и нетто. Иначе проценты взлетают за 300%.
+      const headerTotal = includeIncomes
+        ? `TOTAL_NET:${grandTotal}|EXP:${grandTotalExp}|INC:${grandTotalInc}`
+        : `TOTAL:${grandTotalExp}`;
+
+      let aiText = `LEDGER:${dateRangeLabel}|${headerTotal}|CUR:RUB|TXS:${selectedTxs.length}\n`;
+
       sortedCats.forEach(([cName, data]) => {
-        const pct = ((data.sum / grandTotal) * 100).toFixed(1);
-        aiText += `[${cName}]:${data.sum} (${pct}%, ${data.items.length}tx)\n`;
+        const isIncCat = (data.type === 'Доход');
+        const denom = isIncCat ? grandTotalInc : grandTotalExp;
+        const pct = denom > 0 ? ((data.sum / denom) * 100).toFixed(1) : '0.0';
+        aiText += `[${cName}${isIncCat ? '|INC' : ''}]:${data.sum} (${pct}%, ${data.items.length}tx)\n`;
+
         if (withComments) {
           data.items.forEach(t => {
-            const comClean = (t.comE || '').replace(/[\n\r]+/g, ' ').trim();
-            aiText += ` ${t.fd}:${t.sumE}${comClean ? `|${comClean}` : ''}\n`;
+            const isIncTx = (t.type === 'Доход');
+            const sumVal = isIncTx ? (parseFloat(t.sumI) || 0) : (parseFloat(t.sumE) || 0);
+            const comVal = isIncTx ? (t.comI || '') : (t.comE || '');
+            const comClean = comVal.replace(/[\n\r]+/g, ' ').trim();
+            aiText += ` ${t.fd}:${sumVal}${comClean ? `|${comClean}` : ''}\n`;
           });
         }
       });
+
       downloadFile(aiText, `ai_export_${periodStart}_${periodEnd}.${format === 'md' ? 'md' : 'txt'}`, 'text/plain');
       return;
     }
