@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px;">
       <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Сортировка самих счетов:</label>
       <select id="accountsSortSelect" class="input-ui" onchange="renderBankCards()" style="cursor:pointer; margin-bottom:0; padding:8px;">
@@ -348,7 +348,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view">
+  <div id="viewAnalytics" class="app-view active">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -634,7 +634,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -992,12 +992,12 @@
               <div style="min-width:0; flex:1;">
                 <b style="font-size:12px; color:var(--text-main); word-break:break-word;">Работа</b>
                 <span style="color:var(--text-mute); font-size:10.5px; margin-left:5px; font-weight:700;">
-                  (<b>9&nbsp;чек.</b> • 0/3)
+                  (<b>10&nbsp;чек.</b> • 0/3)
                 </span>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:12px; color:#10b981;">2&nbsp;828&nbsp;₽</b>
+              <b style="font-size:12px; color:#10b981;">3&nbsp;158&nbsp;₽</b>
               <span id="exp_grp_arr_3" style="font-size:9px; color:var(--text-mute);">▼</span>
             </div>
           </div>
@@ -1006,10 +1006,10 @@
           <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 32px; border-bottom:1px dashed var(--border); font-size:11.5px; cursor:pointer;">
             <div style="min-width:0; flex:1; padding-right:8px;">
               <span style="color:var(--text-main); font-weight:600;">Обед/столовая на работе</span>
-              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(7&nbsp;чек.)</span>
+              <span style="color:var(--text-mute); font-size:10px; margin-left:4px;">(8&nbsp;чек.)</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <b style="font-size:11px; color:var(--text-main);">2&nbsp;418&nbsp;₽</b>
+              <b style="font-size:11px; color:var(--text-main);">2&nbsp;748&nbsp;₽</b>
               <!-- ЧЁТКИЙ КОНТРАСТНЫЙ ЧЕКБОКС -->
               <input type="checkbox" class="export-subcat-cb" onchange="toggleExportSubcat('Обед/столовая на работе', event)">
             </div>
@@ -2712,23 +2712,31 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">💳 Счета для трат</h2>
-              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">Яндекс</h2>
+              <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display: block; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
         </div>
-        <div id="histFilterToggleWrap" style="display: block; background: var(--input-bg); padding: 4px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px;">
-            <div style="display:flex; gap:4px;">
-                <button type="button" id="histFilterPoolBtn" onclick="setHistFilter('pool')" style="flex: 1 1 0%; padding: 8px; border-radius: 9px; border: none; font-size: 11.5px; font-weight: 800; cursor: pointer; background: var(--border); color: var(--text-main); transition: 0.15s;">Только выбранные</button>
-                <button type="button" id="histFilterAllBtn" onclick="setHistFilter('all')" style="flex: 1 1 0%; padding: 8px; border-radius: 9px; border: none; font-size: 11.5px; font-weight: 800; cursor: pointer; background: transparent; color: var(--text-mute); transition: 0.15s;">Все счета</button>
+        <div id="histFilterToggleWrap" style="display: none; margin-bottom: 8px;">
+            <div style="display:flex; gap:6px;">
+                <button type="button" id="histFilterPoolBtn" onclick="setHistFilter('pool')" style="flex: 1 1 0%; padding: 9px 8px; border-radius: 10px; border: 1px solid var(--border); font-size: 11.5px; font-weight: 800; cursor: pointer; background: var(--btn-active); color: var(--btn-active-text); transition: 0.15s;">💰 Только выбранные</button>
+                <button type="button" id="histFilterAllBtn" onclick="setHistFilter('all')" style="flex: 1 1 0%; padding: 9px 8px; border-radius: 10px; border: 1px solid var(--border); font-size: 11.5px; font-weight: 800; cursor: pointer; background: var(--input-bg); color: var(--text-mute); transition: 0.15s;">🌍 Все счета</button>
             </div>
         </div>
         <div style="background:var(--input-bg); padding:12px; border-radius:12px; border:1px solid var(--border);">
             <select id="histDateType" class="input-ui" style="margin-bottom:8px; padding:8px;" onchange="updateHistDateUI()">
-                <option value="all">За всё время</option><option value="month">Текущий месяц</option><option value="single">Конкретная дата</option><option value="range">Промежуток дат</option>
+                <option value="month">Месяц</option>
+                <option value="salary">ЗП Месяц (с 16 по 15)</option>
+                <option value="year">Год</option>
+                <option value="last90">Последние 90 дней</option>
+                <option value="single">Конкретная дата</option>
+                <option value="custom">Произвольно</option>
+                <option value="all">За всё время</option>
             </select>
-            <div id="histSingleWrap" style="display:none; margin-bottom:0;"><input type="date" id="histSingle" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
-            <div id="histRangeWrap" style="display:none; gap:8px; margin-bottom:0;"><input type="date" id="histStart" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"><input type="date" id="histEnd" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
+            <div id="histMonthWrap" style="display: none; width: 100%; margin-bottom: 0px;"><input type="month" id="histMonth" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
+            <div id="histYearWrap" style="display:none; width:100%; margin-bottom:0;"><input type="number" id="histYear" class="input-ui" placeholder="Год (напр. 2026)" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
+            <div id="histSingleWrap" style="display:none; width:100%; margin-bottom:0;"><input type="date" id="histSingle" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
+            <div id="histRangeWrap" style="display:none; gap:8px; width:100%; margin-bottom:0;"><input type="date" id="histStart" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"><input type="date" id="histEnd" class="input-ui input-date" style="padding:8px; margin:0;" onchange="executeHistSearch()"></div>
 
             <select id="histSortType" class="input-ui" style="margin-top:8px; margin-bottom:0; padding:8px;" onchange="executeHistSearch()">
               <option value="date_desc">Сортировка: Сначала новые</option>
@@ -2738,7 +2746,7 @@
               <option value="name_asc">Сортировка: Название (А-Я)</option>
               <option value="name_desc">Сортировка: Название (Я-А)</option>
             </select>
-            <input type="text" id="histSearchInput" class="input-ui" style="padding:8px; margin-top:8px; margin-bottom:0;" placeholder="🔍 Поиск (категория, сумма, коммент)..." onkeyup="executeHistSearch()">
+            <input type="text" id="histSearchInput" class="input-ui" style="padding:8px; margin-top:8px; margin-bottom:0;" placeholder="🔍 Поиск (категория, сумма, коммент)..." oninput="debouncedHistSearch()">
         </div>
     </div>
     <div id="histList" style="padding: 16px 24px;"></div>
@@ -3147,7 +3155,7 @@
 </div>
 
 <!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ ПУЛА НАКОПЛЕНИЙ -->
-<div id="savingsPoolModal" class="modal" style="z-index: 4010; display: none;">
+<div id="savingsPoolModal" class="modal" style="z-index: 1200; display: none;">
   <div class="modal-content" style="max-width: 420px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 22px; gap: 12px; box-sizing: border-box;">
     <div class="modal-header-sticky">
       <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">💎 Счета для накоплений</h3>
@@ -3161,95 +3169,15 @@
       <button type="button" onclick="setOnlySavingsPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только накопительные</button>
       <button type="button" onclick="setAllSavingsPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="savingsPoolListContainer" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto;">
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(144 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Яндекс" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="ВТБ" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Сбербанк" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Тинькофф" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Озон Банк" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="ВБ Банк" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет ручки на путешествия" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет копить" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(10&nbsp;858 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет тратить" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(3&nbsp;065 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;448 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Инвестиции" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На квартиру <b style="color:var(--text-mute); font-size:10.5px;">(40&nbsp;000 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="На квартиру" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="savings-pool-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      </div>
+    <div id="savingsPoolListContainer" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto;"></div>
     <button type="button" onclick="saveSavingsPoolSettings()" style="background:#10b981; color:white; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">💾 Сохранить счета накоплений</button>
   </div>
 </div>
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -3366,6 +3294,11 @@
   let activeChartGroup = null;
   let activeHistoryAcc = null;
   let currentTxForSplit = null;
+  // Порционный рендер истории: не строим 2000+ DOM-узлов за раз.
+  // Держим полный массив результатов в памяти и показываем частями.
+  const HIST_PAGE_SIZE = 500;
+  let histCurrentRes = [];
+  let histCurrentLimit = HIST_PAGE_SIZE;
   let selectedAccounts = new Set();
   let isAccountsInitialized = false;
   let currentTravelTab = 'travel';
@@ -5173,9 +5106,21 @@
 
   function updateHistDateUI() {
     const t = document.getElementById('histDateType').value;
-    document.getElementById('histSingleWrap').style.display = t === 'single' ? 'block' : 'none';
-    document.getElementById('histRangeWrap').style.display = t === 'range' ? 'flex' : 'none';
+    document.getElementById('histMonthWrap').style.display = (t === 'month' || t === 'salary') ? 'block' : 'none';
+    document.getElementById('histYearWrap').style.display = (t === 'year') ? 'block' : 'none';
+    document.getElementById('histSingleWrap').style.display = (t === 'single') ? 'block' : 'none';
+    document.getElementById('histRangeWrap').style.display = (t === 'custom') ? 'flex' : 'none';
     executeHistSearch();
+  }
+
+  // Дебаунс для поля поиска: не дёргаем полный рендер истории на каждое нажатие.
+  // Фильтр срабатывает через 250ms после того, как пользователь перестал печатать.
+  let _histSearchTimer = null;
+  function debouncedHistSearch() {
+    clearTimeout(_histSearchTimer);
+    _histSearchTimer = setTimeout(() => {
+      executeHistSearch();
+    }, 250);
   }
 
 function openAccHistory(n) {
@@ -5215,7 +5160,13 @@ function openAccHistory(n) {
 
     document.getElementById('histSearchInput').value = '';
     document.getElementById('accHistoryModal').style.display = 'flex';
-    document.getElementById('histDateType').value = 'all';
+    // Дефолт — текущий месяц. Открывается мгновенно, не грузим всё время.
+    // Пользователь может переключить на «За всё время» через селект.
+    const nowHist = new Date();
+    const curMonthStr = `${nowHist.getFullYear()}-${String(nowHist.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('histDateType').value = 'month';
+    document.getElementById('histMonth').value = curMonthStr;
+    document.getElementById('histYear').value = nowHist.getFullYear();
     document.getElementById('histSortType').value = 'date_desc';
     updateHistDateUI();
   }
@@ -5223,7 +5174,9 @@ function openAccHistory(n) {
   // Возвращает режим фильтрации в модалке истории: 'pool' — только выбранные счета пула,
   // 'all' — все счета системы. Применяется только для виртуальных пулов (__SPENDING__ / __SAVINGS__).
   function getHistFilterMode() {
-    return localStorage.getItem('hist_filter_mode') || 'pool';
+    // Дефолт — «Все счета»: карточка-пул используется как универсальный поисковик.
+    // Пользователь может переключиться на «Только выбранные» — выбор запомнится.
+    return localStorage.getItem('hist_filter_mode') || 'all';
   }
 
   function setHistFilter(mode) {
@@ -5238,16 +5191,21 @@ function openAccHistory(n) {
     if (!poolBtn || !allBtn) return;
 
     const mode = getHistFilterMode();
+    const activeStyle = 'var(--btn-active)';
+    const activeTextStyle = 'var(--btn-active-text)';
+    const inactiveBg = 'var(--input-bg)';
+    const inactiveText = 'var(--text-mute)';
+
     if (mode === 'all') {
-      allBtn.style.background = 'var(--border)';
-      allBtn.style.color = 'var(--text-main)';
-      poolBtn.style.background = 'transparent';
-      poolBtn.style.color = 'var(--text-mute)';
+      allBtn.style.background = activeStyle;
+      allBtn.style.color = activeTextStyle;
+      poolBtn.style.background = inactiveBg;
+      poolBtn.style.color = inactiveText;
     } else {
-      poolBtn.style.background = 'var(--border)';
-      poolBtn.style.color = 'var(--text-main)';
-      allBtn.style.background = 'transparent';
-      allBtn.style.color = 'var(--text-mute)';
+      poolBtn.style.background = activeStyle;
+      poolBtn.style.color = activeTextStyle;
+      allBtn.style.background = inactiveBg;
+      allBtn.style.color = inactiveText;
     }
   }
 
@@ -5335,25 +5293,45 @@ async function recalculateCurrentAccountBalance() {
     };
 
     const dType = document.getElementById('histDateType').value;
-    const dSing = document.getElementById('histSingle').value;
-    const dStart = document.getElementById('histStart').value;
-    const dEnd = document.getElementById('histEnd').value;
     const q = document.getElementById('histSearchInput').value.toLowerCase().trim();
 
-    let bounds = {s: '', e: ''};
-    if(dType === 'month') {
-      let now = new Date();
-      let s = new Date(now.getFullYear(), now.getMonth(), 1);
-      let e = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      bounds.s = toISOLocal(s);
-      bounds.e = toISOLocal(e);
+    const nowHist = new Date();
+    let bounds = { s: '', e: '' };
+
+    if (dType === 'month') {
+      const val = document.getElementById('histMonth').value;
+      if (val) {
+        const [yy, mm] = val.split('-').map(Number);
+        bounds.s = toISOLocal(new Date(yy, mm - 1, 1));
+        bounds.e = toISOLocal(new Date(yy, mm, 0, 23, 59, 59));
+      }
+    } else if (dType === 'salary') {
+      const val = document.getElementById('histMonth').value;
+      if (val) {
+        const [yy, mm] = val.split('-').map(Number);
+        bounds.s = toISOLocal(new Date(yy, mm - 1, 16));
+        bounds.e = toISOLocal(new Date(yy, mm, 15, 23, 59, 59));
+      }
+    } else if (dType === 'year') {
+      const yy = parseInt(document.getElementById('histYear').value, 10) || nowHist.getFullYear();
+      bounds.s = toISOLocal(new Date(yy, 0, 1));
+      bounds.e = toISOLocal(new Date(yy, 11, 31, 23, 59, 59));
+    } else if (dType === 'last90') {
+      bounds.s = toISOLocal(new Date(nowHist.getTime() - 90 * 86400000));
+      bounds.e = toISOLocal(nowHist);
+    } else if (dType === 'single') {
+      const val = document.getElementById('histSingle').value;
+      if (val) bounds.s = bounds.e = val;
+    } else if (dType === 'custom') {
+      bounds.s = document.getElementById('histStart').value || '';
+      bounds.e = document.getElementById('histEnd').value || '';
     }
 
-    let h = '', res = [];
+    const htmlParts = [];
+    let res = [];
     appData.transactions.forEach((r, idx) => {
-        if(dType === 'single' && dSing && r.fd !== dSing) return;
-        if(dType === 'range' && dStart && dEnd && (dStart > r.fd || r.fd > dEnd)) return;
-        if(dType === 'month' && (bounds.s > r.fd || r.fd > bounds.e)) return;
+        if (bounds.s && r.fd < bounds.s) return;
+        if (bounds.e && r.fd > bounds.e) return;
 
         let str = (r.d + ' ' + r.sumE + ' ' + r.catE + ' ' + r.comE + ' ' + r.sumI + ' ' + r.catI + ' ' + r.comI + ' ' + r.accF + ' ' + r.accT + ' ' + r.accE + ' ' + r.accI).toLowerCase();
         if(q && !str.includes(q)) return;
@@ -5377,50 +5355,87 @@ async function recalculateCurrentAccountBalance() {
     });
 
     const sortVal = document.getElementById('histSortType').value;
-    if (sortVal === 'date_desc') res.sort((a, b) => new Date(b.fd).getTime() - new Date(a.fd).getTime() || b.idx - a.idx);
-    else if (sortVal === 'date_asc') res.sort((a, b) => new Date(a.fd).getTime() - new Date(b.fd).getTime() || a.idx - b.idx);
+    // Сортировка по дате: сравниваем ISO-строки напрямую (YYYY-MM-DD).
+    if (sortVal === 'date_desc') res.sort((a, b) => (a.fd < b.fd ? 1 : a.fd > b.fd ? -1 : b.idx - a.idx));
+    else if (sortVal === 'date_asc') res.sort((a, b) => (a.fd > b.fd ? 1 : a.fd < b.fd ? -1 : a.idx - b.idx));
     else if (sortVal === 'sum_desc') res.sort((a, b) => b.s - a.s);
     else if (sortVal === 'sum_asc') res.sort((a, b) => a.s - b.s);
     else if (sortVal === 'name_asc') res.sort((a, b) => a.cat.localeCompare(b.cat));
     else if (sortVal === 'name_desc') res.sort((a, b) => b.cat.localeCompare(a.cat));
 
-    res.forEach(r => {
-      let col = 'var(--text-mute)', sn = '', btnHtml = '';
-      if(r.t.includes('исх') || r.t === 'Расход') { col = '#f43f5e'; sn = '-'; }
-      if(r.t.includes('вх') || r.t === 'Доход') { col = '#10b981'; sn = '+'; }
-      if(r.t.includes('Перевод')) col = '#eab308';
+    // Сохраняем результаты в память и сбрасываем лимит порционного рендера.
+    histCurrentRes = res;
+    histCurrentLimit = HIST_PAGE_SIZE;
+    renderHistList();
+  }
 
-      if(!r.t.includes('Перевод') && r.id) {
-        btnHtml = `<button onclick="clI(event,'${r.id}')" style="background:var(--border); border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px; font-weight:bold; color:var(--text-main);">✏️ Изменить</button>`;
-      }
+  // Строит HTML одной строки транзакции. Вынесено из executeHistSearch,
+  // чтобы не дублировать код в renderHistList.
+  function buildHistRowHtml(r) {
+    let col = 'var(--text-mute)', sn = '', btnHtml = '';
+    if(r.t.includes('исх') || r.t === 'Расход') { col = '#f43f5e'; sn = '-'; }
+    if(r.t.includes('вх') || r.t === 'Доход') { col = '#10b981'; sn = '+'; }
+    if(r.t.includes('Перевод')) col = '#eab308';
 
-      let accHtml = '';
-      if (r.acc) {
-        accHtml = `<span style="background:${getBankCol(r.acc)}; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:bold; margin-left:6px; color:#ffffff;">${r.acc}</span>`;
-      }
-
-      h += `
-        <div style="background:var(--bg-card); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-              <span style="font-size:11px; font-weight:bold; color:var(--text-mute); display:flex; align-items:center;">${r.d} | ${r.t} ${accHtml}</span>
-              <span style="font-weight:900; color:${col};">${sn}${r.s.toLocaleString()} ₽</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-              <div style="flex:1;">
-                 <div style="font-size:14px; font-weight:800; color:var(--text-main);">${escapeHtml(r.cat)}</div>
-                 ${r.c ? `<div class="pre-wrap" style="font-size:11px; color:var(--text-mute); margin-top:4px;">${escapeHtml(r.c)}</div>` : ''}
-              </div>
-              ${btnHtml}
-            </div>
-        </div>
-      `;
-    });
-
-    if (res.length === 0) {
-      document.getElementById('histList').innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-mute); font-weight:bold;">У этого счета пока нет операций.</div>';
-    } else {
-      document.getElementById('histList').innerHTML = `<div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:8px; text-align:right;">Найдено операций: ${res.length} шт.</div>` + h;
+    if(!r.t.includes('Перевод') && r.id) {
+      btnHtml = `<button onclick="clI(event,'${r.id}')" style="background:var(--border); border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px; font-weight:bold; color:var(--text-main);">✏️ Изменить</button>`;
     }
+
+    let accHtml = '';
+    if (r.acc) {
+      accHtml = `<span style="background:${getBankCol(r.acc)}; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:bold; margin-left:6px; color:#ffffff;">${r.acc}</span>`;
+    }
+
+    return `
+      <div style="background:var(--bg-card); padding:12px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:bold; color:var(--text-mute); display:flex; align-items:center;">${r.d} | ${r.t} ${accHtml}</span>
+            <span style="font-weight:900; color:${col};">${sn}${r.s.toLocaleString()} ₽</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div style="flex:1;">
+               <div style="font-size:14px; font-weight:800; color:var(--text-main);">${escapeHtml(r.cat)}</div>
+               ${r.c ? `<div class="pre-wrap" style="font-size:11px; color:var(--text-mute); margin-top:4px;">${escapeHtml(r.c)}</div>` : ''}
+            </div>
+            ${btnHtml}
+          </div>
+      </div>
+    `;
+  }
+
+  // Рендерит список истории порциями: сначала 500 записей, потом по кнопке «Показать ещё».
+  // Это устраняет 200-300ms фризы при открытии карточки с 2000+ транзакциями.
+  function renderHistList() {
+    const histListEl = document.getElementById('histList');
+    if (!histListEl) return;
+
+    const res = histCurrentRes;
+    if (!res || res.length === 0) {
+      histListEl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-mute); font-weight:bold;">У этого счета пока нет операций.</div>';
+      return;
+    }
+
+    const toShow = res.slice(0, histCurrentLimit);
+    const parts = new Array(toShow.length);
+    for (let i = 0; i < toShow.length; i++) {
+      parts[i] = buildHistRowHtml(toShow[i]);
+    }
+
+    let html = `<div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:8px; text-align:right;">Найдено: ${res.length} шт. Показано: ${toShow.length}</div>`;
+    html += parts.join('');
+
+    if (histCurrentLimit < res.length) {
+      const remain = res.length - histCurrentLimit;
+      html += `<button onclick="histLoadMore()" style="width:100%; margin-top:8px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; font-size:12px; font-weight:800; color:var(--text-main); cursor:pointer;">⬇ Показать ещё ${Math.min(HIST_PAGE_SIZE, remain)} (осталось ${remain})</button>`;
+    }
+
+    histListEl.innerHTML = html;
+  }
+
+  // Дозагрузка следующей порции по клику «Показать ещё».
+  function histLoadMore() {
+    histCurrentLimit += HIST_PAGE_SIZE;
+    renderHistList();
   }
 
   // ==== ФОРМЫ "ДОБАВИТЬ" И КАТЕГОРИИ ====
@@ -14892,7 +14907,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
