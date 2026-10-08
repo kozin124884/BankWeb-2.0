@@ -302,22 +302,16 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view">
-    <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
-      <div style="display:flex; gap:8px;">
-        <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
-        <button onclick="selectAllAccounts(false)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✕ Снять все</button>
-      </div>
-      <div>
-        <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Сортировка самих счетов:</label>
-        <select id="accountsSortSelect" class="input-ui" onchange="renderBankCards()" style="cursor:pointer; margin-bottom:0; padding:8px;">
-          <option value="custom">Ручная (своя)</option>
-          <option value="balance_desc">Баланс (Крупные)</option>
-          <option value="balance_asc">Баланс (Мелкие)</option>
-          <option value="name_asc">Имя (А-Я)</option>
-          <option value="name_desc">Имя (Я-А)</option>
-        </select>
-      </div>
+  <div id="viewAccounts" class="app-view active">
+    <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px;">
+      <label style="font-size:10px; font-weight:bold; color:var(--text-mute); display:block; margin-bottom:4px; text-transform:uppercase;">Сортировка самих счетов:</label>
+      <select id="accountsSortSelect" class="input-ui" onchange="renderBankCards()" style="cursor:pointer; margin-bottom:0; padding:8px;">
+        <option value="custom">Ручная (своя)</option>
+        <option value="balance_desc">Баланс (Крупные)</option>
+        <option value="balance_asc">Баланс (Мелкие)</option>
+        <option value="name_asc">Имя (А-Я)</option>
+        <option value="name_desc">Имя (Я-А)</option>
+      </select>
     </div>
     <div id="bankCardsList"></div>
 
@@ -354,7 +348,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view active">
+  <div id="viewAnalytics" class="app-view">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -379,7 +373,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;222 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
         </div>
       </div>
 
@@ -400,7 +394,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -640,7 +634,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 750px;" width="750" height="250"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;" width="0" height="0"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -2718,10 +2712,16 @@
     <div class="modal-header-sticky" style="flex-direction:column; align-items:stretch; gap:12px; border-bottom:1px solid var(--border); margin:0; padding:24px 24px 16px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px;">
-              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;"></h2>
+              <h2 id="histTitle" style="font-size:20px; font-weight:900; margin:0;">💳 Счета для трат</h2>
               <button id="btnRecalcBal" onclick="recalculateCurrentAccountBalance()" style="display:none; background:var(--input-bg); border:1px solid var(--border); color:var(--text-main); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; transition:0.2s;" title="Жесткий пересчет баланса по истории чеков">🔄 Пересчитать</button>
             </div>
             <button class="close-btn" onclick="closeModal('accHistoryModal')">✕</button>
+        </div>
+        <div id="histFilterToggleWrap" style="display: block; background: var(--input-bg); padding: 4px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px;">
+            <div style="display:flex; gap:4px;">
+                <button type="button" id="histFilterPoolBtn" onclick="setHistFilter('pool')" style="flex: 1 1 0%; padding: 8px; border-radius: 9px; border: none; font-size: 11.5px; font-weight: 800; cursor: pointer; background: var(--border); color: var(--text-main); transition: 0.15s;">Только выбранные</button>
+                <button type="button" id="histFilterAllBtn" onclick="setHistFilter('all')" style="flex: 1 1 0%; padding: 8px; border-radius: 9px; border: none; font-size: 11.5px; font-weight: 800; cursor: pointer; background: transparent; color: var(--text-mute); transition: 0.15s;">Все счета</button>
+            </div>
         </div>
         <div style="background:var(--input-bg); padding:12px; border-radius:12px; border:1px solid var(--border);">
             <select id="histDateType" class="input-ui" style="margin-bottom:8px; padding:8px;" onchange="updateHistDateUI()">
@@ -3114,87 +3114,7 @@
       <button type="button" onclick="setOnlyCardPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
       <button type="button" onclick="setAllPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;">
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(144 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Тинькофф" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Озон Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(10&nbsp;858 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(3&nbsp;065 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;448 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>На квартиру <b style="color:var(--text-mute); font-size:10.5px;">(40&nbsp;000 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="На квартиру" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      
-        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
-          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
-          <input type="checkbox" class="pool-acc-item-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
-        </label>
-      </div>
+    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;"></div>
     <div style="border-top:1px solid var(--border); padding-top:10px;">
       <label style="font-size:10.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Или задать сумму вручную (₽):</label>
       <input type="number" id="apManualPoolInput" class="input-ui" placeholder="Оставьте пустым для авто-расчёта" style="margin:0; padding:9px;">
@@ -3206,29 +3126,130 @@
 
 
 
-<!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ "ВСЕ СЧЕТА" -->
-<div id="allAccountsSelectModal" class="modal" style="z-index: 1200; display: none;">
-  <div class="modal-content" style="max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; padding: 22px; gap: 12px;">
+<!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ ПУЛА ТРАТ -->
+<div id="spendingPoolModal" class="modal" style="z-index: 1200; display: none;">
+  <div class="modal-content" style="max-width: 420px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 22px; gap: 12px; box-sizing: border-box;">
     <div class="modal-header-sticky">
-      <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">🌍 Счета в «Все счета»</h3>
-      <button class="close-btn" type="button" onclick="closeModal('allAccountsSelectModal')">✕</button>
+      <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">💳 Счета для трат</h3>
+      <button class="close-btn" type="button" onclick="closeModal('spendingPoolModal')">✕</button>
     </div>
     <div style="font-size: 11.5px; color: var(--text-mute); line-height: 1.4;">
-      Отметьте счета, которые войдут в общий баланс «Все счета». Этот список полностью независим от «Сводки».
+      Отметьте счета, с которых вы тратите на жизнь. Их общая сумма участвует в дневном лимите Автопилота.
     </div>
     <div style="display:flex; gap:6px;">
-      <button type="button" onclick="setAllAccSelectState(true)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Выбрать все</button>
-      <button type="button" onclick="setAllAccSelectState(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
+      <button type="button" onclick="setAllSpendingPoolAccounts(true)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Выбрать все</button>
+      <button type="button" onclick="setOnlyCardSpendingPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
+      <button type="button" onclick="setAllSpendingPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="allAccSelectList" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto; max-height:320px;"></div>
-    <button type="button" onclick="saveAllAccSelectSettings()" style="background:#10b981; color:white; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">💾 Сохранить список счетов</button>
+    <div id="spendingPoolListContainer" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto;"></div>
+    <button type="button" onclick="saveSpendingPoolSettings()" style="background:#10b981; color:white; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">💾 Сохранить счета трат</button>
+  </div>
+</div>
+
+<!-- МОДАЛКА ВЫБОРА СЧЕТОВ ДЛЯ ПУЛА НАКОПЛЕНИЙ -->
+<div id="savingsPoolModal" class="modal" style="z-index: 4010; display: none;">
+  <div class="modal-content" style="max-width: 420px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 22px; gap: 12px; box-sizing: border-box;">
+    <div class="modal-header-sticky">
+      <h3 style="margin: 0; font-size: 15px; font-weight: 900; color: var(--text-main);">💎 Счета для накоплений</h3>
+      <button class="close-btn" type="button" onclick="closeModal('savingsPoolModal')">✕</button>
+    </div>
+    <div style="font-size: 11.5px; color: var(--text-mute); line-height: 1.4;">
+      Отметьте счета, где деньги копятся и не тратятся. Их сумма — ваш капитал.
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button type="button" onclick="setAllSavingsPoolAccounts(true)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Выбрать все</button>
+      <button type="button" onclick="setOnlySavingsPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только накопительные</button>
+      <button type="button" onclick="setAllSavingsPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
+    </div>
+    <div id="savingsPoolListContainer" style="display:flex; flex-direction:column; gap:4px; background:var(--input-bg); padding:10px; border-radius:12px; border:1px solid var(--border); flex:1; overflow-y:auto;">
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(144 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Яндекс" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="ВТБ" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Сбербанк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Тинькофф" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Озон Банк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="ВБ Банк" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет ручки на путешествия" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет копить" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(10&nbsp;858 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Накопительный счет тратить" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(3&nbsp;065 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;448 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Инвестиции" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На квартиру <b style="color:var(--text-mute); font-size:10.5px;">(40&nbsp;000 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="На квартиру" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      </div>
+    <button type="button" onclick="saveSavingsPoolSettings()" style="background:#10b981; color:white; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer;">💾 Сохранить счета накоплений</button>
   </div>
 </div>
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -3602,6 +3623,31 @@
       .replace(/ё/g, 'е');
   }
 
+  // Возвращает список имён счетов, входящих в пул трат.
+  // Этот же список используется автопилотом как «Свободный пул на жизнь».
+  function getSpendingPoolAccounts() {
+    const json = localStorage.getItem('ap_included_pool_accounts');
+    if (json) {
+      try {
+        const arr = JSON.parse(json);
+        if (Array.isArray(arr)) return arr;
+      } catch(e) {}
+    }
+    return [];
+  }
+
+  // Возвращает список имён счетов, входящих в пул накоплений.
+  function getSavingsPoolAccounts() {
+    const json = localStorage.getItem('savings_pool_accounts');
+    if (json) {
+      try {
+        const arr = JSON.parse(json);
+        if (Array.isArray(arr)) return arr;
+      } catch(e) {}
+    }
+    return [];
+  }
+
   function genLocalId(prefix = 'local') {
     const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
       ? crypto.randomUUID()
@@ -3646,6 +3692,27 @@
         localStorage.removeItem('salary_history_period');
       }
       localStorage.setItem('salary_period_migration_v2', 'done');
+    }
+
+    // Разовая миграция: старый список all_acc_included_list (использовался для карточки «Все счета»)
+    // переливаем в пул трат ap_included_pool_accounts, если последний пуст.
+    // Старые legacy-ключи чистим и локально, и в Supabase, чтобы fetchAllData их не вернул.
+    if (localStorage.getItem('pool_migration_v1') !== 'done') {
+      const legacyAllAcc = localStorage.getItem('all_acc_included_list');
+      const hasSpendingPool = localStorage.getItem('ap_included_pool_accounts');
+      if (legacyAllAcc && !hasSpendingPool) {
+        localStorage.setItem('ap_included_pool_accounts', legacyAllAcc);
+      }
+      localStorage.removeItem('all_acc_included_list');
+      localStorage.removeItem('selected_accounts_list');
+      localStorage.setItem('pool_migration_v1', 'done');
+
+      // Чистим legacy-ключи в Supabase (записываем пустую строку — маркер удаления).
+      // Выполняем только для админа: у гостя нет прав на RPC.
+      if (!isGuest()) {
+        removePersistedSetting('all_acc_included_list');
+        removePersistedSetting('selected_accounts_list');
+      }
     }
 
     loadQueueFromStorage(); // восстановит все твои чеки, если телефон выгрузил браузер
@@ -3712,7 +3779,7 @@
         db.from('debtors').select('*'),
         db.from('events').select('*'),
         db.from('debt_archive').select('*').order('date', { ascending: true }),
-        db.from('app_settings').select('key, value').in('key', ['ap_included_pool_accounts', 'ap_manual_rent_reserve', 'ap_override_pool_sum', 'app_system_roles', 'cat_custom_order_json', 'all_acc_included_list', 'selected_accounts_list', 'salary_history_period', 'salary_median_override', 'salary_history_start_override'])
+        db.from('app_settings').select('key, value').in('key', ['ap_included_pool_accounts', 'ap_manual_rent_reserve', 'ap_override_pool_sum', 'app_system_roles', 'cat_custom_order_json', 'all_acc_included_list', 'selected_accounts_list', 'salary_history_period', 'salary_median_override', 'salary_history_start_override', 'savings_pool_accounts', 'pool_color_spending', 'pool_color_savings'])
       ]);
 
       // Синхронизация счетов свободного пула и брони из базы данных (работает и в инкогнито)
@@ -3730,12 +3797,8 @@
           if (item.key === 'app_system_roles' && item.value) {
             localStorage.setItem('app_system_roles', item.value);
           }
-          if (item.key === 'all_acc_included_list' && item.value) {
-            localStorage.setItem('all_acc_included_list', item.value);
-          }
-          if (item.key === 'selected_accounts_list' && item.value) {
-            localStorage.setItem('selected_accounts_list', item.value);
-          }
+          // legacy-ключи all_acc_included_list и selected_accounts_list больше не восстанавливаем —
+          // они мигрированы в ap_included_pool_accounts и удалены в Supabase отдельным скриптом.
           // Синхронизация настроек ЗП-цикла между устройствами.
           // Пустое значение = явное удаление настройки (синхронизируем снятие между устройствами).
           if (item.key === 'salary_history_period') {
@@ -3761,6 +3824,21 @@
           if (item.key === 'salary_history_start_override') {
             if (item.value) localStorage.setItem('salary_history_start_override', item.value);
             else localStorage.removeItem('salary_history_start_override');
+          }
+          // Пул накоплений — новый список. Читаем, если пришёл, иначе снимаем локально (синхронизация удалений).
+          if (item.key === 'savings_pool_accounts') {
+            if (item.value) localStorage.setItem('savings_pool_accounts', item.value);
+            else localStorage.removeItem('savings_pool_accounts');
+          }
+          // Цвета виртуальных карточек-пулов хранятся в app_settings, а в localStorage
+          // раскладываются в те же ключи, что использует renderBankCards: acc_color___ALL__ и acc_color___SAV__.
+          if (item.key === 'pool_color_spending') {
+            if (item.value) localStorage.setItem('acc_color___ALL__', item.value);
+            else localStorage.removeItem('acc_color___ALL__');
+          }
+          if (item.key === 'pool_color_savings') {
+            if (item.value) localStorage.setItem('acc_color___SAV__', item.value);
+            else localStorage.removeItem('acc_color___SAV__');
           }
         });
       }
@@ -3935,6 +4013,21 @@
     }
   }
 
+  // Сохраняет цвет виртуальной карточки-пула.
+  // В localStorage пишет в "локальный" ключ (acc_color___ALL__ / acc_color___SAV__) —
+  // именно его читает renderBankCards. В Supabase пишет в "серверный" ключ app_settings
+  // (pool_color_spending / pool_color_savings), чтобы настройка синхронизировалась между устройствами.
+  // Без обёртки persistAppSetting писала бы в localStorage по "серверному" ключу — получался бы мусор.
+  async function persistPoolColor(appSettingKey, localStorageKey, color) {
+    try { localStorage.setItem(localStorageKey, color); } catch(e) {}
+    if (isGuest()) return;
+    try {
+      await db.rpc('update_app_settings_batch', { p_updates: [{ key: appSettingKey, value: color }] });
+    } catch(e) {
+      console.warn('Не удалось сохранить цвет пула ' + appSettingKey + ' в Supabase:', e);
+    }
+  }
+
   // Удаляет настройку и из localStorage, и из Supabase (записывая пустую строку как маркер удаления).
   // При следующей загрузке на другом устройстве пустое значение снимет настройку и там.
   async function removePersistedSetting(key) {
@@ -3964,39 +4057,102 @@
     return rounded;
   }
 
-  function openAllAccSelectModal(event) {
+  // Модалка выбора счетов для пула трат. Список = ap_included_pool_accounts,
+  // тот же, что использует автопилот как «Свободный пул на жизнь».
+  function openSpendingPoolModal(event) {
     if (event) event.stopPropagation();
-    const container = document.getElementById('allAccSelectList');
+    const container = document.getElementById('spendingPoolListContainer');
     if (!container) return;
 
-    const includedList = getAllAccountsSelectedList();
+    const currentList = getSpendingPoolAccounts();
+    const includedSet = new Set(currentList);
+
     let h = '';
     appData.accounts.forEach(acc => {
       const n = acc.name;
       const low = n.toLowerCase();
       if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
 
-      const isChecked = includedList.includes(n);
+      const isChecked = includedSet.has(n);
       h += `
         <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
           <span>${escapeHtml(n)} <b style="color:var(--text-mute); font-size:10.5px;">(${Math.round(acc.balance).toLocaleString()} ₽)</b></span>
-          <input type="checkbox" class="all-acc-select-chk" value="${escapeHtml(n)}" ${isChecked ? 'checked' : ''} style="cursor:pointer; width:16px; height:16px;">
+          <input type="checkbox" class="spending-pool-chk" value="${escapeHtml(n)}" ${isChecked ? 'checked' : ''} style="cursor:pointer; width:16px; height:16px;">
         </label>
       `;
     });
+
     container.innerHTML = h || '<div style="color:var(--text-mute); font-size:11px;">Счета не найдены</div>';
-    openModal('allAccountsSelectModal');
+    openModal('spendingPoolModal');
   }
 
-  function setAllAccSelectState(state) {
-    document.querySelectorAll('.all-acc-select-chk').forEach(c => c.checked = state);
+  function setAllSpendingPoolAccounts(state) {
+    document.querySelectorAll('.spending-pool-chk').forEach(c => c.checked = state);
   }
 
-  async function saveAllAccSelectSettings() {
-    const checked = Array.from(document.querySelectorAll('.all-acc-select-chk:checked')).map(c => c.value);
-    await persistAppSetting('all_acc_included_list', JSON.stringify(checked));
-    closeModal('allAccountsSelectModal');
-    updateAllAccountsBalance();
+  function setOnlyCardSpendingPoolAccounts() {
+    document.querySelectorAll('.spending-pool-chk').forEach(c => {
+      const low = c.value.toLowerCase();
+      c.checked = !low.includes('обед') && !low.includes('кафе') && !low.includes('вклад')
+                  && !low.includes('накопит') && !low.includes('копил') && !low.includes('сейф')
+                  && !low.includes('инвест') && !low.includes('балл');
+    });
+  }
+
+  async function saveSpendingPoolSettings() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Сохранение недоступно.");
+    const checked = Array.from(document.querySelectorAll('.spending-pool-chk:checked')).map(c => c.value);
+    await persistAppSetting('ap_included_pool_accounts', JSON.stringify(checked));
+    closeModal('spendingPoolModal');
+    renderBankCards();
+    renderMonthlyBudgetWidget();
+  }
+
+  // Модалка выбора счетов для пула накоплений. Список = savings_pool_accounts.
+  function openSavingsPoolModal(event) {
+    if (event) event.stopPropagation();
+    const container = document.getElementById('savingsPoolListContainer');
+    if (!container) return;
+
+    const currentList = getSavingsPoolAccounts();
+    const includedSet = new Set(currentList);
+
+    let h = '';
+    appData.accounts.forEach(acc => {
+      const n = acc.name;
+      const low = n.toLowerCase();
+      if (low.includes('все счета') || low.includes('балл') || low.includes('бонус')) return;
+
+      const isChecked = includedSet.has(n);
+      h += `
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>${escapeHtml(n)} <b style="color:var(--text-mute); font-size:10.5px;">(${Math.round(acc.balance).toLocaleString()} ₽)</b></span>
+          <input type="checkbox" class="savings-pool-chk" value="${escapeHtml(n)}" ${isChecked ? 'checked' : ''} style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      `;
+    });
+
+    container.innerHTML = h || '<div style="color:var(--text-mute); font-size:11px;">Счета не найдены</div>';
+    openModal('savingsPoolModal');
+  }
+
+  function setAllSavingsPoolAccounts(state) {
+    document.querySelectorAll('.savings-pool-chk').forEach(c => c.checked = state);
+  }
+
+  function setOnlySavingsPoolAccounts() {
+    document.querySelectorAll('.savings-pool-chk').forEach(c => {
+      const low = c.value.toLowerCase();
+      c.checked = low.includes('вклад') || low.includes('накопит') || low.includes('копил')
+                  || low.includes('сейф') || low.includes('инвест');
+    });
+  }
+
+  async function saveSavingsPoolSettings() {
+    if (isGuest()) return alert("🔒 Вы вошли как гость. Сохранение недоступно.");
+    const checked = Array.from(document.querySelectorAll('.savings-pool-chk:checked')).map(c => c.value);
+    await persistAppSetting('savings_pool_accounts', JSON.stringify(checked));
+    closeModal('savingsPoolModal');
     renderBankCards();
   }
 
@@ -4732,8 +4888,19 @@
     const balEl = document.getElementById('colorPreviewBalance');
     if (nameEl && balEl) {
       if (accName === '__ALL__') {
-        nameEl.innerText = 'Сводка (Выбранные счета)';
-        balEl.innerText = '— ₽';
+        nameEl.innerText = '💳 Счета для трат';
+        const list = getSpendingPoolAccounts();
+        const total = appData.accounts
+          .filter(a => list.includes(a.name))
+          .reduce((sum, a) => sum + (parseFloat(a.balance) || 0), 0);
+        balEl.innerText = `${Math.round(total).toLocaleString()} ₽`;
+      } else if (accName === '__SAV__') {
+        nameEl.innerText = '💎 Счета для накоплений';
+        const list = getSavingsPoolAccounts();
+        const total = appData.accounts
+          .filter(a => list.includes(a.name))
+          .reduce((sum, a) => sum + (parseFloat(a.balance) || 0), 0);
+        balEl.innerText = `${Math.round(total).toLocaleString()} ₽`;
       } else {
         const accObj = appData.accounts.find(a => a.name === accName);
         nameEl.innerText = accName;
@@ -4768,12 +4935,19 @@
       if (accObj) accObj.color = color;
       renderBankCards();
 
-      // Синхронизируем цвет с сервером Supabase
-      if (!isGuest() && accName !== '__ALL__') {
-        try {
-          await db.from('accounts').update({ color: color }).eq('name', accName);
-        } catch (e) {
-          console.warn('Не удалось сохранить цвет в базу:', e);
+      // Синхронизируем цвет с сервером Supabase.
+      // Для реальных счетов — в таблицу accounts, для виртуальных карточек-пулов — в app_settings.
+      if (!isGuest()) {
+        if (accName === '__ALL__') {
+          await persistPoolColor('pool_color_spending', 'acc_color___ALL__', color);
+        } else if (accName === '__SAV__') {
+          await persistPoolColor('pool_color_savings', 'acc_color___SAV__', color);
+        } else {
+          try {
+            await db.from('accounts').update({ color: color }).eq('name', accName);
+          } catch (e) {
+            console.warn('Не удалось сохранить цвет в базу:', e);
+          }
         }
       }
     }
@@ -4802,6 +4976,7 @@
 
   function getBankCol(name) {
     if (name === '__ALL__') return '#4f46e5';
+    if (name === '__SAV__') return '#10b981';
     const b = name.toLowerCase();
     if(b.includes('сбер')) return '#22c55e';
     if(b.includes('тиньк') || b.includes('t-')) return '#eab308';
@@ -4866,53 +5041,23 @@
       }
   }
 
-  // 2. Отрисовка счетов и корректный авто-выбор галочек
+  // Отрисовка вкладки «Счета»: две виртуальные карточки-пула + список отдельных счетов без галочек.
+  // «Счета для трат» — тот же список, что «Свободный пул на жизнь» в автопилоте (ap_included_pool_accounts).
+  // «Счета для накоплений» — независимый список (savings_pool_accounts).
   function renderBankCards() {
-    // 1. Авто-выбор счетов при старте: сначала пытаемся восстановить сохранённый список из БД/localStorage
-    if (!isAccountsInitialized && appData.accounts && appData.accounts.length > 0) {
-      selectedAccounts.clear();
+    // 1. Считаем суммы по двум пулам
+    const spendingList = getSpendingPoolAccounts();
+    const savingsList = getSavingsPoolAccounts();
 
-      let restoredFromSaved = false;
-      const savedSelRaw = localStorage.getItem('selected_accounts_list');
-      if (savedSelRaw) {
-        try {
-          const savedArr = JSON.parse(savedSelRaw);
-          if (Array.isArray(savedArr) && savedArr.length > 0) {
-            const validNames = new Set(appData.accounts.map(a => a.name));
-            savedArr.forEach(n => {
-              if (validNames.has(n)) selectedAccounts.add(n);
-            });
-            restoredFromSaved = true;
-          }
-        } catch(e) {}
-      }
-
-      // Если сохранённого выбора нет — ставим галочки на всех расходных счетах по умолчанию
-      if (!restoredFromSaved) {
-        appData.accounts.forEach(b => {
-          const accName = String(b.name || '').toLowerCase();
-          if (!accName.includes("все счета") && !accName.includes("балл")) {
-            selectedAccounts.add(b.name);
-          }
-        });
-      }
-
-      isAccountsInitialized = true;
-    }
-
-    // 2. Пересчет счета "Все счета" по выбранным пользователем счетам
-    const allAccIncludedList = getAllAccountsSelectedList();
     const spendingTotal = appData.accounts
-      .filter(a => allAccIncludedList.includes(a.name))
+      .filter(a => spendingList.includes(a.name))
       .reduce((sum, a) => sum + (parseFloat(a.balance) || 0), 0);
 
-    const allAccObj = appData.accounts.find(a => String(a.name || '').toLowerCase().includes("все счета"));
-    if (allAccObj) {
-      allAccObj.balance = Math.round(spendingTotal * 100) / 100;
-    }
+    const savingsTotal = appData.accounts
+      .filter(a => savingsList.includes(a.name))
+      .reduce((sum, a) => sum + (parseFloat(a.balance) || 0), 0);
 
-    let selectedTotal = 0;
-    let h = '';
+    // 2. Готовим список отдельных счетов с сортировкой
     const sortSelect = document.getElementById('accountsSortSelect');
     const sortVal = sortSelect ? sortSelect.value : 'custom';
     let sortedAccounts = appData.accounts.slice();
@@ -4936,83 +5081,94 @@
       });
     }
 
-    let allAcctsCardHtml = ''; // Отдельный слот для технического счёта "Все счета"
+    // 3. Карточка «Счета для накоплений» (первая). Стиль пула: пунктирная обводка,
+    // штриховой паттерн поверх градиента и бейдж «ПУЛ» — чтобы визуально отличалась от обычных счетов.
+    const savingsColor = localStorage.getItem('acc_color___SAV__') || '#10b981';
+    const savingsDark = adjustColorHex(savingsColor, -60);
+    const savingsText = isColorLight(savingsColor) ? '#0f172a' : '#ffffff';
+    const savingsBorder = isColorLight(savingsColor) ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.45)';
 
+    const savingsCard = `
+      <div class="bank-card" style="background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 10px, transparent 10px, transparent 20px),
+        linear-gradient(135deg, ${savingsColor}, ${savingsDark});
+        color: ${savingsText}; padding:18px; border-radius:16px; margin-bottom:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.2s;
+        border: 2px dashed ${savingsBorder};" onclick="openAccHistory('__SAVINGS__')">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span onclick="openColorModal(event, '__SAV__')" style="cursor:pointer; font-size:16px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Изменить цвет">🎨</span>
+              <div style="font-size:14px; font-weight:900;">💎 Счета для накоплений</div>
+              <span onclick="event.stopPropagation(); openSavingsPoolModal(event)" style="cursor:pointer; font-size:14px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Выбрать счета для накоплений">⚙️</span>
+            </div>
+            <span style="font-size:9px; font-weight:900; letter-spacing:0.5px; background:rgba(255,255,255,0.28); padding:2px 6px; border-radius:5px; border:1px solid rgba(255,255,255,0.35);">ПУЛ</span>
+        </div>
+        <div class="sensitive-money" style="font-size:24px; font-weight:900;">${savingsTotal.toLocaleString()} ₽</div>
+      </div>
+    `;
+
+    // 4. Карточка «Счета для трат» (вторая). Тот же стиль «пул».
+    const spendingColor = localStorage.getItem('acc_color___ALL__') || '#4f46e5';
+    const spendingDark = adjustColorHex(spendingColor, -60);
+    const spendingText = isColorLight(spendingColor) ? '#0f172a' : '#ffffff';
+    const spendingBorder = isColorLight(spendingColor) ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.45)';
+
+    const spendingCard = `
+      <div class="bank-card" style="background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 10px, transparent 10px, transparent 20px),
+        linear-gradient(135deg, ${spendingColor}, ${spendingDark});
+        color: ${spendingText}; padding:18px; border-radius:16px; margin-bottom:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.2s;
+        border: 2px dashed ${spendingBorder};" onclick="openAccHistory('__SPENDING__')">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span onclick="openColorModal(event, '__ALL__')" style="cursor:pointer; font-size:16px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Изменить цвет">🎨</span>
+              <div style="font-size:14px; font-weight:900;">💳 Счета для трат</div>
+              <span onclick="event.stopPropagation(); openSpendingPoolModal(event)" style="cursor:pointer; font-size:14px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Выбрать счета для трат">⚙️</span>
+            </div>
+            <span style="font-size:9px; font-weight:900; letter-spacing:0.5px; background:rgba(255,255,255,0.28); padding:2px 6px; border-radius:5px; border:1px solid rgba(255,255,255,0.35);">ПУЛ</span>
+        </div>
+        <div class="sensitive-money" style="font-size:24px; font-weight:900;">${spendingTotal.toLocaleString()} ₽</div>
+      </div>
+    `;
+
+    // 5. Список отдельных счетов — без галочек, только стрелки и клик по карточке
+    let h = '';
     sortedAccounts.forEach(b => {
-      let isChecked = selectedAccounts.has(b.name);
-      let isAllAccts = String(b.name || '').toLowerCase().includes("все счета");
-
-      if (isChecked && !isAllAccts) {
-        selectedTotal += b.balance;
-      }
+      const low = String(b.name || '').toLowerCase();
+      if (low.includes('все счета')) return; // технический счёт не показываем
 
       const cardColor = localStorage.getItem('acc_color_' + b.name) || getBankCol(b.name);
       const darkenedColor = adjustColorHex(cardColor, -45);
       const textColor = isColorLight(cardColor) ? '#0f172a' : '#ffffff';
+      const safeAccName = escapeJsStr(b.name);
 
       let arrows = '';
-      const safeAccName = escapeJsStr(b.name);
-      if (!isAllAccts && sortVal === 'custom') {
+      if (sortVal === 'custom') {
         arrows = `<div style="display:flex; gap:4px; align-items:center;">
                     <button onclick="moveAcc(event, '${safeAccName}', -1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">▲</button>
                     <button onclick="moveAcc(event, '${safeAccName}', 1)" style="min-width:32px; min-height:32px; font-size:12px; font-weight:900; background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.3); color:inherit; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;">▼</button>
                   </div>`;
       }
 
-      const cardHtml = `
+      h += `
         <div class="bank-card" onclick="openAccHistory('${safeAccName}')" style="background: linear-gradient(135deg, ${cardColor}, ${darkenedColor}); color: ${textColor}; padding:18px; border-radius:16px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.2s; border: 1px solid rgba(255,255,255,0.1);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <div style="display:flex; align-items:center; gap:8px;">
                 <span onclick="openColorModal(event, '${safeAccName}')" style="cursor:pointer; font-size:16px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Изменить цвет">🎨</span>
                 <div style="font-size:14px; font-weight:900;">${escapeHtml(b.name)}</div>
-                ${isAllAccts ? `<span onclick="openAllAccSelectModal(event)" style="cursor:pointer; font-size:14px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Выбрать счета для «Все счета»">⚙️</span>` : ''}
               </div>
               <div style="display:flex; gap:8px; align-items:center;">
                 ${arrows}
-                ${!isAllAccts ? `<input type="checkbox" style="width:22px; height:22px; cursor:pointer;" ${isChecked ? 'checked' : ''} onclick="toggleAccountSelection(event, '${safeAccName}')">` : ''}
               </div>
           </div>
           <div class="sensitive-money" style="font-size:24px; font-weight:900;">${b.balance.toLocaleString()} ₽</div>
         </div>
       `;
-
-      // Технический счёт "Все счета" выносим в отдельный слот под Сводку
-      if (isAllAccts) {
-        allAcctsCardHtml += cardHtml;
-      } else {
-        h += cardHtml;
-      }
     });
 
-    const allCardColor = localStorage.getItem('acc_color___ALL__') || '#4f46e5';
-    const allCardDark = adjustColorHex(allCardColor, -45);
-    const allCardText = isColorLight(allCardColor) ? '#0f172a' : '#ffffff';
-
-    let allCard = `
-      <div class="bank-card" style="background: linear-gradient(135deg, ${allCardColor}, ${allCardDark}); border: 2px solid ${allCardColor}; color:${allCardText}; padding: 20px; border-radius:18px; margin-bottom:16px; box-shadow:0 4px 15px rgba(0,0,0,0.15);" onclick="openAccHistory('Все операции')">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span onclick="openColorModal(event, '__ALL__')" style="cursor:pointer; font-size:16px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid rgba(255,255,255,0.3);" title="Изменить цвет">🎨</span>
-              <div style="font-size:14px; font-weight:bold;">Сводка (Выбранные счета)</div>
-            </div>
-            <div style="font-size:18px;">🌍</div>
-        </div>
-        <div style="font-size:26px; font-weight:900;">${selectedTotal.toLocaleString()} ₽</div>
-        <div style="font-size:11px; margin-top:4px; font-weight:600; opacity:0.8;">Сумма по всем счетам с галочками</div>
-      </div>
-    `;
-
     const container = document.getElementById('bankCardsList');
-    if (container) container.innerHTML = allCard + allAcctsCardHtml + h || 'Пусто';
-  }
-
-  function toggleAccountSelection(event, accountName) {
-    event.stopPropagation();
-    if (event.target.checked) selectedAccounts.add(accountName);
-    else selectedAccounts.delete(accountName);
-    renderBankCards();
-    // Сохраняем актуальный список выбранных галочек в БД
-    persistAppSetting('selected_accounts_list', JSON.stringify(Array.from(selectedAccounts)));
+    if (container) container.innerHTML = savingsCard + spendingCard + h;
   }
 
   function updateHistDateUI() {
@@ -5024,14 +5180,75 @@
 
 function openAccHistory(n) {
     activeHistoryAcc = n;
-    document.getElementById('histTitle').innerText = n === 'Все операции' ? 'Сводка' : n;
+
+    // Определяем заголовок и видимость тумблера «Только выбранные / Все счета».
+    // Тумблер актуален только для виртуальных карточек-пулов:
+    //  __SPENDING__  — пул трат (ap_included_pool_accounts)
+    //  __SAVINGS__   — пул накоплений (savings_pool_accounts)
+    // Для отдельных счетов и «Все операции» тумблер скрыт.
+    const titleEl = document.getElementById('histTitle');
+    const toggleWrap = document.getElementById('histFilterToggleWrap');
     const btnRecalc = document.getElementById('btnRecalcBal');
-    if (btnRecalc) btnRecalc.style.display = (n === 'Все операции') ? 'none' : 'block';
+
+    let titleText = n;
+    let showToggle = false;
+
+    if (n === '__SPENDING__') {
+      titleText = '💳 Счета для трат';
+      showToggle = true;
+    } else if (n === '__SAVINGS__') {
+      titleText = '💎 Счета для накоплений';
+      showToggle = true;
+    } else if (n === 'Все операции') {
+      titleText = 'Сводка';
+    }
+
+    titleEl.innerText = titleText;
+
+    if (btnRecalc) {
+      btnRecalc.style.display = (n === '__SPENDING__' || n === '__SAVINGS__' || n === 'Все операции') ? 'none' : 'block';
+    }
+
+    if (toggleWrap) toggleWrap.style.display = showToggle ? 'block' : 'none';
+
+    updateHistFilterButtons();
+
     document.getElementById('histSearchInput').value = '';
     document.getElementById('accHistoryModal').style.display = 'flex';
     document.getElementById('histDateType').value = 'all';
     document.getElementById('histSortType').value = 'date_desc';
     updateHistDateUI();
+  }
+
+  // Возвращает режим фильтрации в модалке истории: 'pool' — только выбранные счета пула,
+  // 'all' — все счета системы. Применяется только для виртуальных пулов (__SPENDING__ / __SAVINGS__).
+  function getHistFilterMode() {
+    return localStorage.getItem('hist_filter_mode') || 'pool';
+  }
+
+  function setHistFilter(mode) {
+    localStorage.setItem('hist_filter_mode', mode);
+    updateHistFilterButtons();
+    executeHistSearch();
+  }
+
+  function updateHistFilterButtons() {
+    const poolBtn = document.getElementById('histFilterPoolBtn');
+    const allBtn = document.getElementById('histFilterAllBtn');
+    if (!poolBtn || !allBtn) return;
+
+    const mode = getHistFilterMode();
+    if (mode === 'all') {
+      allBtn.style.background = 'var(--border)';
+      allBtn.style.color = 'var(--text-main)';
+      poolBtn.style.background = 'transparent';
+      poolBtn.style.color = 'var(--text-mute)';
+    } else {
+      poolBtn.style.background = 'var(--border)';
+      poolBtn.style.color = 'var(--text-main)';
+      allBtn.style.background = 'transparent';
+      allBtn.style.color = 'var(--text-mute)';
+    }
   }
 
 async function recalculateCurrentAccountBalance() {
@@ -5078,8 +5295,45 @@ async function recalculateCurrentAccountBalance() {
 
   function executeHistSearch() {
     if(!activeHistoryAcc) return;
-    const n = activeHistoryAcc.trim();
-    const matchAll = (n === 'Все операции');
+    const n = String(activeHistoryAcc).trim();
+
+    // Определяем режим фильтрации.
+    //  __SPENDING__  — пул трат: набор счетов из ap_included_pool_accounts.
+    //  __SAVINGS__   — пул накоплений: набор счетов из savings_pool_accounts.
+    //  'Все операции' — без фильтра по счёту.
+    //  <имя счёта>   — конкретный счёт.
+    // Тумблер «Только выбранные / Все счета» влияет только на пулы:
+    //  'pool' — учитывать только счета, входящие в пул;
+    //  'all'  — игнорировать пул и показывать операции по всем счетам системы.
+    const isSpendingPool = (n === '__SPENDING__');
+    const isSavingsPool = (n === '__SAVINGS__');
+    const isAllOps = (n === 'Все операции');
+    const isSpecificAcc = !isSpendingPool && !isSavingsPool && !isAllOps;
+
+    let poolAccountsSet = null;
+    if (isSpendingPool) {
+      if (getHistFilterMode() === 'pool') poolAccountsSet = new Set(getSpendingPoolAccounts());
+    } else if (isSavingsPool) {
+      if (getHistFilterMode() === 'pool') poolAccountsSet = new Set(getSavingsPoolAccounts());
+    }
+
+    // Возвращает true, если операция проходит фильтр по счёту.
+    const matchesAccountFilter = (r) => {
+      if (isSpecificAcc) {
+        if (r.type === 'Расход') return r.accE === n;
+        if (r.type === 'Доход') return r.accI === n;
+        if (r.type === 'Перевод' || r.type === 'Между своими') return (r.accF === n || r.accT === n);
+        return false;
+      }
+      if (isAllOps || !poolAccountsSet) return true;
+      if (r.type === 'Расход') return poolAccountsSet.has(r.accE);
+      if (r.type === 'Доход') return poolAccountsSet.has(r.accI);
+      if (r.type === 'Перевод' || r.type === 'Между своими') {
+        return poolAccountsSet.has(r.accF) || poolAccountsSet.has(r.accT);
+      }
+      return false;
+    };
+
     const dType = document.getElementById('histDateType').value;
     const dSing = document.getElementById('histSingle').value;
     const dStart = document.getElementById('histStart').value;
@@ -5104,16 +5358,20 @@ async function recalculateCurrentAccountBalance() {
         let str = (r.d + ' ' + r.sumE + ' ' + r.catE + ' ' + r.comE + ' ' + r.sumI + ' ' + r.catI + ' ' + r.comI + ' ' + r.accF + ' ' + r.accT + ' ' + r.accE + ' ' + r.accI).toLowerCase();
         if(q && !str.includes(q)) return;
 
-        if(r.type === 'Расход' && (matchAll || r.accE === n)) {
+        if (!matchesAccountFilter(r)) return;
+
+        if(r.type === 'Расход') {
           res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Расход', cat: r.catE, s: r.sumE, c: r.comE, acc: r.accE, idx: idx });
-        } else if(r.type === 'Доход' && (matchAll || r.accI === n)) {
+        } else if(r.type === 'Доход') {
           res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Доход', cat: r.catI, s: r.sumI, c: r.comI, acc: r.accI, idx: idx });
         } else if(r.type === 'Между своими' || r.type === 'Перевод') {
-          if(matchAll) {
-            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '', idx: idx });
+          if (isSpecificAcc) {
+            // Для конкретного счёта: две отдельные записи — исходящий и входящий
+            if (r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '', idx: idx });
+            if (r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '', idx: idx });
           } else {
-            if(r.accF === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод исх.', cat: 'В ' + r.accT, s: r.sumTr, acc: '', idx: idx });
-            if(r.accT === n) res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод вх.', cat: 'Из ' + r.accF, s: r.sumTr, acc: '', idx: idx });
+            // Пул или «Все операции»: одна запись на перевод
+            res.push({ id: r.r, fd: r.fd, d: r.d, t: 'Перевод', cat: r.accF + ' ➔ ' + r.accT, s: r.sumTr, acc: '', idx: idx });
           }
         }
     });
@@ -14634,7 +14892,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
