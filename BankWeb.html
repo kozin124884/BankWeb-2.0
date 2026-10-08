@@ -286,7 +286,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
     <div style="display:flex; align-items:center; gap:8px;">
       <h1 style="font-size:24px; font-weight:900; margin:0;">Банк PRO</h1>
-      <span id="userRoleBadge" style="font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.15); color: rgb(16, 185, 129);">👑 Админ</span>
+      <span id="userRoleBadge" style="font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); border-top-style: ; border-top-width: ; border-right-style: ; border-right-width: ; border-bottom-style: ; border-bottom-width: ; border-left-style: ; border-left-width: ; border-image-source: ; border-image-slice: ; border-image-width: ; border-image-outset: ; border-image-repeat: ; background: rgba(16, 185, 129, 0.15); color: rgb(16, 185, 129);">👑 Админ</span>
     </div>
     <div style="display:flex; gap:8px; align-items:center;">
       <button onclick="toggleTheme()" style="background:var(--border); color:var(--text-main); border:none; padding:8px 12px; border-radius:12px; cursor:pointer; font-size:16px;">🌓</button>
@@ -302,7 +302,7 @@
 
 
   <!-- ЭКРАН 1: СЧЕТА -->
-  <div id="viewAccounts" class="app-view active">
+  <div id="viewAccounts" class="app-view">
     <div style="background: var(--bg-card); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; display:flex; flex-direction:column; gap:8px;">
       <div style="display:flex; gap:8px;">
         <button onclick="selectAllAccounts(true)" style="flex:1; padding:10px; border-radius:10px; background:var(--border); color:var(--text-main); border:none; font-weight:bold; font-size:11px; cursor:pointer;">✅ Выбрать все</button>
@@ -354,7 +354,7 @@
   </div>
 
   <!-- ЭКРАН 2: АНАЛИТИКА -->
-  <div id="viewAnalytics" class="app-view">
+  <div id="viewAnalytics" class="app-view active">
     <!-- КНОПКИ ВЫБОРА РЕЖИМА -->
     <div style="display: flex; gap: 4px; margin-bottom: 16px;">
       <div id="btnExp" class="btn-toggle active" onclick="setMode('expense')">Расходы</div>
@@ -368,10 +368,13 @@
       <!-- ШАПКА АВТОПИЛОТА -->
       <div class="click-header" onclick="toggleAutopilotWidget()" style="padding: 12px 16px; background: var(--input-bg); border-radius: 0; display: flex; justify-content: space-between; align-items: center;">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:16px;">🧭</span>
+          <span id="salaryMedianBadge" onclick="event.stopPropagation(); openSalaryHistoryModal();" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1.5px solid rgba(59, 130, 246, 0.55); padding: 3px 6px; border-radius: 8px; line-height: 1; gap: 1px; box-shadow: 0 1px 3px rgba(59, 130, 246, 0.15); transition: 0.15s; flex-shrink: 0;" title="История зарплат и медианный день ЗП">
+            <span style="font-size: 14px; line-height: 1;">🧭</span>
+            <span id="salaryMedianBadgeNum" style="font-size: 9.5px; font-weight: 900; margin-top: 1px;">16-е</span>
+          </span>
           <div>
             <b style="font-size:13px; color:var(--text-main);">Автопилот финансов</b>
-            <div id="autopilotSubStatus" style="font-size:10px; color:var(--text-mute); font-weight:bold;">До ЗП 9 дн. (15.09 — 16.10) <span onclick="event.stopPropagation(); openSalaryHistoryModal();" style="cursor:pointer; color:#3b82f6; margin-left:4px; text-decoration:underline; text-decoration-style:dotted;" title="Показать историю зарплат и прогноз">📊 мед.: 16-е</span></div>
+            <div id="autopilotSubStatus" style="font-size:10px; color:var(--text-mute); font-weight:bold;">До ЗП 9 дн. (15.09 — 16.10)</div>
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
@@ -387,7 +390,7 @@
             <span id="todayStatusText" style="font-weight: 800; font-size: 11.5px; color: rgb(16, 185, 129);">🟢 В норме: <b>+1&nbsp;222 ₽</b> <span style="font-size:10.5px; opacity:0.85;"><span style="color:#10b981; font-weight:bold;">(завтра: ~1&nbsp;375 ₽ ▲)</span></span></span>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-            <span id="streakBadge" onclick="openStreakModal()" style="display: inline-flex; align-items: center; cursor: pointer; background: rgba(245, 158, 11, 0.15); color: rgb(245, 158, 11); border: 1px solid rgba(245, 158, 11, 0.3); padding: 2px 7px; border-radius: 6px; font-weight: 900; font-size: 10.5px; margin-right: 8px;" title="История дней в лимите">🔥 3 дн.</span>
+            <span id="streakBadge" onclick="openStreakModal()" style="display: inline-flex; align-items: center; cursor: pointer; background: rgba(245, 158, 11, 0.15); color: rgb(245, 158, 11); border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 8px; border-radius: 6px; font-weight: 900; font-size: 10.5px; margin-right: 8px;" title="История дней в лимите">🔥 3 дн.</span>
             <b id="todayMathSummary" style="font-size:12px; color:var(--text-main); white-space:nowrap;">0 из 1&nbsp;222 ₽</b>
           </div>
         </div>
@@ -3144,8 +3147,8 @@
 
 <!-- МЕНЮ НАВИГАЦИИ -->
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
-  <div class="nav-item" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
+  <div class="nav-item" id="nav-accounts" onclick="switchTab('accounts')"><div class="nav-icon">💳</div>Счета</div>
+  <div class="nav-item active" id="nav-analytics" onclick="switchTab('analytics')"><div class="nav-icon">📊</div>Аналитика</div>
   <div class="nav-item" id="nav-debts" onclick="switchTab('debts')"><div class="nav-icon">🤝</div>Долги</div>
   <div class="nav-item" id="nav-travels" onclick="switchTab('travels')"><div class="nav-icon">🎯</div>Большие траты</div>
   <div class="nav-item" id="nav-add" onclick="switchTab('add')"><div class="nav-icon">➕</div>Добавить</div>
@@ -12399,16 +12402,20 @@ let totalOnCards = 0;
     const eFmt = `${String(cycleEnd.getDate()).padStart(2,'0')}.${String(cycleEnd.getMonth()+1).padStart(2,'0')}`;
 
     if (subStatus) {
-      const dateLabel = rawDays <= 0
+      subStatus.innerText = rawDays <= 0
         ? `Ожидание ЗП (просрочка: ${overdueDays} дн.)`
         : `До ЗП ${daysLeft} дн. (${sFmt} — ${eFmt})`;
-      // Бейдж зависит от режима: раз в месяц (медианный день) или 2×/мес (медианный интервал)
-      const badgeText = (realCycle.salaryMode === 'multi')
-        ? `📊 кажд. ~${realCycle.medianInterval} дн.`
-        : `📊 мед.: ${medianSalaryDay}-е`;
-      subStatus.innerHTML = `${dateLabel} <span onclick="event.stopPropagation(); openSalaryHistoryModal();" style="cursor:pointer; color:#3b82f6; margin-left:4px; text-decoration:underline; text-decoration-style:dotted;" title="Показать историю зарплат и прогноз">${badgeText}</span>`;
     }
 
+    // Обновляем текст внутри компаса-кнопки (медианный день ЗП).
+    // В обычном режиме показываем день месяца с суффиксом: «16-е», «1-е», «31-е».
+    // В режиме «дважды в месяц» — интервал в днях: «~15». Меняем только текст, вёрстка не дёргается.
+    const medianBadgeNum = document.getElementById('salaryMedianBadgeNum');
+    if (medianBadgeNum) {
+      medianBadgeNum.innerText = (realCycle.salaryMode === 'multi')
+        ? `~${realCycle.medianInterval}`
+        : `${medianSalaryDay}-е`;
+    }
     if (dailyBadge) {
       dailyBadge.innerText = `${dailyRemain.toLocaleString()} ₽/день`;
       dailyBadge.style.color = dailyRemain >= 0 ? '#10b981' : '#ef4444';
@@ -14497,7 +14504,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4030; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14523,7 +14530,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
         </div>
         <textarea id="deployCommitDesc" class="input-ui" placeholder="- исправлен сплит чеков
 - закрыты уязвимости
-- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin: 0px; padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none; line-height: 1.4; height: 474px;" value=""></textarea>
+- улучшен UX на iPhone" rows="3" oninput="adjustTextareaHeight(this)" style="margin:0; padding:8px 10px; font-size:12px; font-family:inherit; resize:none; line-height:1.4;" value=""></textarea>
       </div>
     </div>
 
@@ -14894,7 +14901,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
   </div>
 </div>
 
-<div id="logoutChoiceModal" class="modal" style="z-index: 4020; display: none;">
+<div id="logoutChoiceModal" class="modal" style="z-index: 12000; display: none;">
   <div class="modal-content" style="max-width: 340px; padding: 20px; text-align: center;">
     <div style="font-size: 32px; margin-bottom: 8px;">🚪</div>
     <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 900; color: var(--text-main);">Выход из системы</h3>
