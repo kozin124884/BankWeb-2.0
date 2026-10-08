@@ -379,7 +379,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <span id="autopilotDailyRemainBadge" style="font-size: 12.5px; font-weight: 900; color: rgb(16, 185, 129);">1&nbsp;222 ₽/день</span>
-          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▼</span>
+          <span id="autopilotWidgetArrow" style="font-size:10px; color:var(--text-mute);">▲</span>
         </div>
       </div>
 
@@ -400,7 +400,7 @@
       </div>
 
       <!-- СКРЫТАЯ ЧАСТЬ АВТОПИЛОТА (РАСКРЫВАЕТСЯ ПО КЛИКУ НА ШАПКУ) -->
-      <div id="autopilotWidgetBody" style="display: none; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
+      <div id="autopilotWidgetBody" style="display: flex; padding: 16px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px;">
 
         <!-- 1. ВИДЖЕТ ДИНАМИКИ КАПИТАЛА (НАКОПЛЕНИЯ) -->
         <div style="background: var(--input-bg); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-sizing: border-box;">
@@ -3114,7 +3114,87 @@
       <button type="button" onclick="setOnlyCardPoolAccounts()" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Только карты</button>
       <button type="button" onclick="setAllPoolAccounts(false)" style="flex:1; padding:7px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:bold; color:var(--text-main); cursor:pointer;">Снять все</button>
     </div>
-    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;"></div>
+    <div id="poolAccountsListContainer" style="display: flex; flex-direction: column; gap: 4px; background: var(--input-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); flex: 1; overflow-y: auto;">
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Яндекс <b style="color:var(--text-mute); font-size:10.5px;">(144 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Яндекс" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВТБ <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="ВТБ" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Сбербанк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Сбербанк" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Тинькофф <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Тинькофф" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Озон Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Озон Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>ВБ Банк <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="ВБ Банк" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Наличные <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;731 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Наличные" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет ручки на путешествия <b style="color:var(--text-mute); font-size:10.5px;">(68&nbsp;580 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет ручки на путешествия" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет копить <b style="color:var(--text-mute); font-size:10.5px;">(100&nbsp;404 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет копить" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Накопительный счет тратить <b style="color:var(--text-mute); font-size:10.5px;">(10&nbsp;858 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Накопительный счет тратить" checked="" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На кафешки <b style="color:var(--text-mute); font-size:10.5px;">(3&nbsp;065 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="На кафешки" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Обед на работе <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;448 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Обед на работе" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Инвестиции <b style="color:var(--text-mute); font-size:10.5px;">(35&nbsp;109 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Инвестиции" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На развлечения <b style="color:var(--text-mute); font-size:10.5px;">(5&nbsp;078 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="На развлечения" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>На квартиру <b style="color:var(--text-mute); font-size:10.5px;">(40&nbsp;000 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="На квартиру" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:7px 4px; font-size:12px; color:var(--text-main); cursor:pointer; border-bottom:1px solid var(--border);">
+          <span>Другой кешбек <b style="color:var(--text-mute); font-size:10.5px;">(0 ₽)</b></span>
+          <input type="checkbox" class="pool-acc-item-chk" value="Другой кешбек" style="cursor:pointer; width:16px; height:16px;">
+        </label>
+      </div>
     <div style="border-top:1px solid var(--border); padding-top:10px;">
       <label style="font-size:10.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Или задать сумму вручную (₽):</label>
       <input type="number" id="apManualPoolInput" class="input-ui" placeholder="Оставьте пустым для авто-расчёта" style="margin:0; padding:9px;">
@@ -3508,6 +3588,18 @@
       .replace(/"/g, '\\x22')
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '');
+  }
+
+  // Жёсткая нормализация имени счёта для сравнений.
+  // Убирает все пробелы, приводит к нижнему регистру и заменяет ё→е.
+  // Так «Накопительный счёт копить», «накопительный счет  копить» и «НАКОПИТЕЛЬНЫЙ СЧЁТ КОПИТЬ»
+  // станут одним и тем же ключом.
+  function normalizeAccName(name) {
+    if (!name) return '';
+    return String(name)
+      .replace(/\s+/g, '')
+      .toLowerCase()
+      .replace(/ё/g, 'е');
   }
 
   function genLocalId(prefix = 'local') {
@@ -11380,21 +11472,27 @@ function renderTravels() {
     if (t.type !== 'Расход' || t.sumE <= 0) return false;
     if (t.no_budget) return false; // Ручная галочка исключения
 
-    const accName = (t.accE || '').toLowerCase();
+    // 1. Целевые счета еды/накоплений: используем системные роли + расширенный хардкод
+    // (хардкод — fallback для старых установок, где роли ещё не заполнены).
+    const txAccKey = normalizeAccName(t.accE);
+    const targetAccKeys = [
+      normalizeAccName(roles.lunch_acc),   // счёт обедов
+      normalizeAccName(roles.cafe_acc)     // счёт кафе
+    ].filter(Boolean);
+    const legacyHints = ['обед', 'кафе', 'вклад', 'накопит', 'копил'];
+    const isTargetAcc = targetAccKeys.some(k => txAccKey === k)
+      || legacyHints.some(h => txAccKey.includes(h));
 
-    // 1. Автоматический запрет для целевых счетов еды/накоплений
-    if (accName.includes('обед') || accName.includes('кафе') || accName.includes('вклад') || accName.includes('накопит') || accName.includes('копил')) {
-      return false;
-    }
+    if (isTargetAcc) return false;
 
-    // 2. Проверка по счетам Свободного Пула: если счёт операции не входит в пул — трата не сжигает дневной лимит
-    const cleanTxAcc = (t.accE || '').trim().toLowerCase();
+    // 2. Проверка по счетам Свободного Пула (с нормализацией имён)
     const savedPoolJson = localStorage.getItem('ap_included_pool_accounts');
     if (savedPoolJson) {
       try {
         const poolAccs = JSON.parse(savedPoolJson);
         if (Array.isArray(poolAccs) && poolAccs.length > 0) {
-          const inPool = poolAccs.some(pa => String(pa).trim().toLowerCase() === cleanTxAcc);
+          const poolKeys = poolAccs.map(normalizeAccName);
+          const inPool = poolKeys.includes(txAccKey);
           if (!inPool) return false;
         }
       } catch (e) {}
@@ -11404,7 +11502,11 @@ function renderTravels() {
     const isDebt = ['что-то кому-то купил в долг', 'кому-то в долг', 'вернул долг'].includes(cL);
     const isTransit = isDebt || cL.includes((roles.grandma_cat || 'бабушка').toLowerCase()) || cL.includes('бабушк');
 
-    const isRent = cL === (roles.rent_cat || 'аренда').toLowerCase() || cL.includes('аренда') || cL.includes('квартира');
+    // Аренда: сначала по роли, потом по подстрокам (fallback)
+    const rentKey = (roles.rent_cat || 'аренда').toLowerCase();
+    const isRent = cL === rentKey || cL.includes('аренда') || cL.includes('квартира');
+
+    // Рабочий обед — категория, а не счёт (для исключения из чистых трат)
     const isWorkLunchCat = cL.includes('обед');
 
     let eventObj = t.event_id ? (appData.events || []).find(e => String(e.id) === String(t.event_id)) : null;
@@ -12132,20 +12234,36 @@ let totalOnCards = 0;
     const allSalaryDisplay = allSalaryTxsAsc.slice().reverse(); // ВСЁ в окне (для модалки)
     const latestSalaryTx = salaryHistoryTxs[0] || null;
 
-    // 4. Медианный интервал между последовательными ЗП (в свежем сегменте)
+    // 4. Медианный интервал между последовательными ЗП (в свежем сегменте).
+    // Отсекаем аномально короткие интервалы (< 50% от типичного), чтобы премия через 15 дней
+    // не переключала режим в multi и не сбивала медиану.
     let medianInterval = 30;
     if (freshSalaryTxs.length >= 2) {
-      const intervals = [];
+      const rawIntervals = [];
       for (let i = 1; i < freshSalaryTxs.length; i++) {
         const gap = Math.round((new Date(freshSalaryTxs[i].fd) - new Date(freshSalaryTxs[i - 1].fd)) / 86400000);
-        if (gap > 0) intervals.push(gap);
+        if (gap > 0) rawIntervals.push(gap);
       }
-      if (intervals.length > 0) {
-        intervals.sort((a, b) => a - b);
-        const mid = Math.floor(intervals.length / 2);
-        medianInterval = (intervals.length % 2 !== 0)
-          ? intervals[mid]
-          : Math.round((intervals[mid - 1] + intervals[mid]) / 2);
+
+      if (rawIntervals.length > 0) {
+        // Сначала считаем предварительную медиану — она от «сырых» интервалов
+        const sortedRaw = rawIntervals.slice().sort((a, b) => a - b);
+        const rawMid = Math.floor(sortedRaw.length / 2);
+        const preliminaryMedian = (sortedRaw.length % 2 !== 0)
+          ? sortedRaw[rawMid]
+          : Math.round((sortedRaw[rawMid - 1] + sortedRaw[rawMid]) / 2);
+
+        // Фильтруем интервалы меньше 50% от предварительной медианы —
+        // это либо аванс, либо премия, либо сбой. Они не должны влиять на режим.
+        const minValidGap = Math.max(7, Math.floor(preliminaryMedian * 0.5));
+        const cleanIntervals = rawIntervals.filter(g => g >= minValidGap);
+
+        const finalIntervals = cleanIntervals.length > 0 ? cleanIntervals : rawIntervals;
+        finalIntervals.sort((a, b) => a - b);
+        const mid = Math.floor(finalIntervals.length / 2);
+        medianInterval = (finalIntervals.length % 2 !== 0)
+          ? finalIntervals[mid]
+          : Math.round((finalIntervals[mid - 1] + finalIntervals[mid]) / 2);
       }
     }
 
@@ -12170,9 +12288,19 @@ let totalOnCards = 0;
     // 6. Режим: 'multi' если интервал между ЗП <= 20 дней (платят 2+ раза в месяц)
     const salaryMode = (medianInterval <= 20) ? 'multi' : 'single';
 
-    // 7. Ручные override-даты
-    const manualStartStr = localStorage.getItem('ap_override_start_date');
-    const manualEndStr = localStorage.getItem('ap_override_end_date');
+    // 7. Ручные override-даты.
+    // Автосброс: если задан override старта, но пришла реальная ЗП ПОСЛЕ этой даты —
+    // override устарел, сбрасываем его, чтобы живая ЗП снова управляла циклом.
+    let manualStartStr = localStorage.getItem('ap_override_start_date');
+    let manualEndStr = localStorage.getItem('ap_override_end_date');
+
+    if (manualStartStr && latestSalaryTx && latestSalaryTx.fd > manualStartStr) {
+      // Пришла свежая ЗП позже ручного override → override потерял смысл.
+      localStorage.removeItem('ap_override_start_date');
+      localStorage.removeItem('ap_override_end_date');
+      manualStartStr = null;
+      manualEndStr = null;
+    }
 
     let cycleStart, cycleEnd;
 
@@ -12327,22 +12455,24 @@ let totalOnCards = 0;
 
 // Честный вычет доходов с no_budget: деньги лежат на карте, но в пул на жизнь не идут
     let unspentExcludedIncome = 0;
+    const includedAccKeys = includedAccNames.map(normalizeAccName);
+
     includedAccNames.forEach(accName => {
-      const cleanAcc = accName.trim().toLowerCase();
+      const cleanAcc = normalizeAccName(accName);
       let accIncNoB = 0;
       let accExpNoB = 0;
 
       (appData.transactions || []).forEach(t => {
         if (t.fd >= startISO && t.fd <= todayISO) {
-          if (t.type === 'Доход' && t.no_budget && (t.accI || '').trim().toLowerCase() === cleanAcc) {
+          if (t.type === 'Доход' && t.no_budget && normalizeAccName(t.accI) === cleanAcc) {
             accIncNoB += (parseFloat(t.sumI) || 0);
           }
-          if (t.type === 'Расход' && t.no_budget && (t.accE || '').trim().toLowerCase() === cleanAcc) {
+          if (t.type === 'Расход' && t.no_budget && normalizeAccName(t.accE) === cleanAcc) {
             accExpNoB += (parseFloat(t.sumE) || 0);
           }
-          if ((t.type === 'Перевод' || t.type === 'Между своими') && (t.accF || '').trim().toLowerCase() === cleanAcc) {
-            const destAcc = (t.accT || '').trim().toLowerCase();
-            const destInPool = includedAccNames.some(a => a.trim().toLowerCase() === destAcc);
+          if ((t.type === 'Перевод' || t.type === 'Между своими') && normalizeAccName(t.accF) === cleanAcc) {
+            const destAcc = normalizeAccName(t.accT);
+            const destInPool = includedAccKeys.includes(destAcc);
             if (!destInPool || t.no_budget) {
               accExpNoB += (parseFloat(t.sumTr) || 0);
             }
@@ -14504,7 +14634,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4020; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -14824,80 +14954,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
       <h3 style="font-weight:900; margin:0; font-size:15px;">💰 История ЗП и прогноз</h3>
       <button class="close-btn" type="button" onclick="closeModal('salaryHistoryModal')">✕</button>
     </div>
-    <div id="salaryHistoryBody">
-      <div style="background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.06)); border:1.5px solid #10b981; border-radius:12px; padding:14px; margin-bottom:12px;">
-        <div style="font-size:10.5px; color:var(--text-mute); text-transform:uppercase; font-weight:bold; letter-spacing:0.3px;">Ожидаемый день ЗП:</div>
-        <div style="font-size:26px; font-weight:900; color:#10b981; margin-top:2px;">16-е число</div>
-        <div style="font-size:10.5px; color:var(--text-mute); margin-top:6px; line-height:1.4;">Рассчитано по 6 выплатам. ЗП приходит раз в месяц (средний интервал 31 дн.). Если дата попадает на сб/вс — сдвиг на понедельник.</div>
-      </div>
-
-      <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:12px;">
-        <label style="font-size:10px; font-weight:bold; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:6px;">📊 Период для расчёта:</label>
-        <select id="salaryHistoryPeriodSelect" class="input-ui" style="margin:0; padding:8px 10px; font-size:12px; cursor:pointer;" onchange="setSalaryHistoryPeriod(this.value)">
-          <option value="90">Последние 3 месяца</option><option value="180" selected="">Последние 6 месяцев</option><option value="360">Последние 12 месяцев</option><option value="720">Последние 2 года</option><option value="all">За всё время</option>
-        </select>
-      </div>
-
-      <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11px; line-height:1.6;">
-        <div>📅 <b>Старт текущего цикла:</b> 2026-09-15</div>
-        <div>🎯 <b>Ожидаемый конец:</b> 2026-10-16</div>
-        <div>⏳ <b>Осталось:</b> <b>9 дн.</b></div>
-      </div>
-
-      <div style="font-size:10.5px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">Последние зарплаты (6):</div>
-      <div style="margin-bottom:14px;">
-          <div class="tx-row" onclick="clI(event, '2410')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>15.09.2026</b> — <span style="color:#10b981; font-weight:800;">84&nbsp;953 ₽</span>
-            </div>
-            
-          </div>
-        
-          <div class="tx-row" onclick="clI(event, '204')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>16.08.2026</b> — <span style="color:#10b981; font-weight:800;">137&nbsp;580 ₽</span>
-            </div>
-            <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:5px;">в медиане</span>
-          </div>
-        
-          <div class="tx-row" onclick="clI(event, '518')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>16.07.2026</b> — <span style="color:#10b981; font-weight:800;">84&nbsp;953 ₽</span>
-            </div>
-            <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:5px;">в медиане</span>
-          </div>
-        
-          <div class="tx-row" onclick="clI(event, '1436')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>16.06.2026</b> — <span style="color:#10b981; font-weight:800;">85&nbsp;349 ₽</span>
-            </div>
-            <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:5px;">в медиане</span>
-          </div>
-        
-          <div class="tx-row" onclick="clI(event, '155')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>16.05.2026</b> — <span style="color:#10b981; font-weight:800;">85&nbsp;350 ₽</span>
-            </div>
-            <span style="font-size:9.5px; color:#3b82f6; font-weight:900; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:5px;">в медиане</span>
-          </div>
-        
-          <div class="tx-row" onclick="clI(event, '519')" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; margin-bottom:5px; font-size:11.5px; cursor:pointer; opacity:1;">
-            <div style="min-width:0; flex:1;">
-              <b>15.04.2026</b> — <span style="color:#10b981; font-weight:800;">85&nbsp;350 ₽</span>
-            </div>
-            
-          </div>
-        </div>
-
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <button type="button" onclick="manualOverrideSalaryDay()" style="width:100%; background:var(--input-bg); border:1.5px dashed var(--border); color:var(--text-main); padding:11px; border-radius:10px; font-weight:800; font-size:11.5px; cursor:pointer;">
-          ✏️ Задать день вручную
-        </button>
-        <button type="button" onclick="cutSalaryHistoryToLast()" style="width:100%; background:var(--input-bg); border:1.5px dashed var(--border); color:#f59e0b; padding:11px; border-radius:10px; font-weight:800; font-size:11.5px; cursor:pointer;">
-          ✂️ Считать только с последней ЗП (после смены работы)
-        </button>
-      </div>
-    </div>
+    <div id="salaryHistoryBody"></div>
   </div>
 </div>
 
