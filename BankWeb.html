@@ -10798,31 +10798,39 @@ function renderTravels() {
       <div id="cafeSuggestionBox" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border:1.5px solid rgba(245,158,11,0.3); border-radius:12px; overflow:hidden; box-sizing:border-box; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
         
         <!-- ТОНКАЯ ШАПКА: В СВЁРНУТОМ ВИДЕ СРАЗУ ПОКАЗЫВАЕТ ЗАВЕДЕНИЕ И СУММУ -->
-        <div onclick="toggleCafeSuggestionCollapse(event)" style="display:flex; justify-content:space-between; align-items:center; padding:9px 12px; cursor:pointer; user-select:none; background:rgba(245,158,11,0.06); gap:6px;">
-          <div style="display:flex; align-items:center; gap:6px; min-width:0; flex:1; padding-right:4px;">
-            <span style="font-size:14px; flex-shrink:0;">☕</span>
-            <div style="min-width:0; display:flex; align-items:center; gap:5px; flex:1;">
+        <div onclick="toggleCafeSuggestionCollapse(event)" style="display:flex; flex-direction:column; padding:9px 12px; cursor:pointer; user-select:none; background:rgba(245,158,11,0.06); gap:5px;">
+
+          <!-- РЯД 1: НАЗВАНИЕ, БЕЙДЖ РЕЖИМА И КНОПКИ -->
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:6px;">
+            <div style="display:flex; align-items:center; gap:6px; min-width:0; flex:1;">
+              <span style="font-size:14px; flex-shrink:0;">☕</span>
               <b style="font-size:11px; color:#f59e0b; text-transform:uppercase; letter-spacing:0.3px; flex-shrink:0;">Куда сходить:</b>
-              <div id="cafeSuggestMiniPreview" style="display:${isExpanded ? 'none' : 'flex'}; align-items:center; gap:4px; min-width:0; flex:1;">
-                <span id="cafeSuggestMiniLabel" style="font-size:11.5px; color:var(--text-main); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;">
-                  ${escapeHtml(pickLabel)}
-                </span>
-                <b id="cafeSuggestMiniPrice" style="color:#10b981; font-size:11.5px; flex-shrink:0; white-space:nowrap;">
-                  (${pickSum.toLocaleString()} ₽)
-                </b>
-              </div>
+
+              <!-- КОМПАКТНЫЙ БЕЙДЖ РЕЖИМА -->
+              <span id="cafeSuggestMiniMode" style="font-size:8.5px; font-weight:900; padding:1px 4px; border-radius:4px; flex-shrink:0; display:${isExpanded ? 'none' : 'inline-flex'}; align-items:center; background:${mode === 'auto' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; color:${mode === 'auto' ? '#3b82f6' : '#f59e0b'}; border:1px solid ${mode === 'auto' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(245, 158, 11, 0.3)'};">
+                ${mode === 'auto' ? '🤖 АВТО' : '📝 РУЧ'}
+              </span>
             </div>
-            <span id="cafeSuggestArrow" style="font-size:9px; color:var(--text-mute); background:var(--bg-card); padding:1px 5px; border-radius:4px; border:1px solid var(--border); flex-shrink:0;">${isExpanded ? '▲' : '▼'}</span>
+            <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;" onclick="event.stopPropagation()">
+              <button type="button" onclick="rollCafeSuggestion(event)" style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.4); color:#f59e0b; border-radius:7px; padding:3px 8px; font-size:10.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.15s;" title="Показать другое заведение">
+                <span>🎲</span><span>Другой</span>
+              </button>
+              <button type="button" onclick="openCafeCaliberModal(event)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:7px; padding:3px 6px; font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Настройки порогов и счетов">
+                ⚙️
+              </button>
+            </div>
           </div>
 
-          <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;" onclick="event.stopPropagation()">
-            <button type="button" onclick="rollCafeSuggestion(event)" style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.4); color:#f59e0b; border-radius:7px; padding:4px 9px; font-size:11px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.15s;" title="Показать другое заведение">
-              <span>🎲</span><span>Другой</span>
-            </button>
-            <button type="button" onclick="openCafeCaliberModal(event)" style="background:var(--bg-card); border:1px solid var(--border); border-radius:7px; padding:4px 7px; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Настройки порогов и счетов">
-              ⚙️
-            </button>
+          <!-- РЯД 2: ЗАВЕДЕНИЕ И СУММА (СКРЫВАЕТСЯ ПРИ РАСКРЫТИИ) -->
+          <div id="cafeSuggestMiniPreview" style="display:${isExpanded ? 'none' : 'flex'}; align-items:center; justify-content:space-between; width:100%; gap:8px; padding-left:2px;">
+            <span id="cafeSuggestMiniLabel" style="font-size:11.5px; color:var(--text-main); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;">
+              ${escapeHtml(pickLabel)}
+            </span>
+            <b id="cafeSuggestMiniPrice" style="color:#10b981; font-size:11.5px; flex-shrink:0; white-space:nowrap;">
+              (${pickSum.toLocaleString()} ₽)
+            </b>
           </div>
+
         </div>
 
         <!-- ТЕЛО ВИДЖЕТА (СВОРАЧИВАЕМОЕ) -->
@@ -10951,7 +10959,7 @@ function renderTravels() {
       miniLabel.innerText = label;
       miniPrice.innerText = `(${pick.sumE.toLocaleString()} ₽)`;
     }
-
+//
     haptic(12);
   }
 
@@ -10960,11 +10968,14 @@ function renderTravels() {
     const body = document.getElementById('cafeSuggestCollapsibleBody');
     const arr = document.getElementById('cafeSuggestArrow');
     const mini = document.getElementById('cafeSuggestMiniPreview');
+    const modeBadge = document.getElementById('cafeSuggestMiniMode');
     if (!body) return;
     const isHidden = (body.style.display === 'none');
     body.style.display = isHidden ? 'block' : 'none';
     if (arr) arr.innerText = isHidden ? '▲' : '▼';
     if (mini) mini.style.display = isHidden ? 'none' : 'flex';
+    // Логика не меняется, но теперь mini (превью) это отдельный блок на второй строке
+    if (modeBadge) modeBadge.style.display = isHidden ? 'none' : 'inline-flex';
     localStorage.setItem('cafe_suggestion_expanded', isHidden);
     haptic(10);
   }
