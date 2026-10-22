@@ -519,9 +519,19 @@
                 <option value="all_time">За всё время</option>
               </select>
             </div>
+
+            <!-- ДВЕ КНОПКИ ГЛУБОКОГО АНАЛИЗА: СРЕЗ НА ДАТУ И МЕСЯЦ К МЕСЯЦУ -->
+            <div style="display:flex; gap:6px; margin-bottom:10px;">
+              <button type="button" onclick="openDateSnapshotModal()" style="flex:1; background:var(--input-bg); border:1.5px solid rgba(99,102,241,0.35); color:var(--text-main); padding:8px 8px; border-radius:10px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:0.15s; box-shadow:0 1px 4px rgba(99,102,241,0.08);">
+                <span>⏳</span><span>Срез на дату</span>
+              </button>
+              <button type="button" onclick="openMonthComparisonModal()" style="flex:1; background:var(--input-bg); border:1.5px solid rgba(99,102,241,0.35); color:var(--text-main); padding:8px 8px; border-radius:10px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:0.15s; box-shadow:0 1px 4px rgba(99,102,241,0.08);">
+                <span>📊</span><span>Месяц к месяцу</span>
+              </button>
+            </div>
+
             <div id="analyticsSmartInsightsContent" style="display:flex; flex-direction:column; gap:6px;"></div>
           </div>
-        </div>
 
         <!-- КНОПКИ УПРАВЛЕНИЯ -->
         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
@@ -603,7 +613,7 @@
         </div>
           </div>
 
-          <div id="analyticsFiltersDropdown" style="display: none; padding: 12px; border-top: 1px solid var(--border); background: var(--bg-card); flex-direction: column; gap: 10px;">
+          <div id="analyticsFiltersDropdown" style="display:none; padding:12px; border-top:1px solid var(--border); background:var(--bg-card); flex-direction:column; gap:10px;">
             <!-- БАЗОВЫЕ ЧИПЫ-ИСКЛЮЧЕНИЯ: ДОЛГИ/БАБУШКА И АРЕНДА -->
             <div style="font-size:9.5px; font-weight:800; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.3px;">Базовые исключения:</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px;">
@@ -660,7 +670,7 @@
           <div style="font-size:11px; color:var(--text-mute); font-weight:bold; margin-bottom:2px;">🔙 Назад</div>
           <div id="chartCenterTitle" style="font-size:12px; font-weight:900; color:var(--text-main); line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"></div>
         </div>
-        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 662.4px;" width="828" height="312"></canvas>
+        <canvas id="mainChart" style="position: relative; z-index: 10; cursor: pointer; box-sizing: border-box; touch-action: auto; display: block; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 250px; width: 660.8px;" width="826" height="312"></canvas>
       </div>
 
       <div id="analyticsToggleAllRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0px 2px;">
@@ -6725,6 +6735,431 @@ async function recalculateCurrentAccountBalance() {
     const arrow = document.getElementById('analyticsSmartInsightsArrow');
     if (body) body.style.display = isInsightsExpanded ? 'block' : 'none';
     if (arrow) arrow.innerText = isInsightsExpanded ? '▲' : '▼';
+  }
+
+  // =========================================================================
+  // 1. ИСТОРИЧЕСКИЙ СРЕЗ НА ДАТУ («СКОЛЬКО БЫЛО ДЕНЕГ И СКОЛЬКО ПОТРАТИЛ»)
+  // =========================================================================
+  function openDateSnapshotModal(targetDateStr = null) {
+    const inp = document.getElementById('snapshotDateInput');
+    const today = toISOLocal(new Date());
+    const selDate = targetDateStr || (inp ? inp.value : null) || today;
+    if (inp) inp.value = selDate;
+    calculateDateSnapshot(selDate);
+    openModal('dateSnapshotModal');
+  }
+
+  function setDateSnapshotPreset(preset) {
+    const now = new Date();
+    let target = new Date();
+    if (preset === 'today') {
+      target = now;
+    } else if (preset === 'yesterday') {
+      target = new Date(now.getTime() - 86400000);
+    } else if (preset === 'first_day') {
+      target = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else if (preset === 'zp_day') {
+      const real = computeRealSalaryCycle();
+      const dayNum = real.medianSalaryDay || 16;
+      target = (now.getDate() >= dayNum)
+        ? new Date(now.getFullYear(), now.getMonth(), dayNum)
+        : new Date(now.getFullYear(), now.getMonth() - 1, dayNum);
+    }
+    const iso = toISOLocal(target);
+    document.getElementById('snapshotDateInput').value = iso;
+    calculateDateSnapshot(iso);
+    haptic(10);
+  }
+
+  function calculateDateSnapshot(dateISO) {
+    const container = document.getElementById('dateSnapshotContent');
+    if (!container) return;
+    if (!dateISO) return;
+
+    const todayISO = toISOLocal(new Date());
+
+    // 1. РЕВЕРСИВНЫЙ РАСЧЁТ ТОЧНЫХ ОСТАТКОВ ПО СЧЕТАМ НА КОНЕЦ ВЫБРАННОЙ ДАТЫ
+    // Формула: Баланс(date) = ТекущийБаланс - Изменения(date+1 .. сегодня)
+    const balancesOnDate = {};
+    const accountsList = (appData.accounts || []).filter(a => !a.name.toLowerCase().includes('все счета'));
+
+    accountsList.forEach(acc => {
+      balancesOnDate[acc.name] = parseFloat(acc.balance) || 0;
+    });
+
+    (appData.transactions || []).forEach(t => {
+      if (t.fd > dateISO) {
+        // Траты после выбранной даты: на тот момент эти деньги ЕЩЁ БЫЛИ на счёте
+        if (t.type === 'Расход' && t.accE && balancesOnDate[t.accE] !== undefined) {
+          balancesOnDate[t.accE] += (parseFloat(t.sumE) || 0);
+        }
+        // Доходы после выбранной даты: на тот момент этих денег ЕЩЁ НЕ БЫЛО на счёте
+        else if (t.type === 'Доход' && t.accI && balancesOnDate[t.accI] !== undefined) {
+          balancesOnDate[t.accI] -= (parseFloat(t.sumI) || 0);
+        }
+        // Переводы после выбранной даты: откатываем
+        else if ((t.type === 'Перевод' || t.type === 'Между своими')) {
+          const sum = parseFloat(t.sumTr) || 0;
+          if (t.accF && balancesOnDate[t.accF] !== undefined) balancesOnDate[t.accF] += sum;
+          if (t.accT && balancesOnDate[t.accT] !== undefined) balancesOnDate[t.accT] -= sum;
+        }
+      }
+    });
+
+    // Округляем балансы до целых
+    let totalAllAccounts = 0;
+    let totalSpendingPool = 0;
+    let totalSavingsPool = 0;
+    const spendingPoolNames = getSpendingPoolAccounts();
+    const savingsPoolNames = getSavingsPoolAccounts();
+
+    Object.entries(balancesOnDate).forEach(([name, bal]) => {
+      totalAllAccounts += bal;
+      if (spendingPoolNames.includes(name)) totalSpendingPool += bal;
+      if (savingsPoolNames.includes(name)) totalSavingsPool += bal;
+    });
+
+    // 2. ОПЕРАЦИИ ИМЕННО В ЭТОТ ВЫБРАННЫЙ ДЕНЬ
+    let spentOnDay = 0;
+    let incomeOnDay = 0;
+    const dayTxs = [];
+    const roles = typeof getSystemRoles === 'function' ? getSystemRoles() : { rent_cat: 'Аренда', grandma_cat: 'Бабушка' };
+
+    (appData.transactions || []).forEach(t => {
+      if (t.fd === dateISO) {
+        dayTxs.push(t);
+        if (t.type === 'Расход' && t.sumE > 0) spentOnDay += t.sumE;
+        if (t.type === 'Доход' && t.sumI > 0) incomeOnDay += t.sumI;
+      }
+    });
+
+    // Форматирование даты
+    const [y, m, d] = dateISO.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const daysOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    const dayName = daysOfWeek[dateObj.getDay()];
+    const dateFormatted = `${String(d).padStart(2,'0')}.${String(m).padStart(2,'0')}.${y}, ${dayName}`;
+
+    // Рендер строк балансов счетов
+    let accountsRowsHtml = '';
+    accountsList.slice().sort((a,b) => (balancesOnDate[b.name] || 0) - (balancesOnDate[a.name] || 0)).forEach(a => {
+      const bal = balancesOnDate[a.name] || 0;
+      const isSpend = spendingPoolNames.includes(a.name);
+      const isSave = savingsPoolNames.includes(a.name);
+      let badge = '';
+      if (isSpend) badge = '<span style="font-size:9px; color:#38bdf8; background:rgba(56,189,248,0.15); padding:1px 5px; border-radius:4px; font-weight:800;">ТРАТЫ</span>';
+      else if (isSave) badge = '<span style="font-size:9px; color:#10b981; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:4px; font-weight:800;">КОПИЛКА</span>';
+
+      accountsRowsHtml += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 9px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; font-size:11.5px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-weight:700; color:var(--text-main);">${escapeHtml(a.name)}</span>
+            ${badge}
+          </div>
+          <b style="color:${bal >= 0 ? 'var(--text-main)' : '#ef4444'}; font-size:12px;">${Math.round(bal).toLocaleString()} ₽</b>
+        </div>
+      `;
+    });
+
+    // Рендер чеков дня
+    let txsListHtml = '';
+    if (dayTxs.length === 0) {
+      txsListHtml = '<div style="color:var(--text-mute); font-size:11px; text-align:center; padding:8px 0; font-style:italic;">В этот день операций не было ✨</div>';
+    } else {
+      dayTxs.slice().sort((a,b) => (b.sumE || b.sumI || b.sumTr) - (a.sumE || a.sumI || a.sumTr)).forEach(t => {
+        const isExp = t.type === 'Расход';
+        const isInc = t.type === 'Доход';
+        const isTr = t.type === 'Перевод' || t.type === 'Между своими';
+        const sum = isExp ? t.sumE : (isInc ? t.sumI : t.sumTr);
+        const col = isExp ? '#ef4444' : (isInc ? '#10b981' : '#3b82f6');
+        const sign = isExp ? '-' : (isInc ? '+' : '• ');
+        const title = isTr ? `${escapeHtml(t.accF)} ➔ ${escapeHtml(t.accT)}` : escapeHtml(isExp ? t.catE : t.catI);
+
+        txsListHtml += `
+          <div class="tx-row" onclick="clI(event, '${t.r}')" style="display:flex; justify-content:space-between; align-items:center; padding:7px 9px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;">
+            <div style="min-width:0; flex:1; padding-right:8px;">
+              <span style="font-weight:800; color:var(--text-main);">${title}</span>
+              ${t.comE || t.comI ? `<div class="pre-wrap" style="color:var(--text-mute); font-size:10px; font-style:italic; margin-top:1px;">${escapeHtml(t.comE || t.comI)}</div>` : ''}
+            </div>
+            <b style="color:${col}; font-size:12px; white-space:nowrap;">${sign}${sum.toLocaleString()} ₽</b>
+          </div>
+        `;
+      });
+    }
+
+    container.innerHTML = `
+      <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px;">
+        <div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.3px;">Состояние на вечер дня:</div>
+        <div style="font-size:14px; font-weight:900; color:var(--text-main); margin-top:2px;">📅 ${dateFormatted}</div>
+      </div>
+
+      <!-- СВОДКА 3 КЛЮЧЕВЫХ ЦИФР ДНЯ -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px;">
+        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:9px 8px; text-align:center;">
+          <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Всего на счетах:</div>
+          <div class="sensitive-money" style="font-size:14px; font-weight:900; color:#10b981; margin-top:2px;">${Math.round(totalAllAccounts).toLocaleString()} ₽</div>
+        </div>
+        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:9px 8px; text-align:center;">
+          <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Пул трат (жизнь):</div>
+          <div class="sensitive-money" style="font-size:14px; font-weight:900; color:#38bdf8; margin-top:2px;">${Math.round(totalSpendingPool).toLocaleString()} ₽</div>
+        </div>
+        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:9px 8px; text-align:center;">
+          <div style="font-size:9px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Траты за день:</div>
+          <div class="sensitive-money" style="font-size:14px; font-weight:900; color:${spentOnDay > 0 ? '#ef4444' : 'var(--text-mute)'}; margin-top:2px;">${Math.round(spentOnDay).toLocaleString()} ₽</div>
+        </div>
+      </div>
+
+      <!-- СПИСОК ОСТАТКОВ ПО ВСЕМ СЧЕТАМ -->
+      <div style="border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--input-bg); margin-bottom:12px;">
+        <div style="padding:9px 12px; font-size:10.5px; font-weight:900; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.3px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
+          <span>Баланс по счетам на тот день:</span>
+          <span>Капитал: <b>${Math.round(totalSavingsPool).toLocaleString()} ₽</b></span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px; padding:8px; max-height:170px; overflow-y:auto;">
+          ${accountsRowsHtml}
+        </div>
+      </div>
+
+      <!-- ЧЕКИ ДНЯ -->
+      <div style="border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card);">
+        <div style="padding:9px 12px; font-size:10.5px; font-weight:900; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.3px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+          <span>Операции в этот день (${dayTxs.length}):</span>
+          ${incomeOnDay > 0 ? `<b style="color:#10b981; font-size:11px;">Доход: +${incomeOnDay.toLocaleString()} ₽</b>` : ''}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px; padding:8px; max-height:190px; overflow-y:auto;">
+          ${txsListHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // 2. АНАЛИТИКА «МЕСЯЦ К МЕСЯЦУ» (MONTH-OVER-MONTH СРАВНЕНИЕ ТЕМПА И ОСТАТКОВ)
+  // =========================================================================
+  window.momChartInstance = null;
+  window.momCurrentMode = 'salary'; // 'salary' (с 16 по 15) | 'calendar' (с 1 по 30/31)
+
+  function openMonthOverMonthModal() {
+    renderMonthOverMonth(window.momCurrentMode || 'salary');
+    openModal('monthOverMonthModal');
+  }
+
+  function setMomMode(m) {
+    window.momCurrentMode = m;
+    renderMonthOverMonth(m);
+    haptic(10);
+  }
+
+  function renderMonthOverMonth(cycleType = 'salary') {
+    const container = document.getElementById('momTableContainer');
+    const canvas = document.getElementById('momChartCanvas');
+    const btnSal = document.getElementById('btnMomSalary');
+    const btnCal = document.getElementById('btnMomCalendar');
+
+    if (btnSal && btnCal) {
+      btnSal.style.background = (cycleType === 'salary') ? 'var(--btn-active)' : 'transparent';
+      btnSal.style.color = (cycleType === 'salary') ? 'var(--btn-active-text)' : 'var(--text-mute)';
+      btnCal.style.background = (cycleType === 'calendar') ? 'var(--btn-active)' : 'transparent';
+      btnCal.style.color = (cycleType === 'calendar') ? 'var(--btn-active-text)' : 'var(--text-mute)';
+    }
+
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = now.getMonth();
+    const curDay = now.getDate();
+
+    // Строим список последних 6 циклов от старых к новым
+    const cyclesList = [];
+
+    if (cycleType === 'salary') {
+      const real = computeRealSalaryCycle();
+      const medianDay = real.medianSalaryDay || 16;
+
+      for (let i = 5; i >= 0; i--) {
+        const start = new Date(curYear, (curDay >= medianDay ? curMonth : curMonth - 1) - i, medianDay, 0, 0, 0);
+        const end = new Date(curYear, (curDay >= medianDay ? curMonth + 1 : curMonth) - i, medianDay - 1, 23, 59, 59);
+
+        const sISO = toISOLocal(start);
+        const eISO = toISOLocal(end);
+        const sM = ruMonthNames[start.getMonth()];
+        const eM = ruMonthNames[end.getMonth()];
+        const label = `${sM}–${eM} '${String(end.getFullYear()).slice(2)}`;
+
+        cyclesList.push({ label, startISO: sISO, endISO: eISO, startObj: start, endObj: end });
+      }
+    } else {
+      // Календарные месяцы
+      for (let i = 5; i >= 0; i--) {
+        const start = new Date(curYear, curMonth - i, 1, 0, 0, 0);
+        const end = new Date(curYear, curMonth - i + 1, 0, 23, 59, 59);
+
+        const sISO = toISOLocal(start);
+        const eISO = toISOLocal(end);
+        const label = `${ruMonthNames[start.getMonth()]} '${String(start.getFullYear()).slice(2)}`;
+
+        cyclesList.push({ label, startISO: sISO, endISO: eISO, startObj: start, endObj: end });
+      }
+    }
+
+    const roles = typeof getSystemRoles === 'function' ? getSystemRoles() : { rent_cat: 'Аренда', grandma_cat: 'Бабушка' };
+    const capAccounts = getSavingsPoolAccounts();
+
+    // Считаем показатели по каждому циклу
+    const cycleStats = cyclesList.map((c, cIdx) => {
+      let expTotal = 0;
+      let incTotal = 0;
+      let cleanPersonalExp = 0;
+      const catSums = {};
+      let txCount = 0;
+
+      (appData.transactions || []).forEach(t => {
+        if (t.fd >= c.startISO && t.fd <= c.endISO) {
+          if (t.type === 'Расход' && t.sumE > 0) {
+            expTotal += t.sumE;
+            txCount++;
+            catSums[t.catE] = (catSums[t.catE] || 0) + t.sumE;
+            if (isCleanPersonalExpense(t, roles)) cleanPersonalExp += t.sumE;
+          } else if (t.type === 'Доход' && t.sumI > 0) {
+            incTotal += t.sumI;
+          }
+        }
+      });
+
+      // Топ-статья
+      const sortedCats = Object.entries(catSums).sort((a,b) => b[1] - a[1]);
+      const topCat = sortedCats[0] || ['—', 0];
+
+      // Количество дней в цикле
+      const daysCount = Math.max(1, Math.round((c.endObj.getTime() - c.startObj.getTime()) / 86400000) + 1);
+      const pacePerDay = Math.round(cleanPersonalExp / daysCount);
+
+      return {
+        ...c,
+        expTotal,
+        incTotal,
+        cleanPersonalExp,
+        topCatName: topCat[0],
+        topCatSum: topCat[1],
+        txCount,
+        pacePerDay
+      };
+    });
+
+    // Отрисовка сравнительных карточек
+    let cardsHtml = '';
+    for (let i = cycleStats.length - 1; i >= 0; i--) {
+      const cur = cycleStats[i];
+      const prev = cycleStats[i - 1];
+
+      let deltaExpHtml = '';
+      if (prev && prev.cleanPersonalExp > 0) {
+        const diff = cur.cleanPersonalExp - prev.cleanPersonalExp;
+        const pct = Math.abs(Math.round((diff / prev.cleanPersonalExp) * 100));
+        if (diff > 0) {
+          deltaExpHtml = `<span style="color:#ef4444; font-size:11px; font-weight:800;">▲ +${diff.toLocaleString()} ₽ (+${pct}%) к прошлому</span>`;
+        } else if (diff < 0) {
+          deltaExpHtml = `<span style="color:#10b981; font-size:11px; font-weight:800;">▼ -${Math.abs(diff).toLocaleString()} ₽ (-${pct}%) экономнее</span>`;
+        } else {
+          deltaExpHtml = `<span style="color:var(--text-mute); font-size:11px;">= Вровень с прошлым</span>`;
+        }
+      }
+
+      const isLatest = (i === cycleStats.length - 1);
+
+      cardsHtml += `
+        <div style="background:var(--input-bg); border:1.5px solid ${isLatest ? '#3b82f6' : 'var(--border)'}; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <b style="font-size:13px; color:var(--text-main);">📅 ${cur.label}</b>
+              ${isLatest ? '<span style="font-size:9.5px; font-weight:900; background:rgba(59,130,246,0.15); color:#3b82f6; padding:1px 6px; border-radius:5px;">ТЕКУЩИЙ</span>' : ''}
+            </div>
+            <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">${cur.startISO.slice(5)} ➔ ${cur.endISO.slice(5)}</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:2px;">
+            <div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Бытовые траты (жизнь):</div>
+              <div style="font-size:15px; font-weight:900; color:var(--text-main); margin-top:2px;">${cur.cleanPersonalExp.toLocaleString()} ₽</div>
+              <div style="font-size:10px; color:var(--text-mute); margin-top:2px;">~${cur.pacePerDay.toLocaleString()} ₽/день</div>
+            </div>
+            <div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:9.5px; font-weight:bold; color:var(--text-mute); text-transform:uppercase;">Всего расходов:</div>
+              <div style="font-size:15px; font-weight:900; color:#ef4444; margin-top:2px;">${cur.expTotal.toLocaleString()} ₽</div>
+              <div style="font-size:10px; color:#10b981; font-weight:bold; margin-top:2px;">Доход: +${cur.incTotal.toLocaleString()} ₽</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-top:2px;">
+            ${deltaExpHtml || '<span style="color:var(--text-mute); font-size:10px;">Базовый месяц для сравнения</span>'}
+            <span style="color:var(--text-mute); font-size:10.5px;">Топ: <b>${escapeHtml(cur.topCatName)}</b> (${cur.topCatSum.toLocaleString()} ₽)</span>
+          </div>
+        </div>
+      `;
+    }
+
+    if (container) container.innerHTML = cardsHtml;
+
+    // График сравнения месяцев (Chart.js)
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (window.momChartInstance) {
+        window.momChartInstance.destroy();
+        window.momChartInstance = null;
+      }
+
+      const chartLabels = cycleStats.map(c => c.label);
+      const chartDataPersonal = cycleStats.map(c => c.cleanPersonalExp);
+      const chartDataTotal = cycleStats.map(c => c.expTotal);
+
+      window.momChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartLabels,
+          datasets: [
+            {
+              label: 'Быт (жизнь)',
+              data: chartDataPersonal,
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            },
+            {
+              label: 'Все расходы',
+              data: chartDataTotal,
+              backgroundColor: 'rgba(239, 68, 68, 0.35)',
+              borderColor: '#ef4444',
+              borderWidth: 1,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { font: { size: 10 }, boxWidth: 12 }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} ₽`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 9.5 } } },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                font: { size: 9 },
+                callback: (v) => v >= 1000 ? `${Math.round(v/1000)}к` : v
+              }
+            }
+          }
+        }
+      });
+    }
   }
 
   function openCaliberModal(e) {
@@ -15458,6 +15893,327 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
     }
   }
 
+  // =========================================================================
+  // 1. ИНСПЕКТОР ДНЯ: СРЕЗ НА ДАТУ (СКОЛЬКО ДЕНЕГ БЫЛО И СКОЛЬКО ПОТРАТИЛ)
+  // =========================================================================
+
+  function openDateSnapshotModal(initialDate = null) {
+    const inp = document.getElementById('snapshotDateInput');
+    const today = toISOLocal(new Date());
+    if (inp) {
+      inp.value = initialDate || today;
+      inp.max = today;
+    }
+    calculateDateSnapshot();
+    openModal('dateSnapshotModal');
+  }
+
+  function setSnapshotQuickDate(mode) {
+    const now = new Date();
+    let target = new Date();
+    if (mode === 'today') {
+      target = now;
+    } else if (mode === 'yesterday') {
+      target = new Date(now.getTime() - 86400000);
+    } else if (mode === '7days') {
+      target = new Date(now.getTime() - 7 * 86400000);
+    } else if (mode === '30days') {
+      target = new Date(now.getTime() - 30 * 86400000);
+    } else if (mode === 'lastSalary') {
+      const real = computeRealSalaryCycle();
+      if (real.latestSalaryTx) {
+        const [y, m, d] = real.latestSalaryTx.fd.split('-').map(Number);
+        target = new Date(y, m - 1, d);
+      }
+    }
+    const inp = document.getElementById('snapshotDateInput');
+    if (inp) inp.value = toISOLocal(target);
+    calculateDateSnapshot();
+    haptic(10);
+  }
+
+  function calculateDateSnapshot() {
+    const inp = document.getElementById('snapshotDateInput');
+    const targetISO = inp ? inp.value : toISOLocal(new Date());
+    if (!targetISO) return;
+
+    const todayISO = toISOLocal(new Date());
+    const isToday = (targetISO === todayISO);
+
+    // 1. Реверсивный расчёт остатков по всем счетам на конец выбранного дня
+    const accountsSnapshot = {};
+    (appData.accounts || []).forEach(a => {
+      accountsSnapshot[a.name] = parseFloat(a.balance) || 0;
+    });
+
+    // Откатываем транзакции, которые произошли ПОСЛЕ targetISO
+    (appData.transactions || []).forEach(t => {
+      if (t.fd > targetISO) {
+        if (t.type === 'Расход' && t.accE && accountsSnapshot[t.accE] !== undefined) {
+          accountsSnapshot[t.accE] += (parseFloat(t.sumE) || 0);
+        } else if (t.type === 'Доход' && t.accI && accountsSnapshot[t.accI] !== undefined) {
+          accountsSnapshot[t.accI] -= (parseFloat(t.sumI) || 0);
+        } else if ((t.type === 'Перевод' || t.type === 'Между своими') && t.accF && t.accT) {
+          if (accountsSnapshot[t.accF] !== undefined) accountsSnapshot[t.accF] += (parseFloat(t.sumTr) || 0);
+          if (accountsSnapshot[t.accT] !== undefined) accountsSnapshot[t.accT] -= (parseFloat(t.sumTr) || 0);
+        }
+      }
+    });
+
+    // 2. Операции за сам выбранный день
+    let spentDayTotal = 0;
+    let incomeDayTotal = 0;
+    const dayTxs = [];
+
+    (appData.transactions || []).forEach(t => {
+      if (t.fd === targetISO) {
+        dayTxs.push(t);
+        if (t.type === 'Расход') spentDayTotal += (parseFloat(t.sumE) || 0);
+        else if (t.type === 'Доход') incomeDayTotal += (parseFloat(t.sumI) || 0);
+      }
+    });
+
+    // 3. Подсчёт капитала: всего, на картах трат и в накоплениях
+    const spendingAccs = getSpendingPoolAccounts();
+    const savingsAccs = getSavingsPoolAccounts();
+
+    let totalCap = 0;
+    let spendingCap = 0;
+    let savingsCap = 0;
+
+    Object.entries(accountsSnapshot).forEach(([name, bal]) => {
+      const low = name.toLowerCase();
+      if (low.includes('все счета') || low.includes('балл')) return;
+      totalCap += bal;
+      if (spendingAccs.includes(name)) spendingCap += bal;
+      if (savingsAccs.includes(name)) savingsCap += bal;
+    });
+
+    // 4. Отрисовка сводки дня
+    const summaryBox = document.getElementById('snapshotDaySummary');
+    const [y, m, d] = targetISO.split('-').map(Number);
+    const dayObj = new Date(y, m - 1, d);
+    const daysOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    const dateTitle = `${d} ${ruMonthFullNames[m - 1]} ${y} (${daysOfWeek[dayObj.getDay()]})`;
+
+    if (summaryBox) {
+      summaryBox.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:6px;">
+          <b style="font-size:12.5px; color:var(--text-main);">📅 ${escapeHtml(dateTitle)}</b>
+          ${isToday ? '<span style="font-size:9.5px; font-weight:900; color:#3b82f6; background:rgba(59,130,246,0.15); padding:2px 6px; border-radius:5px;">СЕГОДНЯ</span>' : ''}
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div style="background:var(--input-bg); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="font-size:9.5px; color:var(--text-mute); font-weight:bold; text-transform:uppercase;">Всего на счетах:</div>
+            <div class="sensitive-money" style="font-size:16px; font-weight:900; color:#10b981; margin-top:2px;">${Math.round(totalCap).toLocaleString()} ₽</div>
+            <div style="font-size:9.5px; color:var(--text-mute); margin-top:2px;">Траты: <b>${Math.round(spendingCap).toLocaleString()} ₽</b> • Копилка: <b>${Math.round(savingsCap).toLocaleString()} ₽</b></div>
+          </div>
+          <div style="background:var(--input-bg); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="font-size:9.5px; color:var(--text-mute); font-weight:bold; text-transform:uppercase;">Траты за этот день:</div>
+            <div class="sensitive-money" style="font-size:16px; font-weight:900; color:${spentDayTotal > 0 ? '#ef4444' : 'var(--text-mute)'}; margin-top:2px;">${spentDayTotal > 0 ? '-' : ''}${Math.round(spentDayTotal).toLocaleString()} ₽</div>
+            <div style="font-size:9.5px; color:var(--text-mute); margin-top:2px;">Доход дня: <b style="color:#10b981;">+${Math.round(incomeDayTotal).toLocaleString()} ₽</b></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 5. Отрисовка счетов на ту дату
+    const accListEl = document.getElementById('snapshotAccountsList');
+    if (accListEl) {
+      let h = '';
+      const orderedList = getOrderedAccountsList();
+      orderedList.forEach(name => {
+        const bal = accountsSnapshot[name] !== undefined ? accountsSnapshot[name] : 0;
+        const low = name.toLowerCase();
+        if (low.includes('все счета') || low.includes('балл')) return;
+        const cardCol = localStorage.getItem('acc_color_' + name) || getBankCol(name);
+
+        h += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px;">
+            <div style="display:flex; align-items:center; gap:7px; min-width:0; flex:1;">
+              <span style="width:10px; height:10px; border-radius:3px; background:${cardCol}; flex-shrink:0;"></span>
+              <span style="font-weight:700; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(name)}</span>
+            </div>
+            <b class="sensitive-money" style="font-size:12px; color:var(--text-main); flex-shrink:0;">${Math.round(bal).toLocaleString()} ₽</b>
+          </div>
+        `;
+      });
+      accListEl.innerHTML = h || '<div style="color:var(--text-mute); font-size:11px;">Счета не найдены</div>';
+    }
+
+    // 6. Отрисовка чеков дня
+    const txListEl = document.getElementById('snapshotDayTxsList');
+    const txCountBadge = document.getElementById('snapshotDayTxsCount');
+    if (txCountBadge) txCountBadge.innerText = `${dayTxs.length} шт.`;
+
+    if (txListEl) {
+      if (dayTxs.length === 0) {
+        txListEl.innerHTML = '<div style="color:var(--text-mute); font-size:11px; padding:10px 0; text-align:center; font-style:italic;">В этот день не было операций</div>';
+      } else {
+        let th = '';
+        dayTxs.slice().sort((a, b) => (b.sumE || b.sumI || b.sumTr) - (a.sumE || a.sumI || a.sumTr)).forEach(t => {
+          const isExp = t.type === 'Расход';
+          const isInc = t.type === 'Доход';
+          const catTitle = isExp ? t.catE : (isInc ? t.catI : `${t.accF} ➔ ${t.accT}`);
+          const sumVal = isExp ? t.sumE : (isInc ? t.sumI : t.sumTr);
+          const col = isExp ? '#ef4444' : (isInc ? '#10b981' : '#3b82f6');
+          const sign = isExp ? '-' : (isInc ? '+' : '• ');
+          const com = isExp ? t.comE : t.comI;
+
+          th += `
+            <div class="tx-row" onclick="clI(event, '${t.r}')" style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11.5px; cursor:pointer;">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <b style="color:var(--text-main);">${escapeHtml(catTitle)}</b>
+                ${com ? `<div class="pre-wrap" style="color:var(--text-mute); font-size:10px; font-style:italic; margin-top:2px;">${escapeHtml(com)}</div>` : ''}
+              </div>
+              <b style="color:${col}; font-size:12px; white-space:nowrap;">${sign}${sumVal.toLocaleString()} ₽</b>
+            </div>
+          `;
+        });
+        txListEl.innerHTML = th;
+      }
+    }
+  }
+
+  // =========================================================================
+  // 2. АНАЛИТИКА «МЕСЯЦ К МЕСЯЦУ» (MONTH-OVER-MONTH СРАВНЕНИЕ)
+  // =========================================================================
+
+  function openMonthComparisonModal() {
+    renderMonthComparisonData();
+    openModal('monthComparisonModal');
+  }
+
+  function renderMonthComparisonData() {
+    const mode = document.getElementById('monthCompModeSelect')?.value || 'salary';
+    const container = document.getElementById('monthCompContent');
+    if (!container) return;
+
+    const now = new Date();
+    const roles = typeof getSystemRoles === 'function' ? getSystemRoles() : { rent_cat: 'Аренда', grandma_cat: 'Бабушка' };
+
+    let curStart, curEnd, prevStart, prevEnd, curLabel, prevLabel, daysPassed;
+
+    if (mode === 'salary') {
+      const cycles = getSalaryCycleDates(now);
+      curStart = cycles.curStart;
+      curEnd = cycles.curEnd;
+      prevStart = cycles.prevStart;
+      prevEnd = cycles.prevEnd;
+
+      curLabel = `Текущий ЗП цикл (${cycles.curStartISO.slice(5)} — ${cycles.curEndISO.slice(5)})`;
+      prevLabel = `Прошлый ЗП цикл (${cycles.prevStartISO.slice(5)} — ${cycles.prevEndISO.slice(5)})`;
+
+      daysPassed = Math.max(1, Math.round((now.getTime() - curStart.getTime()) / 86400000) + 1);
+    } else {
+      const curY = now.getFullYear();
+      const curM = now.getMonth();
+
+      curStart = new Date(curY, curM, 1);
+      curEnd = new Date(curY, curM + 1, 0, 23, 59, 59);
+
+      prevStart = new Date(curY, curM - 1, 1);
+      prevEnd = new Date(curY, curM, 0, 23, 59, 59);
+
+      curLabel = `${ruMonthFullNames[curM]} ${curY}`;
+      prevLabel = `${ruMonthFullNames[curM === 0 ? 11 : curM - 1]} ${curM === 0 ? curY - 1 : curY}`;
+
+      daysPassed = now.getDate();
+    }
+
+    const curStartISO = toISOLocal(curStart);
+    const curEndISO = toISOLocal(curEnd);
+    const prevStartISO = toISOLocal(prevStart);
+    const prevEndISO = toISOLocal(prevEnd);
+
+    // Дата отсечки для сравнения день-в-день в прошлом месяце
+    const prevCutoff = new Date(prevStart.getTime() + (daysPassed - 1) * 86400000);
+    const prevCutoffISO = toISOLocal(prevCutoff);
+
+    let curTotal = 0;
+    let prevTotalFull = 0;
+    let prevTotalPace = 0; // ровно за столько же первых дней
+
+    const curCats = {};
+    const prevCats = {};
+
+    (appData.transactions || []).forEach(t => {
+      if (t.type === 'Расход' && t.sumE > 0 && isCleanPersonalExpense(t, roles)) {
+        // Текущий месяц (по сегодняшний день)
+        if (t.fd >= curStartISO && t.fd <= toISOLocal(now)) {
+          curTotal += t.sumE;
+          curCats[t.catE] = (curCats[t.catE] || 0) + t.sumE;
+        }
+
+        // Прошлый месяц (полный)
+        if (t.fd >= prevStartISO && t.fd <= prevEndISO) {
+          prevTotalFull += t.sumE;
+        }
+
+        // Прошлый месяц (день-в-день)
+        if (t.fd >= prevStartISO && t.fd <= prevCutoffISO) {
+          prevTotalPace += t.sumE;
+          prevCats[t.catE] = (prevCats[t.catE] || 0) + t.sumE;
+        }
+      }
+    });
+
+    const diffPace = curTotal - prevTotalPace;
+    const pctPace = prevTotalPace > 0 ? ((diffPace / prevTotalPace) * 100).toFixed(1) : 0;
+    const isPaceMore = diffPace > 0;
+
+    // Сравнение категорий
+    const allCatKeys = Array.from(new Set([...Object.keys(curCats), ...Object.keys(prevCats)]));
+    const catDiffs = allCatKeys.map(cat => {
+      const cVal = curCats[cat] || 0;
+      const pVal = prevCats[cat] || 0;
+      const diff = cVal - pVal;
+      return { cat, cVal, pVal, diff };
+    }).sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+
+    let catRowsHtml = '';
+    catDiffs.slice(0, 8).forEach(item => {
+      const isUp = item.diff > 0;
+      const col = isUp ? '#ef4444' : (item.diff < 0 ? '#10b981' : 'var(--text-mute)');
+      const sign = isUp ? '▲ +' : (item.diff < 0 ? '▼ ' : '');
+
+      catRowsHtml += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 10px; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; font-size:11px;">
+          <div style="min-width:0; flex:1; padding-right:8px;">
+            <b style="color:var(--text-main);">${escapeHtml(item.cat)}</b>
+            <div style="color:var(--text-mute); font-size:10px; margin-top:2px;">Сейчас: ${item.cVal.toLocaleString()} ₽ • Было: ${item.pVal.toLocaleString()} ₽</div>
+          </div>
+          <b style="color:${col}; font-size:12px; flex-shrink:0;">${sign}${Math.abs(item.diff).toLocaleString()} ₽</b>
+        </div>
+      `;
+    });
+
+    container.innerHTML = `
+      <!-- СВОДКА ДЕНЬ-В-ДЕНЬ -->
+      <div style="background:var(--input-bg); border:1.5px solid ${isPaceMore ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}; border-radius:12px; padding:12px; margin-bottom:10px;">
+        <div style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase;">Темп за первые ${daysPassed} дней цикла:</div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:4px;">
+          <div style="font-size:20px; font-weight:900; color:${isPaceMore ? '#ef4444' : '#10b981'};">
+            ${isPaceMore ? '▲ +' : '▼ '}${Math.abs(diffPace).toLocaleString()} ₽
+          </div>
+          <span style="font-size:11px; font-weight:800; color:${isPaceMore ? '#ef4444' : '#10b981'};">
+            ${isPaceMore ? 'больше на' : 'экономнее на'} ${Math.abs(pctPace)}%
+          </span>
+        </div>
+        <div style="font-size:10.5px; color:var(--text-mute); margin-top:6px; line-height:1.4;">
+          Сейчас потрачено: <b style="color:var(--text-main);">${curTotal.toLocaleString()} ₽</b><br>
+          В прошлом цикле на этот же день: <b style="color:var(--text-main);">${prevTotalPace.toLocaleString()} ₽</b> (всего за весь прошлый месяц: ${prevTotalFull.toLocaleString()} ₽)
+        </div>
+      </div>
+
+      <!-- РАЗНИЦА ПО СТАТЬЯМ РАСХОДОВ -->
+      <div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-bottom:6px;">Где изменились траты (за первые ${daysPassed} дн.):</div>
+      <div style="display:flex; flex-direction:column; gap:5px;">
+        ${catRowsHtml || '<div style="color:var(--text-mute); text-align:center; padding:10px;">Нет данных для сравнения</div>'}
+      </div>
+    `;
+  }
+
   // Смена логина, ключа и слова сброса входного шлюза калькулятора
   async function updateGatewayCredentials() {
     if (isGuest()) return alert("🔒 Вы вошли как гость! Изменение настроек доступно только администратору с мастер-PIN.");
@@ -15760,7 +16516,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА ВЫБОРА ИСКЛЮЧАЕМЫХ КАТЕГОРИЙ ИЗ АНАЛИТИКИ (1-В-1 КАК В АВТОПИЛОТЕ) -->
-<div id="analyticsCatExcludeModal" class="modal" style="z-index: 4030; display: none; overflow-x: hidden; padding: 12px;">
+<div id="analyticsCatExcludeModal" class="modal" style="z-index: 4060; display: none; overflow-x: hidden; padding: 12px;">
   <div class="modal-content" style="max-width: 460px; max-height: 88vh; display: flex; flex-direction: column; padding: 20px; gap: 10px; box-sizing: border-box; overflow-x: hidden;">
 
     <!-- Фиксированная шапка -->
@@ -15784,169 +16540,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
     <!-- 1. ВКЛАДКА ПРОСМОТРА (КРАСИВЫЙ СПИСОК ЧИПОВ) -->
     <div id="anExViewContent" style="display: flex; flex-direction: column; gap: 10px; flex: 1 1 0%; overflow-y: auto; scrollbar-gutter: stable; padding-right: 2px;">
-      <div id="anExOverviewSummary">
-      <!-- БЛОК: ЧТО ИСКЛЮЧЕНО -->
-      <div style="border:1.5px solid rgba(239,68,68,0.4); border-radius:12px; padding:12px; background:var(--bg-card);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <b style="font-size:12.5px; color:#ef4444;">🚫 Исключено из аналитики (9 статей):</b>
-        </div>
-        <div style="font-size:10.5px; color:var(--text-mute); margin-bottom:8px; line-height:1.4;">
-          Эти траты не учитываются в общей сумме за период, круговой диаграмме и списке категорий:
-        </div>
-        
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Бабушка <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(3)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Бабушка Аптека</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Бабушка Магазины</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Бабушка другое</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Связь и Жилье <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(1)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Аренда квартиры</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Прочее и Финансы <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(5)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Что-то кому-то купил не в долг</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Что-то кому-то купил в долг</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кому-то в долг</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кому-то не в долг</span><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.55); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Вернул долг</span>
-          </div>
-        </div>
-      
-      </div>
-
-      <!-- БЛОК: ЧТО УЧИТЫВАЕТСЯ -->
-      <div style="border:1.5px solid #10b981; border-radius:12px; padding:12px; background:var(--bg-card); margin-top:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <b style="font-size:12.5px; color:#10b981;">🟢 В аналитике (97 статей):</b>
-        </div>
-        <div style="font-size:10.5px; color:var(--text-mute); margin-bottom:8px; line-height:1.4;">
-          Все остальные расходы, формирующие твой бюджет:
-        </div>
-        
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Работа <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(3)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Обед/столовая на работе</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Сборы денег на работе</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Еда/что-то на работу для себя</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Еда вне дома с ручкой <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(5)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кафе чисто перекусить</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кофейни</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Фастфуд</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кафе в честь чего-то</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Перекус/джанкфуд продукты вне дома с ручкой</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Продукты <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(12)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Доставка</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">КБ</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Пятерочка</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Чижик</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Магнит</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Дикси</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Перекресток</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Спар</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Вкусвилл</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ароматный мир/винлаб</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Другие продуктовые магазины</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Вода в еще</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Алкоголь и Привычки <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(4)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Алкоголь бары пабы</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Курение</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Алкоголь из магазина домой</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Алкоголь из магазина вне дома</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Связь и Жилье <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(6)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Сотовая связь</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Интернет домашний</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Онлайн - Подписки</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Консьержка</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">ЖКХ - вода</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">ЖКХ - свет</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Машина <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(9)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Парковка</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Запчасти на машину</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ремонт машины</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Мойка машины</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Штрафы</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">ОСАГО</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Бензин</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Не запчасти</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Вода в машину</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Транспорт и Авто <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(4)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Такси</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Каршеринг</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Самокаты</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Транспорт городской общественный</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Ручка <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(9)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ручка продукты</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ручка красота</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Подарки ручке</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Цветы ручке</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ручке деньги</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Проявка пленки ручки</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ручка одежда</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Ручка другое</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Пленка ручке</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Здоровье <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(5)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Аптека</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Здоровье (обследования итд)</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Стрижка</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Интим</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Лекарства</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Досуг и Развлечения <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(8)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Кино</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Театр</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Окультуривание (выставки и тд) БИЛЕТЫ</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Открытки/сувениры и тд</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Иной досуг</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Музеи</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Иные развлечения</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Фотобудка и тд</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Прочее и Финансы <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(2)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Подарки</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Не сошёлся дебет кредит</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Путешествия <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(10)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Еда в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Досуг и развлечения в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Продукты в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Иные траты в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Сувениры и тд в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Бензин в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Жилье в путешествиях</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Транспорт туда/обратно</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Перемещение по локации (такси/автобусы/тд)</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Туры</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Хозтовары <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(5)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">еще</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Фикс прайс</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Хозтовары из других магазинов</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Хозтовары онлайн</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Галамарт</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Еда дома <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(3)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Доставка еды</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Домой перекус/готовая еда/джанкфуд из магазина</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Еда для себя и гостей дома</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Дача <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(4)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Продукты дача</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Алкоголь дача</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Хозтовары дача</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Мясо дача</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Еда вне дома без ручки <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(2)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Фастфуд/кафешки/рестораны/шаурма без ручки</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">В магазине еда/джанкфуд вне дома без ручки</span>
-          </div>
-        </div>
-      
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px;">
-          <div style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:5px;">📂 Шопинг <span style="font-size:10px; color:var(--text-mute); font-weight:bold;">(6)</span></div>
-          <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Маркеты</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Мебель</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Одежда</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Техника</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Товары для дома онлайн</span><span style="background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.5); padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; letter-spacing:0.2px;">Товары для себя/аксессуары</span>
-          </div>
-        </div>
-      
-      </div>
-    </div>
+      <div id="anExOverviewSummary"></div>
       <button type="button" onclick="switchAnExModalTab('edit')" style="width:100%; background:var(--input-bg); border:1.5px solid #3b82f6; color:#3b82f6; padding:12px; border-radius:10px; font-weight:900; cursor:pointer; font-size:12px; margin-top:2px;">
         ✏️ Настроить, какие статьи скрыть ➔
       </button>
@@ -16164,7 +16758,7 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 </div>
 
 <!-- МОДАЛКА: ДЕПЛОЙ В GITHUB (ИДЕАЛЬНО ОТЦЕНТРОВАННАЯ, ПАРЯЩАЯ И КОМПАКТНАЯ) -->
-<div id="deployModal" class="modal" style="z-index: 4040; display: none;">
+<div id="deployModal" class="modal" style="z-index: 4010; display: none;">
   <div class="modal-content" style="max-width: 440px; padding: 22px; border-radius: 20px; box-shadow: 0 16px 45px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 10px; scrollbar-gutter: stable;">
     <div class="modal-header-sticky" style="margin: -24px -24px 6px -24px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -18107,7 +18701,6 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
   </div>
 </div>
-
 <div id="logoutChoiceModal" class="modal" style="z-index: 12000; display: none;">
 
   <div class="modal-content" style="max-width: 340px; padding: 20px; text-align: center;">
@@ -18133,6 +18726,163 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
   </div>
 </div>
 
+<!-- МОДАЛКА: СРЕЗ НА ДАТУ (ИНСПЕКТОР ДНЯ / МАШИНА ВРЕМЕНИ) -->
+<div id="dateSnapshotModal" class="modal" style="z-index: 4060; display: none;">
+  <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
+
+    <div class="modal-header-sticky" style="margin: -20px -20px 10px -20px; padding: 16px 20px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">⏳</span>
+        <h3 style="font-weight:900; margin:0; font-size:15px; color:var(--text-main);">Срез финансов на дату</h3>
+      </div>
+      <button class="close-btn" type="button" onclick="closeModal('dateSnapshotModal')">✕</button>
+    </div>
+
+    <!-- ВЫБОР ДАТЫ И БЫСТРЫЕ КНОПКИ -->
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin-bottom:10px; flex-shrink:0;">
+      <label style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Выберите дату для среза:</label>
+      <input type="date" id="snapshotDateInput" class="input-ui input-date" style="margin-bottom:8px; padding:8px 10px; font-size:13px; font-weight:800;" onchange="calculateDateSnapshot()">
+
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <button type="button" onclick="setSnapshotQuickDate('today')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">Сегодня</button>
+        <button type="button" onclick="setSnapshotQuickDate('yesterday')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">Вчера</button>
+        <button type="button" onclick="setSnapshotQuickDate('7days')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">-7 дней</button>
+        <button type="button" onclick="setSnapshotQuickDate('30days')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">-30 дней</button>
+        <button type="button" onclick="setSnapshotQuickDate('lastSalary')" style="background:var(--bg-card); border:1px solid var(--border); color:#3b82f6; font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">День ЗП 💰</button>
+      </div>
+    </div>
+
+    <!-- СКРОЛЛИРУЕМОЕ ТЕЛО СРЕЗА -->
+    <div style="flex:1; overflow-y:auto; scrollbar-gutter:stable; display:flex; flex-direction:column; gap:10px; padding-right:2px;">
+
+      <!-- СВОДКА ДНЯ -->
+      <div id="snapshotDaySummary" style="background:var(--bg-card); border:1.5px solid var(--border); border-radius:12px; padding:12px;"></div>
+
+      <!-- СПИСОК СЧЕТОВ НА ТУ ДАТУ -->
+      <div style="border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg-card);">
+        <div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-bottom:8px;">💳 Остатки по счетам на конец того дня:</div>
+        <div id="snapshotAccountsList" style="display:flex; flex-direction:column; gap:5px; max-height:160px; overflow-y:auto; padding-right:2px;"></div>
+      </div>
+
+      <!-- ЧЕКИ ЗА ЭТОТ ДЕНЬ -->
+      <div style="border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg-card);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase;">🧾 Операции за этот день:</span>
+          <span id="snapshotDayTxsCount" style="font-size:10px; font-weight:bold; color:var(--text-mute);">0 шт.</span>
+        </div>
+        <div id="snapshotDayTxsList" style="display:flex; flex-direction:column; gap:5px; max-height:180px; overflow-y:auto; padding-right:2px;"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- МОДАЛКА: МЕСЯЦ К МЕСЯЦУ (СРАВНЕНИЕ ТЕМПА И КАТЕГОРИЙ) -->
+<div id="monthComparisonModal" class="modal" style="z-index: 4060; display: none;">
+  <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
+
+    <div class="modal-header-sticky" style="margin: -20px -20px 10px -20px; padding: 16px 20px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">📊</span>
+        <h3 style="font-weight:900; margin:0; font-size:15px; color:var(--text-main);">Аналитика месяц к месяцу</h3>
+      </div>
+      <button class="close-btn" type="button" onclick="closeModal('monthComparisonModal')">✕</button>
+    </div>
+
+    <!-- ВЫБОР РЕЖИМА СРАВНЕНИЯ -->
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:10px; flex-shrink:0;">
+      <label style="font-size:9.5px; font-weight:800; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">База сравнения:</label>
+      <select id="monthCompModeSelect" class="input-ui" style="margin:0; padding:6px 10px; font-size:11.5px; cursor:pointer;" onchange="renderMonthComparisonData()">
+        <option value="salary" selected="">Текущий ЗП цикл vs Прошлый ЗП цикл</option>
+        <option value="calendar">Календарный месяц vs Прошлый месяц</option>
+      </select>
+    </div>
+
+    <!-- ТЕЛО СРАВНЕНИЯ -->
+    <div id="monthCompContent" style="flex:1; overflow-y:auto; scrollbar-gutter:stable; display:flex; flex-direction:column; gap:10px; padding-right:2px;"></div>
+
+  </div>
+</div>
+
+<!-- МОДАЛКА: СРЕЗ НА ДАТУ (ИНСПЕКТОР ДНЯ / МАШИНА ВРЕМЕНИ) -->
+<div id="dateSnapshotModal" class="modal" style="z-index: 4060; display: none;">
+  <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
+
+    <div class="modal-header-sticky" style="margin: -20px -20px 10px -20px; padding: 16px 20px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">⏳</span>
+        <h3 style="font-weight:900; margin:0; font-size:15px; color:var(--text-main);">Срез финансов на дату</h3>
+      </div>
+      <button class="close-btn" type="button" onclick="closeModal('dateSnapshotModal')">✕</button>
+    </div>
+
+    <!-- ВЫБОР ДАТЫ И БЫСТРЫЕ КНОПКИ -->
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin-bottom:10px; flex-shrink:0;">
+      <label style="font-size:10px; font-weight:800; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">Выберите дату для среза:</label>
+      <input type="date" id="snapshotDateInput" class="input-ui input-date" style="margin-bottom:8px; padding:8px 10px; font-size:13px; font-weight:800;" onchange="calculateDateSnapshot()">
+
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <button type="button" onclick="setSnapshotQuickDate('today')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">Сегодня</button>
+        <button type="button" onclick="setSnapshotQuickDate('yesterday')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">Вчера</button>
+        <button type="button" onclick="setSnapshotQuickDate('7days')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">-7 дней</button>
+        <button type="button" onclick="setSnapshotQuickDate('30days')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text-main); font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">-30 дней</button>
+        <button type="button" onclick="setSnapshotQuickDate('lastSalary')" style="background:var(--bg-card); border:1px solid var(--border); color:#3b82f6; font-size:10px; font-weight:bold; padding:4px 7px; border-radius:6px; cursor:pointer;">День ЗП 💰</button>
+      </div>
+    </div>
+
+    <!-- СКРОЛЛИРУЕМОЕ ТЕЛО СРЕЗА -->
+    <div style="flex:1; overflow-y:auto; scrollbar-gutter:stable; display:flex; flex-direction:column; gap:10px; padding-right:2px;">
+
+      <!-- СВОДКА ДНЯ -->
+      <div id="snapshotDaySummary" style="background:var(--bg-card); border:1.5px solid var(--border); border-radius:12px; padding:12px;"></div>
+
+      <!-- СПИСОК СЧЕТОВ НА ТУ ДАТУ -->
+      <div style="border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg-card);">
+        <div style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase; margin-bottom:8px;">💳 Остатки по счетам на конец того дня:</div>
+        <div id="snapshotAccountsList" style="display:flex; flex-direction:column; gap:5px; max-height:160px; overflow-y:auto; padding-right:2px;"></div>
+      </div>
+
+      <!-- ЧЕКИ ЗА ЭТОТ ДЕНЬ -->
+      <div style="border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg-card);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:10px; font-weight:900; color:var(--text-mute); text-transform:uppercase;">🧾 Операции за этот день:</span>
+          <span id="snapshotDayTxsCount" style="font-size:10px; font-weight:bold; color:var(--text-mute);">0 шт.</span>
+        </div>
+        <div id="snapshotDayTxsList" style="display:flex; flex-direction:column; gap:5px; max-height:180px; overflow-y:auto; padding-right:2px;"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- МОДАЛКА: МЕСЯЦ К МЕСЯЦУ (СРАВНЕНИЕ ТЕМПА И КАТЕГОРИЙ) -->
+<div id="monthComparisonModal" class="modal" style="z-index: 4060; display: none;">
+  <div class="modal-content" style="max-width: 440px; height: 85vh; max-height: 85vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
+
+    <div class="modal-header-sticky" style="margin: -20px -20px 10px -20px; padding: 16px 20px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">📊</span>
+        <h3 style="font-weight:900; margin:0; font-size:15px; color:var(--text-main);">Аналитика месяц к месяцу</h3>
+      </div>
+      <button class="close-btn" type="button" onclick="closeModal('monthComparisonModal')">✕</button>
+    </div>
+
+    <!-- ВЫБОР РЕЖИМА СРАВНЕНИЯ -->
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:10px; flex-shrink:0;">
+      <label style="font-size:9.5px; font-weight:800; color:var(--text-mute); text-transform:uppercase; display:block; margin-bottom:4px;">База сравнения:</label>
+      <select id="monthCompModeSelect" class="input-ui" style="margin:0; padding:6px 10px; font-size:11.5px; cursor:pointer;" onchange="renderMonthComparisonData()">
+        <option value="salary" selected="">Текущий ЗП цикл vs Прошлый ЗП цикл</option>
+        <option value="calendar">Календарный месяц vs Прошлый месяц</option>
+      </select>
+    </div>
+
+    <!-- ТЕЛО СРАВНЕНИЯ -->
+    <div id="monthCompContent" style="flex:1; overflow-y:auto; scrollbar-gutter:stable; display:flex; flex-direction:column; gap:10px; padding-right:2px;"></div>
+
+  </div>
+</div>
 
 
 
@@ -18141,4 +18891,5 @@ const envWrap = document.getElementById('autopilotEnvelopesWrap');
 
 
 
-</body></html>
+
+</div></body></html>
